@@ -1,6 +1,5 @@
 import React from 'react';
-import {IndexRoute, Route} from 'react-router';
-import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
+import {Route} from 'react-router';
 import {
     App,
     Chat,
@@ -8,6 +7,7 @@ import {
     Widgets,
     About,
     Login,
+    Register,
     LoginSuccess,
     Survey,
     NotFound,
@@ -31,28 +31,20 @@ export default (store) => {
     }
   };
 
-  /**
-   * Please keep routes in alphabetical order
-   */
-  return (
-    <Route path="/" component={App}>
-      { /* Home (main) route */ }
-      <IndexRoute component={Home}/>
+    return (
+        <Route component={App}>
+            <Route path="/" component={Home}/>
+            <Route path="/widgets" component={Widgets}/>
+            <Route path="/about" component={About}/>
+            <Route path="/login" component={Login}/>
+            <Route path="/register" component={Register}/>
+            <Route onEnter={requireLogin}>
+                <Route path="/chat" component={Chat}/>
+                <Route path="/loginSuccess" component={LoginSuccess}/>
+            </Route>
+            <Route path="/survey" component={Survey}/>
+            <Route path="*" component={NotFound} status={404}/>
+        </Route>
 
-      { /* Routes requiring login */ }
-      <Route onEnter={requireLogin}>
-        <Route path="chat" component={Chat}/>
-        <Route path="loginSuccess" component={LoginSuccess}/>
-      </Route>
-
-      { /* Routes */ }
-      <Route path="about" component={About}/>
-      <Route path="login" component={Login}/>
-      <Route path="survey" component={Survey}/>
-      <Route path="widgets" component={Widgets}/>
-
-      { /* Catch all route */ }
-      <Route path="*" component={NotFound} status={404} />
-    </Route>
-  );
+    );
 };
