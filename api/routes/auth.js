@@ -1,5 +1,7 @@
 var passport = require('passport');
 var config = require('../config');
+var jwt = require('jsonwebtoken');
+
 import { login, register } from '../services/user.server.service';
 
 module.exports = function(app) {
@@ -42,6 +44,27 @@ module.exports = function(app) {
         return res.json({});
     });
 
+    app.post('/loadAuth', function(req, res) {
+        // check header or url parameters or post parameters for token
+
+        var token = req.body.token || req.params.token || req.headers['x-access-token'];
+        // decode token
+        if (token) {
+
+            // verifies secret and checks exp
+            jwt.verify(token, config.jwtSecret, function (err, decoded) {
+                if (err) {
+                    return res.json({});
+                } else {
+                    return res.json(decoded);
+                }
+            });
+        } else {
+            return res.json({});
+        }
+
+    });
+
     app.use(function(req, res, next) {
 
         // check header or url parameters or post parameters for token
@@ -76,8 +99,6 @@ module.exports = function(app) {
 // ---------------------------------------------------------
 // authenticated routes
 // ---------------------------------------------------------
-    app.get('loadAuth', function(req, res) {
-        res.json(req.decoded);
-    });
+
 
 };

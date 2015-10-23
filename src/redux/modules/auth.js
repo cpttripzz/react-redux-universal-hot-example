@@ -102,7 +102,7 @@ export function load(globalState) {
     //promise: (client) => client.get('/loadAuth')
     promise: (client) => client.post('/loadAuth', {
       data: {
-        token: globalState.auth.user.token
+        token: (globalState && globalState.auth && globalState.auth.user && globalState.auth.user.token) || null
       }
     })
   };

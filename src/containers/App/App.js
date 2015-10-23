@@ -61,6 +61,7 @@ export default class App extends Component {
 
   render() {
     const {user} = this.props;
+    console.log(user);
     const styles = require('./App.scss');
     return (
       <div className={styles.app}>
@@ -81,7 +82,7 @@ export default class App extends Component {
               {user && <li className="logout-link"><a href="/logout" onClick={::this.handleLogout}>Logout</a></li>}
             </ul>
             {user &&
-            <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
+            <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.email}</strong>.</p>}
             <ul className="nav navbar-nav navbar-right">
               <li>
                 <a href="https://github.com/erikras/react-redux-universal-hot-example"

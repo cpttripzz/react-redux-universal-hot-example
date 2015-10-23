@@ -1,8 +1,9 @@
 import React, {Component, PropTypes} from 'react';
 import { Link } from 'react-router';
-import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import * as authActions from 'redux/modules/auth';
+import { isLoaded as isAuthLoaded, load as loadAuth,login } from 'redux/modules/auth';
+
+import { pushState } from 'redux-router';
 
 import { AlertAutoDismissable } from 'components';
 
@@ -11,23 +12,39 @@ import { AlertAutoDismissable } from 'components';
         user: state.auth.user,
         error: state.auth.loginError,
     }),
-    authActions)
+    {login, pushState})
 
 export default class Login extends Component {
     static propTypes = {
         user: PropTypes.object,
         error: PropTypes.object,
         login: PropTypes.func,
-        logout: PropTypes.func
+        logout: PropTypes.func,
+        pushState: PropTypes.func.isRequired
     }
-    constructor(props, context) {
-        super(props, context);
-    }
-
     static contextTypes = {
-        router: React.PropTypes.object,
+        store: PropTypes.object.isRequired
+    };
+
+    componentWillReceiveProps(nextProps) {
+        if (!this.props.user && nextProps.user) {
+            // login
+
+            this.props.pushState(null, '/loginSuccess');
+        } else if (this.props.user && !nextProps.user) {
+            // logout
+            this.props.pushState(null, '/');
+        }
     }
 
+    static fetchData(getState, dispatch) {
+        const promises = [];
+
+        if (!isAuthLoaded(getState())) {
+            promises.push(dispatch(loadAuth(getState())));
+        }
+        return Promise.all(promises);
+    }
 
     handleSubmit(event) {
         event.preventDefault();
@@ -45,7 +62,7 @@ export default class Login extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (!this.props.user && nextProps.user) {
-            this.context.router.transitionTo('/');
+            this.props.pushState(null, '/loginSuccess');
         }
     }
 
