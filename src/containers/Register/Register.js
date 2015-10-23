@@ -28,8 +28,8 @@ export default class Register extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const email = this.refs.email.getDOMNode();  // need for getDOMNode() call going away in React 0.14
-    const password = this.refs.password.getDOMNode();  // need for getDOMNode() call going away in React 0.14
+    const email = this.refs.email;  // need for getDOMNode() call going away in React 0.14
+    const password = this.refs.password;  // need for getDOMNode() call going away in React 0.14
     this.props.register(email.value, password.value);
     //email.value = '';
     //password.value = '';

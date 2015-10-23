@@ -1,5 +1,6 @@
 import React from 'react';
-import {Route} from 'react-router';
+import {IndexRoute, Route} from 'react-router';
+import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
 import {
     App,
     Chat,
@@ -25,7 +26,7 @@ export default (store) => {
     }
 
     if (!isAuthLoaded(store.getState())) {
-      store.dispatch(loadAuth()).then(checkAuth);
+      store.dispatch(loadAuth(store.getState())).then(checkAuth);
     } else {
       checkAuth();
     }
@@ -33,7 +34,7 @@ export default (store) => {
 
     return (
         <Route component={App}>
-            <Route path="/" component={Home}/>
+            <IndexRoute component={Home}/>
             <Route path="/widgets" component={Widgets}/>
             <Route path="/about" component={About}/>
             <Route path="/login" component={Login}/>

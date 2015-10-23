@@ -7,7 +7,9 @@ const LOGIN_FAIL = 'redux-example/auth/LOGIN_FAIL';
 const LOGOUT = 'redux-example/auth/LOGOUT';
 const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
 const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
-
+const REGISTRATION = 'redux-example/auth/REGISTRATION';
+const REGISTRATION_SUCCESS = 'redux-example/auth/REGISTRATION_SUCCESS';
+const REGISTRATION_FAIL = 'redux-example/auth/REGISTRATION_FAIL';
 const initialState = {
   loaded: false
 };
@@ -42,7 +44,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         loggingIn: false,
-        user: action.result.returnUser
+        user: action.result.authUser
       };
     case LOGIN_FAIL:
       return {
@@ -68,6 +70,23 @@ export default function reducer(state = initialState, action = {}) {
         loggingOut: false,
         logoutError: action.error
       };
+    case REGISTRATION:
+      return {
+        ...state,
+        registering: true
+      };
+    case REGISTRATION_SUCCESS:
+      return {
+        ...state,
+        registering: false,
+        user: null
+      };
+    case REGISTRATION_FAIL:
+      return {
+        ...state,
+        registering: false,
+        registerError: action.error
+      };
     default:
       return state;
   }
@@ -76,20 +95,38 @@ export default function reducer(state = initialState, action = {}) {
 export function isLoaded(globalState) {
   return globalState.auth && globalState.auth.loaded;
 }
-
-export function load() {
+//function getJsonWebToken()
+export function load(globalState) {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-    promise: (client) => client.get('/loadAuth')
+    //promise: (client) => client.get('/loadAuth')
+    promise: (client) => client.post('/loadAuth', {
+      data: {
+        token: globalState.auth.user.token
+      }
+    })
   };
 }
 
-export function login(name) {
+export function login(email, password) {
   return {
     types: [LOGIN, LOGIN_SUCCESS, LOGIN_FAIL],
     promise: (client) => client.post('/login', {
       data: {
-        name: name
+        email: email,
+        password: password
+      }
+    })
+  };
+}
+
+export function register(email,password) {
+  return {
+    types: [REGISTRATION,REGISTRATION_SUCCESS,REGISTRATION_FAIL],
+    promise: (client) => client.post('/register', {
+      data: {
+        email: email,
+        password: password
       }
     })
   };

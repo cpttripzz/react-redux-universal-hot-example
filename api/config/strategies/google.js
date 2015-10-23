@@ -22,7 +22,6 @@ module.exports = function () {
                 providerId: profile.id,
                 providerData: providerData
             };
-            console.log(providerUserProfile);
             saveOAuthUserProfile(req, providerUserProfile, done);
         }));
 };

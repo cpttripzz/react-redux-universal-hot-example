@@ -32,17 +32,19 @@ export function login (req, res){
 					if(err){
 						console.log('node acl errrrrror', err);
 					}
-					console.log('user', user);
 
-					var returnUser = {
+					var authUser = {
 						id: user.id,
 						email: user.email,
 						role: roles
 					};
-					var token = jwt.sign(returnUser, config.jwtSecret, {
-						expiresInMinutes: 1440 // expires in 24 hours
+					var token = jwt.sign(authUser, config.jwtSecret, {
+						expiresIn: 1440 * 60// expires in 24 hours
 					});
-					return res.json({returnUser, token});
+					if (token) {
+						authUser["token"] = token;
+					}
+					return res.json({authUser});
 				});
 
 			});

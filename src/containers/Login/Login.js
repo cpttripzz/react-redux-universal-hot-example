@@ -11,9 +11,7 @@ import { AlertAutoDismissable } from 'components';
         user: state.auth.user,
         error: state.auth.loginError,
     }),
-    dispatch => bindActionCreators(authActions, dispatch)
-)
-
+    authActions)
 
 export default class Login extends Component {
     static propTypes = {
@@ -33,8 +31,8 @@ export default class Login extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const email = this.refs.email.getDOMNode();
-        const password = this.refs.password.getDOMNode();
+        const email = this.refs.email;
+        const password = this.refs.password;
         this.props.login(email.value, password.value);
         //input.value = '';
     }

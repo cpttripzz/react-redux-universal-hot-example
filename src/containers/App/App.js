@@ -37,6 +37,7 @@ export default class App extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.user && nextProps.user) {
       // login
+
       this.props.pushState(null, '/loginSuccess');
     } else if (this.props.user && !nextProps.user) {
       // logout
@@ -46,11 +47,9 @@ export default class App extends Component {
 
   static fetchData(getState, dispatch) {
     const promises = [];
-    if (!isInfoLoaded(getState())) {
-      promises.push(dispatch(loadInfo()));
-    }
+
     if (!isAuthLoaded(getState())) {
-      promises.push(dispatch(loadAuth()));
+      promises.push(dispatch(loadAuth(getState())));
     }
     return Promise.all(promises);
   }

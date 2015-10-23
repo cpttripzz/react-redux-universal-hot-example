@@ -12,17 +12,7 @@ module.exports = function(app) {
         return register(req,res);
     });
 
-    app.get('/loadAuth', function(req, res) {
-        //if(req.session.user) {
-        //    return res.json(req.session.user);
-        //} else {
-            return res.json({});
-        //}
-    });
-    app.get('/oauthSuccess',
-        function(req, res){
-            return res.render('oauthSuccess');
-        });
+
     app.get('/oauth/facebook', passport.authenticate('facebook', {
         scope:['email']
     }));
@@ -43,7 +33,6 @@ module.exports = function(app) {
     app.get('/oauth/google/callback',
         passport.authenticate('google', { failureRedirect: '/' }),
         function(req, res) {
-            console.log('cookie',req.get('cookie'));
             res.redirect('http://bandaid.com:3000');
         });
 
@@ -52,4 +41,43 @@ module.exports = function(app) {
         req.logout();
         return res.json({});
     });
+
+    app.use(function(req, res, next) {
+
+        // check header or url parameters or post parameters for token
+        var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+
+        // decode token
+        if (token) {
+
+            // verifies secret and checks exp
+            jwt.verify(token, config.jwtSecret, function(err, decoded) {
+                if (err) {
+                    return res.json({ success: false, message: 'Failed to authenticate token.' });
+                } else {
+                    // if everything is good, save to request for use in other routes
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+
+        } else {
+
+            // if there is no token
+            // return an error
+            return res.status(403).send({
+                success: false,
+                message: 'No token provided.'
+            });
+
+        }
+
+    });
+// ---------------------------------------------------------
+// authenticated routes
+// ---------------------------------------------------------
+    app.get('loadAuth', function(req, res) {
+        res.json(req.decoded);
+    });
+
 };
