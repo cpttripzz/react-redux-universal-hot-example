@@ -2,7 +2,7 @@ var passport = require('passport');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 
-import { login, register } from '../services/user.server.service';
+import { login, register, getUsers, fuk } from '../services/user.server.service';
 
 module.exports = function(app) {
 
@@ -68,7 +68,7 @@ module.exports = function(app) {
     app.use(function(req, res, next) {
 
         // check header or url parameters or post parameters for token
-        var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+                var token = req.body.token || req.params.token || req.headers['x-access-token'];
 
         // decode token
         if (token) {
@@ -99,6 +99,13 @@ module.exports = function(app) {
 // ---------------------------------------------------------
 // authenticated routes
 // ---------------------------------------------------------
+    app.get('/users', function(req, res){
+        getUsers().then(function(users){
+            return res.json(users);
+        });
+
+
+    });
 
 
 };
