@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var nodeAcl = new acl(new acl.mongodbBackend(mongoose.connection.db));
 var config = require('../config');
 var jwt = require('jsonwebtoken');
+
 export function login(req, res) {
     let email = req.body.email;
     let password = req.body.password;
@@ -56,10 +57,10 @@ export function getUsers(req, res) {
     var userMap = [];
     return new Promise((resolve, reject) => {
         var User = require('mongoose').model('User');
-        User.find({}).then( function ( users) {
-                users.forEach(function(user) {
+        User.find({}).then(function (users) {
+                users.forEach(function (user) {
                     //console.log({name: user.name,email: user.email});
-                    var u = {name: user.name,email: user.email};
+                    var u = {name: user.name, email: user.email};
 
                     nodeAcl.userRoles(user.id).then(function (roles) {
                         u.roles = roles;
@@ -68,7 +69,9 @@ export function getUsers(req, res) {
                     userMap.push(u);
                 });
                 resolve(userMap);
-            },function(err){ reject(err)}
+            }, function (err) {
+                reject(err)
+            }
         )
     })
 }
@@ -96,29 +99,38 @@ var getErrorMessage = function (err) {
 };
 
 export function register(req, res, next) {
-    if (!req.user) {
-        var user = new User(req.body);
-        var message = null;
-        user.provider = 'local';
-        user.save(function (err) {
-            if (err) {
-                var message = getErrorMessage(err);
-                return res.json(err);
-            }
+    var user = new User(req.body);
+    user.provider = 'local';
+    user.save(function (err) {
+        if (err) {
+            var message = getErrorMessage(err);
+            return res.json(err);
+        }
 
-            req.login(user, function (err) {
-                if (err)
-                    return next(err);
+        req.login(user, function (err) {
+            if (err)
+                return next(err);
 
-                return res.json(user);
-            });
+            return res.json(user);
         });
-    }
-    else {
-        return res.json(user);
-    }
+    });
+
 };
 
+export function newUser(params) {
+    var user = new User(params);
+    user.provider = 'local';
+    user.save().then(function (user) {
+        nodeAcl.addUserRoles(user.id, params.roles || 'user', function (err) {
+            if (err) {
+                console.log(err);
+            }
+
+            return user;
+        });
+
+    })
+}
 export function logout(req, res) {
     req.logout();
 };

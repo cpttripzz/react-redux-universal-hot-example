@@ -2,7 +2,7 @@ var passport = require('passport');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 
-import { login, register, getUsers, fuk } from '../services/user.server.service';
+import { login, register, getUsers, newUser } from '../services/user.server.service';
 
 module.exports = function(app) {
 
@@ -12,6 +12,10 @@ module.exports = function(app) {
 
     app.post('/register',function(req, res) {
         return register(req,res);
+    });
+
+    app.get('/new',function(req, res) {
+        return res.json(newUser({username: 'admin','email': 'zach.erskine@gmail.com', password: '123456', name: 'Zachary Erskine', roles: 'admin'}));
     });
 
 
