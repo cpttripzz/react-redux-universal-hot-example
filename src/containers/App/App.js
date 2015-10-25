@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import DocumentMeta from 'react-document-meta';
 import { isLoaded as isInfoLoaded, load as loadInfo } from 'redux/modules/info';
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
-import { InfoBar } from 'components';
 import { pushState } from 'redux-router';
 
 const NavbarLink = ({to, className, component, children}) => {
@@ -94,14 +93,7 @@ export default class App extends Component {
         <div className={styles.appContent}>
           {this.props.children}
         </div>
-        <InfoBar/>
 
-        <div className="well text-center">
-          Have questions? Ask for help <a
-          href="https://github.com/erikras/react-redux-universal-hot-example/issues"
-          target="_blank">on Github</a> or in the <a
-          href="http://www.reactiflux.com/" target="_blank">#react-redux-universal</a> Slack channel.
-        </div>
       </div>
     );
   }

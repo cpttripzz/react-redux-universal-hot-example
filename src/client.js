@@ -39,11 +39,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 if (__DEVTOOLS__) {
-  const { DevTools, DebugPanel, LogMonitor } = require('redux-devtools/lib/react');
-  ReactDOM.render(<div>
+  const DevTools = require('./containers/DevTools/DevTools');
+  ReactDOM.render(
+    <Provider store={store} key="provider">
+      <div>
     {component}
-    <DebugPanel top right bottom key="debugPanel">
-      <DevTools store={store} monitor={LogMonitor}/>
-    </DebugPanel>
-  </div>, dest);
+        <DevTools />
+      </div>
+    </Provider>,
+    dest
+  );
 }
