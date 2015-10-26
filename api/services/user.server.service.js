@@ -7,49 +7,45 @@ var nodeAcl = new acl(new acl.mongodbBackend(mongoose.connection.db));
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 
-export function login(req, res) {
+export function login(req) {
     let email = req.body.email;
     let password = req.body.password;
     var User = require('mongoose').model('User');
-    User.findOne({email: email}).exec().then(function (user) {
-
-        //if (err) {
-        //    return res.status(500).json(err.message);
-        //}
-        let errMsg = {message: 'Invalid username or password'};
-        if (!user) {
-            return res.status(500).json(errMsg);
-        }
-
-        if (!user.authenticate(password)) {
-            return res.status(500).json(errMsg);
-        }
-        req.login(user, function (err) {
-            if (err) {
-                res.json({loginError: err});
+    return new Promise((resolve, reject) => {
+        User.findOne({email: email}).exec().then(function (user) {
+            let errMsg = {message: 'Invalid username or password'};
+            if (!user || (!user.authenticate(password))) {
+                reject(errMsg);
             }
 
-            nodeAcl.userRoles(user.id, function (err, roles) {
+            req.login(user, function (err) {
                 if (err) {
-                    console.log('node acl errrrrror', err);
+                    reject({loginError: err});
                 }
+                nodeAcl.userRoles(user.id, function (err, roles) {
+                    if (err) {
+                        console.log('node acl errrrrror', err);
+                    }
 
-                var authUser = {
-                    id: user.id,
-                    email: user.email,
-                    role: roles
-                };
-                var token = jwt.sign(authUser, config.jwtSecret, {
-                    expiresIn: 1440 * 60// expires in 24 hours
+                    var authUser = {
+                        id: user.id,
+                        email: user.email,
+                        role: roles
+                    };
+                    var token = jwt.sign(authUser, config.jwtSecret, {
+                        expiresIn: 1440 * 60// expires in 24 hours
+                    });
+                    if (token) {
+                        authUser["token"] = token;
+                    }
+                    return res.json({authUser});
                 });
-                if (token) {
-                    authUser["token"] = token;
-                }
-                return res.json({authUser});
-            });
 
-        });
-    });
+            });
+        }, function (err) {
+            reject(err);
+        })
+    })
 };
 
 export function getUsers(req, res) {

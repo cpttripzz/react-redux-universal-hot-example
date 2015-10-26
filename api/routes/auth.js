@@ -7,7 +7,12 @@ import { login, register, getUsers, newUser } from '../services/user.server.serv
 module.exports = function(app) {
 
     app.post('/login',function(req, res) {
-        return login(req,res);
+        login(req).then(function(data){
+            return res.json(data);
+        },
+        function(err){
+            return res.json(err);
+        })
     });
 
     app.post('/register',function(req, res) {
