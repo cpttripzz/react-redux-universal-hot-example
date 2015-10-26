@@ -33,7 +33,7 @@ export default class Navbar extends Component {
             <nav className="navbar navbar-default navbar-fixed-top">
                 <div className="container">
                     <NavbarLink to="/" className="navbar-brand" component={IndexLink}>
-                        React Redux Example
+                        Application
                     </NavbarLink>
 
                     <ul className="nav navbar-nav">
