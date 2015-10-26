@@ -6,3 +6,4 @@
  */
 
 export AlertAutoDismissable from './AlertAutoDismissable/AlertAutoDismissable';
+export Navbar from './Navbar/Navbar.js';
