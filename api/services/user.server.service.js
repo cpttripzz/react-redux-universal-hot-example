@@ -12,37 +12,37 @@ export function login(req) {
     let password = req.body.password;
     var User = require('mongoose').model('User');
     return new Promise((resolve, reject) => {
-        User.findOne({email: email}).exec().then(function (user) {
+        User.findOne({email: email}).exec().then((user) => {
             let errMsg = {message: 'Invalid username or password'};
             if (!user || (!user.authenticate(password))) {
                 reject(errMsg);
             }
 
-            req.login(user, function (err) {
+            req.login(user, (err) => {
                 if (err) {
                     reject({loginError: err});
                 }
-                nodeAcl.userRoles(user.id, function (err, roles) {
-                    if (err) {
-                        console.log('node acl errrrrror', err);
-                    }
-
-                    var authUser = {
-                        id: user.id,
-                        email: user.email,
-                        role: roles
-                    };
-                    var token = jwt.sign(authUser, config.jwtSecret, {
-                        expiresIn: 1440 * 60// expires in 24 hours
+                var authUser = {
+                    id: user.id,
+                    email: user.email
+                };
+                //function (users) { return users[0]; }
+                //users => users[0]
+                nodeAcl.userRoles(user.id)
+                    .then((roles) => {
+                            authUser['roles'] = roles;
+                            return nodeAcl.whatResources(roles)
+                        }
+                    )
+                    .then((resources) => {
+                        authUser['resources'] = resources;
+                        authUser["token"] = jwt.sign(authUser, config.jwtSecret, {
+                            expiresIn: 1440 * 60// expires in 24 hours
+                        });
+                        resolve(authUser);
                     });
-                    if (token) {
-                        authUser["token"] = token;
-                    }
-                    return res.json({authUser});
-                });
-
             });
-        }, function (err) {
+        }, (err) => {
             reject(err);
         })
     })
@@ -52,22 +52,20 @@ export function getUsers(req, res) {
     var userMap = [];
     return new Promise((resolve, reject) => {
         var User = require('mongoose').model('User');
-        User.find({}).then(function (users) {
-                users.forEach(function (user) {
-                    //console.log({name: user.name,email: user.email});
-                    var u = {name: user.name, email: user.email};
+        User.find({}).then((users) => {
+            users.forEach((user) => {
+                //console.log({name: user.name,email: user.email});
+                var u = {name: user.name, email: user.email};
 
-                    nodeAcl.userRoles(user.id).then(function (roles) {
-                        u.roles = roles;
-
-                    });
-                    userMap.push(u);
+                nodeAcl.userRoles(user.id).then((roles) => {
+                    u.roles = roles;
                 });
-                resolve(userMap);
-            }, function (err) {
-                reject(err)
-            }
-        )
+                userMap.push(u);
+            });
+            resolve(userMap);
+        }, (err) => {
+            reject(err)
+        })
     })
 }
 
@@ -116,14 +114,14 @@ export function newUser(params) {
     var user = new User(params);
     user.provider = 'local';
     user.save().then(function (user) {
-        nodeAcl.addUserRoles(user.id, params.roles || 'user', function (err) {
-            if (err) {
+        nodeAcl.addUserRoles(user.id, params.roles || 'user').then(
+            function (roles) {
+                return user;
+            },
+            function (err) {
                 console.log(err);
-            }
 
-            return user;
-        });
-
+            });
     })
 }
 export function logout(req, res) {
@@ -172,7 +170,6 @@ export function saveOAuthUserProfile(req, profile, done) {
                         if (err) {
                             console.log('node acl errrrrror', err);
                         }
-                        console.log(req.session);
                         //req.session.user = {
                         //	id: user.id,
                         //	email: user.email || null,

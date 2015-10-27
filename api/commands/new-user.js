@@ -10,6 +10,5 @@ cli.parse({
 });
 
 cli.main(function(args, options) {
-    console.log(options.username);
     newUser(options);
 });

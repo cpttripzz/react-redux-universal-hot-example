@@ -6,13 +6,10 @@ import { login, register, getUsers, newUser } from '../services/user.server.serv
 
 module.exports = function(app) {
 
-    app.post('/login',function(req, res) {
-        login(req).then(function(data){
-            return res.json(data);
-        },
-        function(err){
-            return res.json(err);
-        })
+    app.post('/login', (req, res) =>{
+        login(req)
+            .then( (data) => res.json(data) )
+            .catch( (err) => res.json(err) )
     });
 
     app.post('/register',function(req, res) {
@@ -53,7 +50,7 @@ module.exports = function(app) {
         return res.json({});
     });
 
-    app.post('/loadAuth', function(req, res) {
+    app.post('/loadAuth', (req, res) => {
         // check header or url parameters or post parameters for token
 
         var token = req.body.token || req.params.token || req.headers['x-access-token'];
@@ -61,7 +58,7 @@ module.exports = function(app) {
         if (token) {
 
             // verifies secret and checks exp
-            jwt.verify(token, config.jwtSecret, function (err, decoded) {
+            jwt.verify(token, config.jwtSecret, (err, decoded) => {
                 if (err) {
                     return res.json({});
                 } else {
@@ -77,8 +74,7 @@ module.exports = function(app) {
     app.use(function(req, res, next) {
 
         // check header or url parameters or post parameters for token
-                var token = req.body.token || req.params.token || req.headers['x-access-token'];
-
+        var token = req.body.token || req.params.token || req.headers['x-access-token'];
         // decode token
         if (token) {
 
@@ -88,7 +84,7 @@ module.exports = function(app) {
                     return res.json({ success: false, message: 'Failed to authenticate token.' });
                 } else {
                     // if everything is good, save to request for use in other routes
-                    req.decoded = decoded;
+                    req.user = decoded;
                     next();
                 }
             });
@@ -108,13 +104,17 @@ module.exports = function(app) {
 // ---------------------------------------------------------
 // authenticated routes
 // ---------------------------------------------------------
-    app.get('/users', function(req, res){
-        getUsers().then(function(users){
-            return res.json(users);
-        });
+    app.get('/users', (req, res) =>
+        getUsers().then( (users) => res.json(users))
+    );
 
+    app.post('/resource', function(req, res){
+        import { allow } from '../services/resource.server.service';
+        if(req.user.role.indexOf('admin') >= 0) {
+            allow(req.body)
+                .then( (result) => res.json(result))
+                .catch( (err) => res.json(err) )
 
+        }
     });
-
-
 };
