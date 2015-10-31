@@ -97,6 +97,7 @@ export function isLoaded(globalState) {
 }
 //function getJsonWebToken()
 export function load(globalState) {
+
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
     //promise: (client) => client.get('/loadAuth')

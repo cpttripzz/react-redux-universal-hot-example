@@ -92,38 +92,35 @@ var getErrorMessage = function (err) {
 };
 
 export function register(req, res, next) {
-    var user = new User(req.body);
-    user.provider = 'local';
-    user.save(function (err) {
-        if (err) {
-            var message = getErrorMessage(err);
-            return res.json(err);
-        }
+    return new Promise((resolve, reject) => {
+        newUser(req.body).then((user) => {
+            req.login(user, (err) => {
+                if (err) {
+                    reject(err);
+                }
 
-        req.login(user, function (err) {
-            if (err)
-                return next(err);
-
-            return res.json(user);
-        });
-    });
-
-};
-
-export function newUser(params) {
-    var user = new User(params);
-    user.provider = 'local';
-    user.save().then(function (user) {
-        nodeAcl.addUserRoles(user.id, params.roles || 'user').then(
-            function (roles) {
-                return user;
-            },
-            function (err) {
-                console.log(err);
-
-            });
+                resolve(user);
+            })
+        })
     })
 }
+
+export function newUser(params) {
+    return new Promise((resolve, reject) => {
+
+        var user = new User(params);
+        user.provider = 'local';
+        user.save()
+            .then( (user) => {
+                console.log(user);
+                nodeAcl.addUserRoles(user.id, params.roles || 'user').then(
+                    (roles) => resolve(user),
+                    (err) => reject(err)
+                )})
+            .catch( (err) => reject(err))
+    })
+}
+
 export function logout(req, res) {
     req.logout();
 };

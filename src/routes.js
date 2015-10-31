@@ -34,7 +34,7 @@ export default (store) => {
 
     return (
         <Route component={App}>
-            <IndexRoute component={Home}/>
+            <Route path="/" component={Home}/>
             <Route path="/widgets" component={Widgets}/>
             <Route path="/about" component={About}/>
             <Route path="/login" component={Login}/>

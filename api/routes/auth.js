@@ -9,15 +9,19 @@ module.exports = function(app) {
     app.post('/login', (req, res) =>{
         login(req)
             .then( (data) => res.json(data) )
-            .catch( (err) => res.json(err) )
+            .catch( (err) => res.status(500).json(err) )
     });
 
-    app.post('/register',function(req, res) {
-        return register(req,res);
+    app.post('/register', (req, res) =>{
+        register(req)
+            .then( (data) => res.json(data) )
+            .catch( (err) => res.status(500).json(err) )
     });
 
-    app.get('/new',function(req, res) {
-        return res.json(newUser({username: 'admin','email': 'zach.erskine@gmail.com', password: '123456', name: 'Zachary Erskine', roles: 'admin'}));
+    app.post('/new',function(req, res) {
+        newUser(req.body)
+            .then((user) => res.json(user))
+            .catch((err) => res.json(err))
     });
 
 
