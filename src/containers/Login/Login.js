@@ -26,25 +26,16 @@ export default class Login extends Component {
         store: PropTypes.object.isRequired
     };
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.props.user && nextProps.user) {
-            // login
 
-            this.props.pushState(null, '/loginSuccess');
-        } else if (this.props.user && !nextProps.user) {
-            // logout
-            this.props.pushState(null, '/');
-        }
-    }
 
-    static fetchData(getState, dispatch) {
-        const promises = [];
-
-        if (!isAuthLoaded(getState())) {
-            promises.push(dispatch(loadAuth(getState())));
-        }
-        return Promise.all(promises);
-    }
+    //static fetchData(getState, dispatch) {
+    //    const promises = [];
+    //
+    //    if (!isAuthLoaded(getState())) {
+    //        promises.push(dispatch(loadAuth(getState())));
+    //    }
+    //    return Promise.all(promises);
+    //}
 
     handleSubmit(event) {
         event.preventDefault();
@@ -59,12 +50,6 @@ export default class Login extends Component {
         window.location.href = 'http://bandaid.com:3030/oauth/google';
     }
 
-
-    componentWillReceiveProps(nextProps) {
-        if (!this.props.user && nextProps.user) {
-            this.props.pushState(null, '/loginSuccess');
-        }
-    }
 
     render() {
         const {user,error} = this.props;
