@@ -96,14 +96,18 @@ export function isLoaded(globalState) {
   return globalState.auth && globalState.auth.loaded;
 }
 //function getJsonWebToken()
-export function load(globalState) {
-
-  return {
+export function load() {
+  let token = null;
+  if (typeof window !== "undefined" && window.localStorage.token) {
+    token = window.localStorage.token;
+  }
+    return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
     //promise: (client) => client.get('/loadAuth')
+
     promise: (client) => client.post('/loadAuth', {
       data: {
-        token: (globalState && globalState.auth && globalState.auth.user && globalState.auth.user.token) || null
+        token:  token
       }
     })
   };

@@ -28,6 +28,7 @@ export default class Navbar extends Component {
     }
     render() {
         const {user} = this.props;
+        //const {user} = (Object.keys(this.props.user).length) ? this.props : false;
 
         return (
             <nav className="navbar navbar-default navbar-fixed-top">
