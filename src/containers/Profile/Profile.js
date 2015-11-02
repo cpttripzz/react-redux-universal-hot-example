@@ -1,38 +1,55 @@
 import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import * as authActions from 'redux/modules/auth';
+import {reduxForm} from 'redux-form';
+export const fields = ['firstName', 'lastName', 'username', 'email'];
 
-@connect(
-    state => ({user: state.auth.user}),
-    authActions)
-export default
-class Profile extends Component {
+class SimpleForm extends Component {
   static propTypes = {
-    user: PropTypes.object,
-    logout: PropTypes.func
-  }
+    fields: PropTypes.object.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    resetForm: PropTypes.func.isRequired
+  };
 
   render() {
-    const {user, logout} = this.props;
-    return (user &&
-      <div className="container">
-        <h1>Login Success</h1>
-
-        <div>
-          <p>Hi, {user.name}. You have just successfully logged in, and were forwarded here
-            by <code>componentWillReceiveProps()</code> in <code>App.js</code>, which is listening to
-            the auth reducer via redux <code>@connect</code>. How exciting!
-          </p>
-
-          <p>
-            The same function will forward you to <code>/</code> should you chose to log out. The choice is yours...
-          </p>
-
-          <div>
-            <button className="btn btn-danger" onClick={logout}><i className="fa fa-sign-out"/>{' '}Log Out</button>
+    const {
+        fields: {firstName, lastName, username, email},
+        handleSubmit,
+        resetForm
+        } = this.props;
+    return (<form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="col-xs-4 control-label">First Name</label>
+            <div className="col-xs-8">
+              <input type="text" className="form-control" placeholder="First Name" {...firstName}/>
+            </div>
           </div>
-        </div>
-      </div>
+          <div className="form-group">
+            <label className="col-xs-4 control-label">Last Name</label>
+            <div className="col-xs-8">
+              <input type="text" className="form-control" placeholder="Last Name" {...lastName}/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="col-xs-4 control-label">Email</label>
+            <div className="col-xs-8">
+              <input type="email" className="form-control" placeholder="Email" {...email}/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="col-xs-4 control-label">Username</label>
+            <div className="col-xs-8">
+              <input type="username" className="form-control" placeholder="Username" {...username}/>
+            </div>
+          </div>
+          <div>
+            <button onClick={handleSubmit}>Submit</button>
+            <button onClick={resetForm}>Clear Values</button>
+          </div>
+        </form>
     );
   }
 }
+
+export default reduxForm({
+  form: 'simple',
+  fields
+})(SimpleForm);

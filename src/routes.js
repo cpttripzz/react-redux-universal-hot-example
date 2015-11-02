@@ -12,7 +12,8 @@ import {
     LoginSuccess,
     Survey,
     NotFound,
-    UserAdmin
+    UserAdmin,
+    Profile
 } from 'containers';
 
 export default (store) => {
@@ -42,6 +43,7 @@ export default (store) => {
             <Route path="/user-admin" component={UserAdmin}/>
             <Route path="/oauth-profile" component={LoginSuccess}/>
             <Route onEnter={requireLogin}>
+                <Route path="/profile" component={Profile}/>
                 <Route path="/loginSuccess" component={LoginSuccess}/>
             </Route>
             <Route path="*" component={NotFound} status={404}/>
