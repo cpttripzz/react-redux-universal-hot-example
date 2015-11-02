@@ -1,17 +1,17 @@
-const LOAD = 'redux-example/users/LOAD';
-const LOAD_SUCCESS = 'redux-example/users/LOAD_SUCCESS';
-const LOAD_FAIL = 'redux-example/users/LOAD_FAIL';
-const EDIT_START = 'redux-example/users/EDIT_START';
-const EDIT_STOP = 'redux-example/users/EDIT_STOP';
-const SAVE = 'redux-example/users/SAVE';
-const SAVE_SUCCESS = 'redux-example/users/SAVE_SUCCESS';
-const SAVE_FAIL = 'redux-example/users/SAVE_FAIL';
+const LOAD = 'redux-example/profile/LOAD';
+const LOAD_SUCCESS = 'redux-example/profile/LOAD_SUCCESS';
+const LOAD_FAIL = 'redux-example/profile/LOAD_FAIL';
+const EDIT_START = 'redux-example/profile/EDIT_START';
+const EDIT_STOP = 'redux-example/profile/EDIT_STOP';
+const SAVE = 'redux-example/profile/SAVE';
+const SAVE_SUCCESS = 'redux-example/profile/SAVE_SUCCESS';
+const SAVE_FAIL = 'redux-example/profile/SAVE_FAIL';
 const initialState = {
   loaded: false,
-  users: false
+  profile: false
 };
 
-export default function users(state = initialState, action = {}) {
+export default function profile(state = initialState, action = {}) {
   switch (action.type) {
     case LOAD:
       return {
@@ -23,7 +23,7 @@ export default function users(state = initialState, action = {}) {
         ...state,
         loading: false,
         loaded: true,
-        users: action.result
+        profile: action.result
       };
     case LOAD_FAIL:
       return {
@@ -79,12 +79,30 @@ export default function users(state = initialState, action = {}) {
 }
 
 export function isLoaded(globalState) {
-  return globalState.users && globalState.users.loaded;
+  return globalState.profile && globalState.profile.loaded;
 }
-
 export function load() {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-    promise: (client) => client.get('/users') // params not used, just shown as demonstration
+    promise: (client) => client.get('/profile') // params not used, just shown as demonstration
   };
+}
+
+  export function save(profile) {
+    return {
+      types: [SAVE, SAVE_SUCCESS, SAVE_FAIL],
+      id: profile.id,
+      promise: (client) => client.post('/profile/update', {
+        data: profile
+      })
+    };
+  }
+
+  export function editStart(id) {
+    return { type: EDIT_START, id };
+  }
+
+  export function editStop(id) {
+    return { type: EDIT_STOP, id };
+  }
 }
