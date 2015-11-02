@@ -40,9 +40,7 @@ export default class Navbar extends Component {
                     <ul className="nav navbar-nav">
                         {user && <li><NavbarLink to="/chat">Chat</NavbarLink></li>}
 
-                        <li><NavbarLink to="/widgets">Widgets</NavbarLink></li>
-                        <li><NavbarLink to="/survey">Survey</NavbarLink></li>
-                        <li><NavbarLink to="/about">About Us</NavbarLink></li>
+                        <li><NavbarLink to="/user-admin">User Admin</NavbarLink></li>
                         {!user && <li><NavbarLink to="/login">Login</NavbarLink></li>}
                         {user &&
                         <li className="logout-link"><a href="/logout" onClick={::this.handleLogout}>Logout</a></li>}

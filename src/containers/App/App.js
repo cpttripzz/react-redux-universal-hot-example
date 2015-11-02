@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { IndexLink, Link } from 'react-router';
 import { connect } from 'react-redux';
 import DocumentMeta from 'react-document-meta';
-import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
+import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
 import { pushState } from 'redux-router';
 import { Navbar } from  'components';
 
@@ -12,13 +12,11 @@ import { Navbar } from  'components';
         user: state.auth.user,
         auth: state.auth
     }),
-    {logout, pushState})
+    {pushState})
 export default class App extends Component {
     static propTypes = {
         children: PropTypes.object.isRequired,
         user: PropTypes.object,
-
-        logout: PropTypes.func.isRequired,
         pushState: PropTypes.func.isRequired
     };
 
@@ -26,33 +24,27 @@ export default class App extends Component {
         store: PropTypes.object.isRequired
     };
 
-    //componentWillReceiveProps(nextProps) {
-    //    if (!this.props.user && nextProps.user) {
-    //        // login
-    //        window.localStorage.token = nextProps.user.token;
-    //        this.props.pushState(null, '/loginSuccess');
-    //    } else if (this.props.user && !nextProps.user) {
-    //        // logout
-    //        delete localStorage.token;
-    //        this.props.pushState(null, '/');
-    //    }
-    //}
-    componentWillMount() {
-        if (Object.keys(this.props.user).length === 0) {
+    componentWillReceiveProps(nextProps) {
+        if (  (typeof this.props.user === "undefined"  || Object.keys(this.props.user).length === 0)
+                && ( nextProps.user && Object.keys(nextProps.user).length) ) {
+            // login
+            window.localStorage.token = nextProps.user.token;
+            this.props.pushState(null, '/loginSuccess');
+        } else if (this.props.user && !nextProps.user) {
+            // logout
+            delete localStorage.token;
+            this.props.pushState(null, '/');
+        }
+    }
+    componentDidMount() {
+        if (!this.props.user || Object.keys(this.props.user).length === 0) {
             if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined") {
 
                 this.context.store.dispatch(loadAuth());
             }
         }
     }
-    static fetchData(getState, dispatch) {
-        const promises = [];
 
-        if (!isAuthLoaded(getState())) {
-            promises.push(dispatch(loadAuth()));
-        }
-        return Promise.all(promises);
-    }
 
 
     render() {

@@ -40,7 +40,7 @@ export default (store) => {
             <Route path="/login" component={Login}/>
             <Route path="/register" component={Register}/>
             <Route path="/user-admin" component={UserAdmin}/>
-
+            <Route path="/oauth-profile" component={LoginSuccess}/>
             <Route onEnter={requireLogin}>
                 <Route path="/loginSuccess" component={LoginSuccess}/>
             </Route>
