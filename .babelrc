@@ -8,7 +8,8 @@
   "env": {
     "development": {
       "plugins": [
-        "react-transform"
+        "react-transform",
+        "jsx-control-statements/babel"
       ],
       "extra": {
         "react-transform": {

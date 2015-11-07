@@ -1,86 +1,80 @@
 import React, {Component, PropTypes} from 'react';
+import DocumentMeta from 'react-document-meta';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {reduxForm} from 'redux-form';
-import widgetValidation, {colors} from './widgetValidation';
-import * as widgetActions from 'redux/modules/widgets';
+import * as profileActions from 'redux/modules/profile';
+import {isLoaded, load as loadProfile} from 'redux/modules/profile';
+import {initializeWithKey} from 'redux-form';
+import { ProfileForm } from 'components';
 
 @connect(
   state => ({
-    saveError: state.widgets.saveError
+    profile: state.profile.data,
+    editing: state.profile.editing,
+    error: state.profile.error,
+    loading: state.profile.loading
   }),
-  dispatch => bindActionCreators(widgetActions, dispatch)
-)
-@reduxForm({
-  form: 'profile',
-  fields: ['firstName', 'lastName', 'username', 'email'],
-  validate: profileValidation
-})
-export default class WidgetForm extends Component {
+  {...profileActions, initializeWithKey })
+export default
+class Profile extends Component {
   static propTypes = {
-    fields: PropTypes.object.isRequired,
-    editStop: PropTypes.func.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    invalid: PropTypes.bool.isRequired,
-    pristine: PropTypes.bool.isRequired,
-    save: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired,
-    saveError: PropTypes.object,
-    formKey: PropTypes.string.isRequired,
-    values: PropTypes.object.isRequired
-  };
+    profile: PropTypes.object,
+    error: PropTypes.string,
+    loading: PropTypes.bool,
+    initializeWithKey: PropTypes.func.isRequired,
+    editing: PropTypes.object.isRequired,
+    load: PropTypes.func.isRequired,
+    editStart: PropTypes.func.isRequired
+  }
+
+  static fetchDataDeferred(getState, dispatch) {
+    if (!isLoaded(getState())) {
+      return dispatch(loadProfile());
+    }
+  }
+
+  handleEdit(profile) {
+    const {editStart} = this.props; // eslint-disable-line no-shadow
+    return () => {
+      editStart(String(profile.id));
+    };
+  }
 
   render() {
-    const {
-        const { editStop, fields: {id, color, sprocketCount, owner}, formKey, handleSubmit, invalid,
-      pristine, save, submitting, saveError: { [formKey]: saveError }, values } = this.props;
-    const styles = require('containers/Profile/Profile.scss');
-
-    return (<form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">First Name</label>
-            <div className="col-xs-8">
-              <input type="text" className="form-control" placeholder="First Name" {...firstName}/>
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">Last Name</label>
-            <div className="col-xs-8">
-              <input type="text" className="form-control" placeholder="Last Name" {...lastName}/>
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">Email</label>
-            <div className="col-xs-8">
-              <input type="email" className="form-control" placeholder="Email" {...email}/>
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">Username</label>
-            <div className="col-xs-8">
-              <input type="username" className="form-control" placeholder="Username" {...username}/>
-            </div>
-          </div>
-          <div>
-            <button className="btn btn-default"
-                  onClick={() => editStop(formKey)}
-                  disabled={submitting}>
-            <i className="fa fa-ban"/> Cancel
+    const {profile, error, editing, loading, load} = this.props;
+    let refreshClassName = 'fa fa-refresh';
+    if (loading) {
+      refreshClassName += ' fa-spin';
+    }
+    const styles = require('./Profile.scss');
+    return (
+      <div className={styles.profile + ' container'}>
+        <h1>
+          Profile
+          <button className={styles.refreshBtn + ' btn btn-success'} onClick={load}><i
+            className={refreshClassName}/> {' '} Reload Profile
           </button>
-          <button className="btn btn-success"
-                  onClick={handleSubmit(() => save(values)
-                    .then(result => {
-                      if (result && typeof result.error === 'object') {
-                        return Promise.reject(result.error);
-                      }
-                    })
-                  )}
-                  disabled={pristine || invalid || submitting}>
-            <i className={'fa ' + (submitting ? 'fa-cog fa-spin' : 'fa-cloud')}/> Save
-          </button>
-          {saveError && <div className="text-danger">{saveError}</div>}
-          </div>
-        </form>
+        </h1>
+        <DocumentMeta title="React Redux Example: Profile"/>
+        <p>
+          If you hit refresh on your browser, the data loading will take place on the server before the page is returned.
+          If you navigated here from another page, the data was fetched from the client after the route transition.
+          This uses the static method <code>fetchDataDeferred</code>. To block a route transition until some data is loaded, use <code>fetchData</code>.
+          To always render before loading data, even on the server, use <code>componentDidMount</code>.
+        </p>
+        <p>
+          This profile are stored in your session, so feel free to edit it and refresh.
+        </p>
+        {error &&
+        <div className="alert alert-danger" role="alert">
+          <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          {' '}
+          {error}
+        </div>}
+        {profile &&
+        <ProfileForm formKey={String(profile.id)} key={String(profile.id)} initialValues={profile}/>
+        }
+      </div>
     );
   }
 }
+

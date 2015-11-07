@@ -5,59 +5,54 @@ import { pushState } from 'redux-router';
 import { logout } from 'redux/modules/auth';
 
 const NavbarLink = ({to, className, component, children}) => {
-    const Comp = component || Link;
+  const Comp = component || Link;
 
-    return (
-        <Comp to={to} className={className} activeStyle={{color: '#33e0ff'}}>
-            {children}
-        </Comp>
-    );
+  return (
+    <Comp to={to} className={className} activeStyle={{color: '#33e0ff'}}>
+      {children}
+    </Comp>
+  );
 };
 
 @connect(
-    state => ({user: state.auth.user}),
-    {logout, pushState})
+  state => ({user: state.auth.user}),
+  {logout, pushState})
 export default class Navbar extends Component {
-    static propTypes = {
-        user: PropTypes.object,
-        logout: PropTypes.func.isRequired
-    }
-    handleLogout(event) {
-        event.preventDefault();
-        this.props.logout();
-    }
-    render() {
-        const {user} = this.props;
-        //const {user} = (Object.keys(this.props.user).length) ? this.props : false;
+  static propTypes = {
+    user: PropTypes.object,
+    logout: PropTypes.func.isRequired
+  }
 
-        return (
-            <nav className="navbar navbar-default navbar-fixed-top">
-                <div className="container">
-                    <NavbarLink to="/" className="navbar-brand" component={IndexLink}>
-                        Application
-                    </NavbarLink>
+  handleLogout(event) {
+    event.preventDefault();
+    this.props.logout();
+  }
 
-                    <ul className="nav navbar-nav">
-                        {user && <li><NavbarLink to="/chat">Chat</NavbarLink></li>}
 
-                        <li><NavbarLink to="/user-admin">User Admin</NavbarLink></li>
-                        <li><NavbarLink to="/profile">Profile</NavbarLink></li>
+  render() {
+    const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false;
 
-                        {!user && <li><NavbarLink to="/login">Login</NavbarLink></li>}
-                        {user &&
+    return (
+      <nav className="navbar navbar-default navbar-fixed-top">
+        <div className="container">
+          <NavbarLink to="/" className="navbar-brand" component={IndexLink}>
+            Application
+          </NavbarLink>
 
-                        <li className="logout-link"><a href="/logout" onClick={::this.handleLogout}>Logout</a></li>}
-                    </ul>
-                    {user &&
-                    <p className='navbar-text'>Logged in as <strong>{user.email}</strong>.
-                    </p>}
-                    <ul className="nav navbar-nav navbar-right">
-                        <li>
-                            yo
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        );
-    }
-}
+          <ul className="nav navbar-nav">
+            {isLoggedIn && <li><NavbarLink to="/user-admin">User Admin</NavbarLink></li>}
+            {isLoggedIn && <li><NavbarLink to="/profile">Profile</NavbarLink></li>}
+            {!isLoggedIn && <li><NavbarLink to="/login">Login</NavbarLink></li>}
+            {isLoggedIn && <li className="logout-link"><a href="/logout" onClick={::this.handleLogout}>Logout</a></li>}
+          </ul>
+          {isLoggedIn && <p className='navbar-text'>Logged in as <strong>{this.props.user.email}</strong></p>}
+          <ul className="nav navbar-nav navbar-right">
+            <li>
+              yo
+            </li>
+          </ul>
+        </div>
+      </nav>
+    );
+  }
+  }

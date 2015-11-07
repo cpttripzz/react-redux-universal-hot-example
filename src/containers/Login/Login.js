@@ -54,6 +54,7 @@ export default class Login extends Component {
     render() {
         const {user,error} = this.props;
         const styles = require('./Login.scss');
+        const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false;
 
         return (
 
@@ -62,7 +63,7 @@ export default class Login extends Component {
                 {error &&
                 <AlertAutoDismissable message={error.message} bsStyle="danger" ref="alertAuto"/>
                 }
-                {!user &&
+                {!isLoggedIn &&
                 <div className="col-sm-6 col-sm-offset-3">
                     <form className="login-form" onSubmit={::this.handleSubmit}>
                         <div className="form-group">

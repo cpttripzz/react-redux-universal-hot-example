@@ -76,17 +76,18 @@ export default function profile(state = initialState, action = {}) {
     default:
       return state;
   }
-}
 
-export function isLoaded(globalState) {
-  return globalState.profile && globalState.profile.loaded;
-}
-export function load() {
-  return {
-    types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-    promise: (client) => client.get('/profile') // params not used, just shown as demonstration
-  };
-}
+
+  export function isLoaded(globalState) {
+    return globalState.profile && globalState.profile.loaded;
+  }
+
+  export function load() {
+    return {
+      types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
+      promise: (client) => client.get('/profile') // params not used, just shown as demonstration
+    };
+  }
 
   export function save(profile) {
     return {
@@ -99,10 +100,10 @@ export function load() {
   }
 
   export function editStart(id) {
-    return { type: EDIT_START, id };
+    return {type: EDIT_START, id};
   }
 
   export function editStop(id) {
-    return { type: EDIT_STOP, id };
+    return {type: EDIT_STOP, id};
   }
 }
