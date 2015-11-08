@@ -45,7 +45,11 @@ module.exports = function(app) {
     app.get('/oauth/google/callback',
         passport.authenticate('google', { failureRedirect: '/' }),
         function(req, res) {
-            res.redirect('http://bandaid.com:3000');
+            let authUser = req.user;
+            authUser["token"] = jwt.sign(authUser, config.jwtSecret, {
+                expiresIn: 1440 * 60 * 7// expires in 24 hours * 7
+            });
+            res.redirect('http://bandaid.com:3000/oauth-profile/'+authUser["token"]);
         });
 
     app.get('/logout', function(req, res){

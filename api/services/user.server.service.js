@@ -174,7 +174,7 @@ export function saveOAuthUserProfile(req, profile, done) {
                 if (err) {
                   console.log(err);
                 }
-                req.session.user = {
+                req.user = {
                   id: user.id,
                   email: user.email || null,
                   username: possibleUsername,

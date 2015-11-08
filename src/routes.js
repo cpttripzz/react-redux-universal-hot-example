@@ -13,7 +13,8 @@ import {
     Survey,
     NotFound,
     UserAdmin,
-    Profile
+    Profile,
+    OauthToken
 } from 'containers';
 
 export default (store) => {
@@ -34,14 +35,20 @@ export default (store) => {
         }
     };
 
+    const saveOauthToken = (nextState, replaceState, cb) => {
+      if (typeof nextState.params.token !== "undefined")
+      {
 
+      }
+      cb();
+    }
     return (
         <Route component={App}>
             <Route path="/" component={Home}/>
             <Route path="/login" component={Login}/>
             <Route path="/register" component={Register}/>
             <Route path="/user-admin" component={UserAdmin}/>
-            <Route path="/oauth-profile" component={LoginSuccess}/>
+            <Route path="/oauth-profile/:token" component={OauthToken}/>
             <Route onEnter={requireLogin}>
                 <Route path="/profile" component={Profile}/>
                 <Route path="/loginSuccess" component={LoginSuccess}/>
