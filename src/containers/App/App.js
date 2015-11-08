@@ -26,19 +26,25 @@ export default class App extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (  (typeof this.props.user === "undefined"  || Object.keys(this.props.user).length === 0)
-                && ( nextProps.user && Object.keys(nextProps.user).length) ) {
+                && ( nextProps.user && Object.keys(nextProps.user).length)
+                && typeof nextProps.user.token !== "undefined" && nextProps.user.token !== "undefined"
+        )
+
+        {
             // login
             window.localStorage.token = nextProps.user.token;
-            this.props.pushState(null, '/loginSuccess');
+            const location = this.props.location ? this.props.location : '/';
+            this.props.pushState(null, location);
         } else if (this.props.user && !nextProps.user) {
-            // logout
             delete localStorage.token;
+            console.log('deleting',localStorage.token);
             this.props.pushState(null, '/');
         }
     }
     componentDidMount() {
         if (!this.props.user || Object.keys(this.props.user).length === 0) {
-            if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined") {
+            if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined"
+            &&  window.localStorage.token !== "undefined") {
 
                 this.context.store.dispatch(loadAuth());
             }

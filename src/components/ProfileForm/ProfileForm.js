@@ -2,21 +2,21 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {reduxForm} from 'redux-form';
-import widgetValidation, {colors} from './widgetValidation';
-import * as widgetActions from 'redux/modules/widgets';
+import profileValidation, {colors} from './profileValidation';
+import * as profileActions from 'redux/modules/profile';
 
 @connect(
   state => ({
-    saveError: state.widgets.saveError
+    saveError: state.profiles.saveError
   }),
-  dispatch => bindActionCreators(widgetActions, dispatch)
+  dispatch => bindActionCreators(profileActions, dispatch)
 )
 @reduxForm({
   form: 'profile',
   fields: ['firstName', 'lastName', 'username', 'email'],
   validate: profileValidation
 })
-export default class WidgetForm extends Component {
+export default class ProfileForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,
     editStop: PropTypes.func.isRequired,
@@ -31,38 +31,37 @@ export default class WidgetForm extends Component {
   };
 
   render() {
-    const {
-        const { editStop, fields: {id, color, sprocketCount, owner}, formKey, handleSubmit, invalid,
+    const { editStop, fields: {id, color, sprocketCount, owner}, formKey, handleSubmit, invalid,
       pristine, save, submitting, saveError: { [formKey]: saveError }, values } = this.props;
     const styles = require('containers/Profile/Profile.scss');
 
     return (<form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">First Name</label>
-            <div className="col-xs-8">
-              <input type="text" className="form-control" placeholder="First Name" {...firstName}/>
-            </div>
+        <div className="form-group">
+          <label className="col-xs-4 control-label">First Name</label>
+          <div className="col-xs-8">
+            <input type="text" className="form-control" placeholder="First Name" {...firstName}/>
           </div>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">Last Name</label>
-            <div className="col-xs-8">
-              <input type="text" className="form-control" placeholder="Last Name" {...lastName}/>
-            </div>
+        </div>
+        <div className="form-group">
+          <label className="col-xs-4 control-label">Last Name</label>
+          <div className="col-xs-8">
+            <input type="text" className="form-control" placeholder="Last Name" {...lastName}/>
           </div>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">Email</label>
-            <div className="col-xs-8">
-              <input type="email" className="form-control" placeholder="Email" {...email}/>
-            </div>
+        </div>
+        <div className="form-group">
+          <label className="col-xs-4 control-label">Email</label>
+          <div className="col-xs-8">
+            <input type="email" className="form-control" placeholder="Email" {...email}/>
           </div>
-          <div className="form-group">
-            <label className="col-xs-4 control-label">Username</label>
-            <div className="col-xs-8">
-              <input type="username" className="form-control" placeholder="Username" {...username}/>
-            </div>
+        </div>
+        <div className="form-group">
+          <label className="col-xs-4 control-label">Username</label>
+          <div className="col-xs-8">
+            <input type="username" className="form-control" placeholder="Username" {...username}/>
           </div>
-          <div>
-            <button className="btn btn-default"
+        </div>
+        <div>
+          <button className="btn btn-default"
                   onClick={() => editStop(formKey)}
                   disabled={submitting}>
             <i className="fa fa-ban"/> Cancel
@@ -79,8 +78,8 @@ export default class WidgetForm extends Component {
             <i className={'fa ' + (submitting ? 'fa-cog fa-spin' : 'fa-cloud')}/> Save
           </button>
           {saveError && <div className="text-danger">{saveError}</div>}
-          </div>
-        </form>
+        </div>
+      </form>
     );
   }
 }

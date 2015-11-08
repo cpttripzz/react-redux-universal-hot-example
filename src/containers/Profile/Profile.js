@@ -2,7 +2,9 @@ import React, {Component, PropTypes} from 'react';
 import DocumentMeta from 'react-document-meta';
 import {connect} from 'react-redux';
 import * as profileActions from 'redux/modules/profile';
-import {isLoaded, load as loadProfile} from 'redux/modules/profile';
+import { isLoaded as isProfileLoaded, load as loadProfile } from 'redux/modules/profile';
+
+
 import {initializeWithKey} from 'redux-form';
 import { ProfileForm } from 'components';
 
@@ -27,7 +29,7 @@ class Profile extends Component {
   }
 
   static fetchDataDeferred(getState, dispatch) {
-    if (!isLoaded(getState())) {
+    if (!isProfileLoaded(getState())) {
       return dispatch(loadProfile());
     }
   }
@@ -41,6 +43,7 @@ class Profile extends Component {
 
   render() {
     const {profile, error, editing, loading, load} = this.props;
+    console.log(this.props.profile);
     let refreshClassName = 'fa fa-refresh';
     if (loading) {
       refreshClassName += ' fa-spin';

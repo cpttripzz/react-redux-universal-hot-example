@@ -8,7 +8,7 @@ const SAVE_SUCCESS = 'redux-example/profile/SAVE_SUCCESS';
 const SAVE_FAIL = 'redux-example/profile/SAVE_FAIL';
 const initialState = {
   loaded: false,
-  profile: false
+  profile: {}
 };
 
 export default function profile(state = initialState, action = {}) {
@@ -19,6 +19,7 @@ export default function profile(state = initialState, action = {}) {
         loading: true
       };
     case LOAD_SUCCESS:
+      console.log(action.result);
       return {
         ...state,
         loading: false,
@@ -79,13 +80,13 @@ export default function profile(state = initialState, action = {}) {
 
 
   export function isLoaded(globalState) {
-    return globalState.profile && globalState.profile.loaded;
+    return globalState && globalState.profile && globalState.profile.loaded;
   }
 
   export function load() {
     return {
       types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-      promise: (client) => client.get('/profile') // params not used, just shown as demonstration
+      promise: (client) => client.get('/profile')
     };
   }
 

@@ -79,7 +79,7 @@ export default function users(state = initialState, action = {}) {
 }
 
 export function isLoaded(globalState) {
-  return globalState.users && globalState.users.loaded;
+  return globalState && globalState.users && globalState.users.loaded;
 }
 
 export function load() {

@@ -2,7 +2,7 @@ var passport = require('passport');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 
-import { login, register, getUsers, newUser } from '../services/user.server.service';
+import { login, register, getUsers, newUser, getProfile } from '../services/user.server.service';
 
 module.exports = function(app) {
 
@@ -66,6 +66,7 @@ module.exports = function(app) {
                 if (err) {
                     return res.json({});
                 } else {
+                    decoded.token = token;
                     return res.json(decoded);
                 }
             });
@@ -89,6 +90,7 @@ module.exports = function(app) {
                 } else {
                     // if everything is good, save to request for use in other routes
                     req.user = decoded;
+                    //console.log('jwt', req.user);
                     next();
                 }
             });
@@ -109,7 +111,13 @@ module.exports = function(app) {
 // authenticated routes
 // ---------------------------------------------------------
     app.get('/users', (req, res) =>
-        getUsers().then( (users) => res.json(users))
+      getUsers().then( (users) => res.json(users))
+    );
+
+    app.get('/profile', (req, res) =>
+      getProfile(req).then( (user) => res.json(user))
+        .catch( (err) => res.json(err) )
+
     );
 
     app.post('/resource', function(req, res){

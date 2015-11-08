@@ -6,4 +6,5 @@
  */
 
 export AlertAutoDismissable from './AlertAutoDismissable/AlertAutoDismissable';
-export Navbar from './Navbar/Navbar.js';
+export Navbar from './Navbar/Navbar';
+export ProfileForm from './ProfileForm/ProfileForm';
