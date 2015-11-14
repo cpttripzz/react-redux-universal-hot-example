@@ -49,6 +49,8 @@ class Profile extends Component {
       refreshClassName += ' fa-spin';
     }
     const styles = require('./Profile.scss');
+    const hasProfile = this.props.profile && (Object.keys(this.props.profile).length) ? true: false;
+
     return (
       <div className={styles.profile + ' container'}>
         <h1>
@@ -73,7 +75,7 @@ class Profile extends Component {
           {' '}
           {error}
         </div>}
-        {profile &&
+        {hasProfile &&
         <ProfileForm formKey={String(profile.id)} key={String(profile.id)} initialValues={profile}/>
         }
       </div>

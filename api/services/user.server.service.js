@@ -81,6 +81,7 @@ export function getProfile(req) {
     var User = require('mongoose').model('User');
     User.findById(req.user.id).then((user) => {
         var u = {
+          id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email

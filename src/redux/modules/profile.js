@@ -19,7 +19,6 @@ export default function profile(state = initialState, action = {}) {
         loading: true
       };
     case LOAD_SUCCESS:
-      console.log(action.result);
       return {
         ...state,
         loading: false,
