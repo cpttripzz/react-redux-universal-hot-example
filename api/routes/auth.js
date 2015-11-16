@@ -2,9 +2,14 @@ var passport = require('passport');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 
-import { login, register, getUsers, newUser, getProfile } from '../services/user.server.service';
+import { login, register, getUsers, newUser, getProfile } from '../services/user.service';
 
 module.exports = function(app) {
+
+    process.on("unhandledRejection", function(reason, p){
+        console.log("Unhandled", reason, p); // log all your errors, "unsuppressing" them.
+        throw reason; // optional, in case you want to treat these as errors
+    });
 
     app.post('/login', (req, res) =>{
         login(req)

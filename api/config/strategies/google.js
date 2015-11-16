@@ -2,7 +2,7 @@ var passport = require('passport'),
     url = require('url'),
     googleStrategy = require('passport-google-oauth2').Strategy;
 import config from '../../config';
-import { saveOAuthUserProfile } from '../../services/user.server.service';
+import { saveOAuthUserProfile } from '../../services/user.service';
 
 module.exports = function () {
     passport.use(new googleStrategy({

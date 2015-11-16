@@ -1,7 +1,7 @@
 var passport = require('passport'),
 	url = require('url'),
 	FacebookStrategy = require('passport-facebook').Strategy,
-	userService = require('../../services/user.server.service');
+	userService = require('../../services/user.service');
 
 import config from '../../config';
 

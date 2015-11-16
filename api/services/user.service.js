@@ -6,7 +6,6 @@ mongoose.Promise = Promise;
 var nodeAcl = new acl(new acl.mongodbBackend(mongoose.connection.db));
 var config = require('../config');
 var jwt = require('jsonwebtoken');
-
 export function login(req) {
   let email = req.body.email;
   let password = req.body.password;
@@ -86,14 +85,14 @@ export function getProfile(req) {
           lastName: user.lastName,
           email: user.email
         };
-      resolve(u)
-    }
+        resolve(u)
+      }
       , (err) => reject(err))
   })
 }
 
 var getErrorMessage = function (err) {
-  var message = '';
+  let message = '';
   if (err.code) {
     switch (err.code) {
       case 11000:
@@ -103,14 +102,9 @@ var getErrorMessage = function (err) {
       default:
         message = 'Something went wrong';
     }
+  } else {
+    message = [for (m of err) m.message].join();
   }
-  else {
-    for (var errName in err.errors) {
-      if (err.errors[errName].message)
-        message = err.errors[errName].message;
-    }
-  }
-
   return message;
 };
 
@@ -128,23 +122,43 @@ export function register(req, res, next) {
   })
 }
 
-export function newUser(params) {
+export function newUser(user) {
   return new Promise((resolve, reject) => {
 
-    var user = new User(params);
-    user.provider = 'local';
-    user.save()
+    if (!user.provider) user.provider = 'local';
+    validateUser(user)
       .then((user) => {
-        console.log(user);
-        nodeAcl.addUserRoles(user.id, params.roles || 'user').then(
-          (roles) => resolve(user),
-          (err) => reject(err)
+        const objUser = new User(user);
+        objUser.save(user).then(
+          (user) => resolve(user),
+          (err) => reject(getErrorMessage(err))
         )
       })
-      .catch((err) => reject(err))
+      .catch((err) => reject(getErrorMessage(err)))
+
+    //user.save()
+    //  .then((user) => {
+    //    console.log(user);
+    //    nodeAcl.addUserRoles(user.id, params.roles || 'user').then(
+    //      (roles) => resolve(user),
+    //      (err) => reject(err)
+    //    )
+    //  })
+    //  .catch((err) => reject(err))
   })
 }
 
+export function validateUser(user) {
+  import validate from  '../../utils/validate';
+  var readFile = require("bluebird").promisify(require("fs").readFile);
+  return new Promise((resolve, reject) => {
+    readFile(__dirname + '/../models/validators/user.schema.json')
+      .then((schema) => JSON.parse(schema))
+      .then((schema) => validate(user, schema))
+      .then((user) => resolve(user))
+      .catch((err) =>  reject(err))
+  });
+}
 export function logout(req, res) {
   req.logout();
 };

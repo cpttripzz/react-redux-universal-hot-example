@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 require('babel/register');
 import cli from 'cli';
-import { newUser } from '../services/user.server.service';
+import { newUser } from '../services/user.service';
 cli.parse({
     username:   ['u', 'Username', 'string'],
     email:  ['e', 'Email', 'email'],
