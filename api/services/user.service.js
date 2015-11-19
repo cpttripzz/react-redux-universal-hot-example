@@ -91,6 +91,15 @@ export function getProfile(req) {
   })
 }
 
+export function exists(req) {
+
+  return new Promise((resolve, reject) => {
+    var User = require('mongoose').model('User');
+    User.findOne(req).then((result) =>  resolve(result !== null),
+      (err) => reject(err))
+  })
+}
+
 var getErrorMessage = function (err) {
   let message = '';
   if (err.code) {

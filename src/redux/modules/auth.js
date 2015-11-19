@@ -125,11 +125,12 @@ export function login(email, password) {
   };
 }
 
-export function register(email,password) {
+export function register(username,email,password) {
   return {
     types: [REGISTRATION,REGISTRATION_SUCCESS,REGISTRATION_FAIL],
     promise: (client) => client.post('/register', {
       data: {
+        username: username,
         email: email,
         password: password
       }
