@@ -8,8 +8,19 @@ import bodyParser from 'body-parser';
 import config from './config';
 import PrettyError from 'pretty-error';
 import passport from 'passport';
+import morgan from 'morgan';
+
+// You can set morgan to log differently depending on your environment
+
 const app = express();
+morgan.token('body', function(req, res){ return require('util').inspect(req.body) })
+
 require('./config/passport')(passport);
+if (app.get('env') == 'production') {
+  app.use(morgan('common', { skip: function(req, res) { return res.statusCode < 400 }, stream: __dirname + '/../morgan.log' }));
+} else {
+  app.use(morgan(':method :url :status :req[header] :body'));
+}
 
 app.use(bodyParser.json());
 app.use(passport.initialize());

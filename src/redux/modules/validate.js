@@ -31,18 +31,48 @@ export default function reducer(state = initialState, action = {}) {
         validUsername: false,
         error: action.error
       };
-
+    case VALIDATE_EMAIL:
+      return {
+        ...state,
+        validatingEmail: true
+      };
+    case VALIDATE_EMAIL_TRUE:
+      return {
+        ...state,
+        validatingEmail: false,
+        validEmail: true
+      };
+    case VALIDATE_EMAIL_FALSE:
+      return {
+        ...state,
+        validatingEmail: false,
+        validEmail: false,
+        error: action.error
+      };
     default:
       return state;
   }
 }
 
-export function validateUsername(params) {
-  return {
-    types: [VALIDATE_USERNAME,VALIDATE_USERNAME_TRUE,VALIDATE_USERNAME_FALSE],
-    promise: (client) => client.post('/exists/user', {
-      data: JSON.stringify(params)
+export function validate(prop,value) {
+  const params = {[prop]: value};
+  switch (prop){
+    case "username":
+      return {
+        types: [VALIDATE_USERNAME,VALIDATE_USERNAME_TRUE,VALIDATE_USERNAME_FALSE],
+        promise: (client) => client.post('/exists/user', {
+          data: params
 
-    })
-  };
+        })
+      };
+    case "email":
+      return {
+        types: [VALIDATE_EMAIL,VALIDATE_EMAIL_TRUE,VALIDATE_EMAIL_FALSE],
+        promise: (client) => client.post('/exists/user', {
+          data: params
+        })
+      };
+
+  }
+  
 }
