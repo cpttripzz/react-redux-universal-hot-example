@@ -61,6 +61,8 @@ export default class Register extends Component {
 
   render() {
     const {validate, fields: {username, email, password}, resetForm, handleSubmit} = this.props;
+    console.log(username.touched, username.error, validate.validUsername)
+
     const styles = require('./Register.scss');
     return (
       <form  className="form col-md-4" onSubmit={handleSubmit}>

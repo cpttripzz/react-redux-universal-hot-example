@@ -92,15 +92,15 @@ export function getProfile(req) {
 }
 
 export function exists(req) {
-
   return new Promise((resolve, reject) => {
     var User = require('mongoose').model('User');
-    User.findOne(req).then((result) =>  resolve(result !== null),
+    User.findOne(req).then((result) =>  resolve( result !== null ? {[ Object.keys(req)[0]] : Object.keys(req)[0] + ' already exists'  } : false),
       (err) => reject(err))
   })
 }
 
 var getErrorMessage = function (err) {
+  console.log(err);
   let message = '';
   if (err.code) {
     switch (err.code) {
@@ -112,7 +112,7 @@ var getErrorMessage = function (err) {
         message = 'Something went wrong';
     }
   } else {
-    message = [for (m of err) m.message].join();
+    return err.map(err =>  { return {[err.path.replace(/\#\//i, '')]: err.message} } )
   }
   return message;
 };
@@ -124,24 +124,33 @@ export function register(req, res, next) {
         if (err) {
           reject(err);
         }
-
         resolve(user);
       })
     })
   })
 }
-
+export function propsUnique(objUser){
+  return Promise.all(Object.keys(objUser)
+    .filter((prop) => ['email','username'].indexOf(prop) >= 0 )
+    .map( (prop) => exists({[prop]: objUser[prop]}) )
+  )
+}
 export function newUser(user) {
   return new Promise((resolve, reject) => {
 
     if (!user.provider) user.provider = 'local';
     validateUser(user)
       .then((user) => {
-        const objUser = new User(user);
-        objUser.save(user).then(
-          (user) => resolve(user),
-          (err) => reject(getErrorMessage(err))
-        )
+        propsUnique(user)
+          .then(userProps  =>  userProps.filter( (prop) =>  prop !== false ))
+          .then(userPropsNonUnique => {
+            if(userPropsNonUnique) return reject(userPropsNonUnique)
+            const objUser = new User(user)
+            objUser.save(user).then(
+              (user) => resolve(user),
+              (err) => reject(getErrorMessage(err))
+            )
+          })
       })
       .catch((err) => reject(getErrorMessage(err)))
 

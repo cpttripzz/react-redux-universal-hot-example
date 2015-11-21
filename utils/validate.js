@@ -1,6 +1,5 @@
 import schemaValidator from 'z-schema';
 export default function validate(objToValidate, schema) {
-  console.log("heree");
   var validator = new schemaValidator({
     breakOnFirstError: false,
 

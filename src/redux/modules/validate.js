@@ -10,13 +10,13 @@ const initialState = {
   validatingEmail: false,
 };
 export default function reducer(state = initialState, action = {}) {
+  debugger;
 
   switch (action.type) {
 
     case VALIDATE_USERNAME:
       return {
         ...state,
-        validatingUsername: true
       };
     case VALIDATE_USERNAME_TRUE:
       return {
