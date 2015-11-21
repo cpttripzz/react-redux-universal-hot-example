@@ -10,7 +10,6 @@ const initialState = {
   validatingEmail: false,
 };
 export default function reducer(state = initialState, action = {}) {
-  debugger;
 
   switch (action.type) {
 
@@ -54,25 +53,14 @@ export default function reducer(state = initialState, action = {}) {
   }
 }
 
-export function validate(prop,value) {
-  const params = {[prop]: value};
-  switch (prop){
-    case "username":
-      return {
-        types: [VALIDATE_USERNAME,VALIDATE_USERNAME_TRUE,VALIDATE_USERNAME_FALSE],
-        promise: (client) => client.post('/exists/user', {
-          data: params
+export function validate(values) {
+  return {
+    types: [VALIDATE_USERNAME, VALIDATE_USERNAME_TRUE, VALIDATE_USERNAME_FALSE],
+    promise: (client) => client.post('/exists/user', {
+      data: values
 
-        })
-      };
-    case "email":
-      return {
-        types: [VALIDATE_EMAIL,VALIDATE_EMAIL_TRUE,VALIDATE_EMAIL_FALSE],
-        promise: (client) => client.post('/exists/user', {
-          data: params
-        })
-      };
+    })
+  };
 
-  }
-  
+
 }

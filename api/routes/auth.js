@@ -2,7 +2,7 @@ var passport = require('passport');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 
-import { login, register, getUsers, newUser, getProfile, exists, propsUnique } from '../services/user.service';
+import { login, register, getUsers, newUser, getProfile, checkProps } from '../services/user.service';
 
 module.exports = function(app) {
 
@@ -30,8 +30,9 @@ module.exports = function(app) {
     });
 
     app.post('/exists/:entity/',function(req, res) {
-        exists(req.body)
-        .then( (result) => res.json(result))
+        checkProps(req.body)
+        .then( (result) => res.status((result)?500:200).json(result))
+          .catch( (err) => res.status(500).json(err) )
     });
 
 

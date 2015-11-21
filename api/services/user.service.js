@@ -98,7 +98,23 @@ export function exists(req) {
       (err) => reject(err))
   })
 }
-
+export function checkProps(props){
+  return new Promise((resolve, reject) => {
+    propsUnique(props)
+      .then(userProps  =>  userProps.filter((prop) =>  prop !== false))
+      .then(userPropsNonUnique => {
+        let objProps = {}
+        if (userPropsNonUnique.length === 0) return resolve()
+        userPropsNonUnique.forEach(prop  => {
+          for (let propName in prop){
+            objProps[propName] = prop[propName]
+          }
+        })
+        return reject(objProps);
+      })
+      .catch((err) => reject(getErrorMessage(err)))
+  })
+}
 var getErrorMessage = function (err) {
   console.log(err);
   let message = '';

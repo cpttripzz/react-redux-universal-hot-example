@@ -22,20 +22,21 @@ const validate = values => {
 };
 
 const asyncValidate = (values, dispatch, _props) => {
-  const propToValidate = _props.form._active;
+  //const propToValidate = _props.form._active;
   return new Promise((resolve,reject) => {
-    if(!values[propToValidate]) {
-      return resolve();
-    }
-    dispatch(validateParams(propToValidate, values[propToValidate]))
+    //if(!values[propToValidate]) {
+    //  return resolve();
+    //}
+    dispatch(validateParams(values))
       .then(response => {
-        const msg = propToValidate + ' already in use';
-        console.log(response,response.result == "true" , response.result);
-        if (response.result) {
-          return reject({[propToValidate]: msg, _error: msg});
+        if (response.error) {
+          console.log(response.error);
+
+          return reject(response.error);
         }
         return resolve();
       })
+      .catch(err => { console.log(err); reject(err)} )
   })
 }
 
