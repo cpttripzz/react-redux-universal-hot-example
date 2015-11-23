@@ -22,27 +22,20 @@ const validate = values => {
 };
 
 const asyncValidate = (values, dispatch, _props) => {
-  //const propToValidate = _props.form._active;
+  const propToValidate = _props.form._active;
   return new Promise((resolve,reject) => {
-    //if(!values[propToValidate]) {
-    //  return resolve();
-    //}
     dispatch(validateParams(values))
       .then(response => {
-        if (response.error) {
-          console.log(response.error);
+        if (response.error) return reject(response.error);
 
-          return reject(response.error);
-        }
         return resolve();
       })
-      .catch(err => { console.log(err); reject(err)} )
+      .catch(err => reject(err) )
   })
 }
 
 @connect( state => ({validate: state.validate}))
 export default class Register extends Component {
-
   handleSubmit(event) {
     event.preventDefault();
     const username = this.refs.username;
@@ -62,7 +55,6 @@ export default class Register extends Component {
 
   render() {
     const {validate, fields: {username, email, password}, resetForm, handleSubmit} = this.props;
-    console.log(username.touched, username.error, validate.validUsername)
 
     const styles = require('./Register.scss');
     return (
