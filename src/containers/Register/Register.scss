@@ -1,21 +1,41 @@
+.registerPage {
+  body { padding-top:80px; }
+  input {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  form {
+    display: block;
+    margin-top: 0em;
+    :global(.btn) {
+      margin-left: 10px;
+    }
+  }
 
-input {
-  padding: 10px !important;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
+  .usernameSpinner {
+    position: relative !important;
+    top: -26px !important;
+    left: 908px !important;
+  }
 
-form {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
-}
+  .email-spinner {
+    position: relative;
+    top: -26px;
+    left: 908px;
+  }
+  h1 {
+    text-align: center;
+    span.fa-sign-in {
 
-.username {
-  margin-top: 10px;
-}
-.fa .fa-cog .fa-spin {
-  position: relative;
-  right: -1px;
-  top: 26px;
+    }
+  }
+  i {
+    font-size: 30px;
+    height: 30px;
+    top: -35px;
+    position: relative;
+    left: 929px;
+  }
+
 }
