@@ -4,7 +4,7 @@ import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import { validate as validateParams, register} from 'redux/modules/register';
 import {connect} from 'react-redux';
-import {classnames as classNames} from 'classnames';
+var classNames = require('classnames');
 var Loader = require('react-loader');
 
 export const fields = ['username', 'email', 'password'];
@@ -58,13 +58,12 @@ export default class Register extends Component {
     handleSubmit: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
     validateParams: PropTypes.func,
-    register: PropTypes.func,
-    validate: PropTypes.object.isRequired
+    register: PropTypes.func
   };
 
   render() {
     const {
-      validate, error, submitting,
+      error, submitting, invalid,
       fields: {username, email, password},
       resetForm, handleSubmit
     } = this.props;
@@ -82,8 +81,13 @@ export default class Register extends Component {
     };
     let usernameSpinnerOptions = Object.assign({top:'18px'}, options);
     let emailSpinnerOptions = Object.assign({top:'67px'}, options);
-    return (
+    const btnSubmitClass = classNames({
+      'btn': true,
+      'btn-primary': true,
+      'disabled' : invalid
+    });
 
+    return (
       <div className={styles.registerPage}>
         <h1><span className="fa fa-user-plus"></span> Sign up</h1>
         <div className="col-sm-6 col-sm-offset-3">
@@ -99,15 +103,16 @@ export default class Register extends Component {
             </div>
             {email.touched && email.error && <div className="help-block">{email.error}</div>}
             <div className={'form-group' + (password.touched && password.error ? ' has-error' : '')}>
-              <input type="text" className="form-control" placeholder="Password" {...password}/>
+              <input type="password" className="form-control" placeholder="Password" {...password}/>
             </div>
             {password.touched && password.error && <div className="help-block">{password.error}</div>}
 
             {error && <div>{error}</div>}
             <div>
-              <button className = "btn btn-primary" onClick={handleSubmit(submitRegister)}>
-                {!submitting && <i/> /* key icon */}
-                {submitting && <i/> /* spinning cog icon */} Register
+
+              <button className={btnSubmitClass} onClick={handleSubmit(submitRegister)}>
+                {!submitting && <i className="fa fa-key"/>}
+                {submitting && <i className="fa fa-cog fa-spin"/>} Register
               </button>
               <button className = "btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
@@ -126,6 +131,5 @@ export default reduxForm({
   fields,
   asyncValidate,
   asyncBlurFields: ['username', 'email'],
-  asyncValidateReturnActiveFieldOnly: true,
   validate
 })(Register);

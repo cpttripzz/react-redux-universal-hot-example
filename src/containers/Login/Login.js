@@ -67,12 +67,10 @@ export default class Login extends Component {
                 <div className="col-sm-6 col-sm-offset-3">
                     <form className="login-form" onSubmit={::this.handleSubmit}>
                         <div className="form-group">
-                            <label>Email</label>
                             <input type="text" className="form-control" ref="email" placeholder="Enter your email"/>
                         </div>
                         <div className="form-group">
-                            <label>Password</label>
-                            <input type="password" className="form-control" ref="password"/>
+                            <input type="password" className="form-control" ref="password" placeholder="Enter your password"/>
                         </div>
 
                         <button className="btn btn-success" onClick={::this.handleSubmit}><i

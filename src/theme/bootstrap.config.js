@@ -12,6 +12,7 @@
 
 module.exports = {
   preBootstrapCustomizations: './src/theme/variables.scss',
+  bootstrapCustomizations: "./src/theme/_bootswatch.scss",
   mainSass: './src/theme/bootstrap.overrides.scss',
   verbose: false,
   debug: false,

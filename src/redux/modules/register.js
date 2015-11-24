@@ -55,7 +55,6 @@ export function register(values) {
     types: [REGISTER, REGISTER_TRUE, REGISTER_FALSE],
     promise: (client) => client.post('/user/new', {
       data: values
-
     })
   }
 }

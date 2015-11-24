@@ -160,7 +160,7 @@ export function newUser(user) {
         propsUnique(user)
           .then(userProps  =>  userProps.filter( (prop) =>  prop !== false ))
           .then(userPropsNonUnique => {
-            if(userPropsNonUnique) return reject(userPropsNonUnique)
+            if(userPropsNonUnique.length) return reject(userPropsNonUnique)
             const objUser = new User(user)
             objUser.save(user).then(
               (user) => resolve(user),
