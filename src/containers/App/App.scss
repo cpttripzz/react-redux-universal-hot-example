@@ -1,4 +1,13 @@
 .app {
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+  }
   .brand {
     position: absolute;
     $size: 40px;
@@ -19,11 +28,4 @@
 }
 .appContent {
   margin: 50px 0; // for fixed navbar
-  #spinner {
-    width: 150px;height: 150px;
-    -webkit-animation: sweep 1s infinite linear;
-    border-radius:75px;
-    border-bottom:5px solid blue;
-  }
-  @-webkit-keyframes sweep { to { -webkit-transform: rotate(360deg); } }
 }

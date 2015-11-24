@@ -23,7 +23,7 @@ module.exports = function(app) {
             .catch( (err) => res.status(500).json(err) )
     });
 
-    app.post('/new',function(req, res) {
+    app.post('/user/new',function(req, res) {
         newUser(req.body)
             .then((user) => res.json(user))
             .catch((err) => res.status(500).json(err))

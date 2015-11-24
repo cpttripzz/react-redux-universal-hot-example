@@ -5,7 +5,7 @@ import {reducer as form} from 'redux-form';
 import auth from './auth';
 import users from './users';
 import profile from './profile';
-import validate from './validate';
+import register from './register';
 
 export default combineReducers({
   router: routerStateReducer,
@@ -13,5 +13,5 @@ export default combineReducers({
   auth,
   users,
   profile,
-  validate,
+  register,
 });

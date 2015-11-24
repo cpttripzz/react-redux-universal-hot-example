@@ -16,8 +16,8 @@
     height: $size;
     width: $size;
     border-radius: $size / 2;
-    border: 1px solid $cyan;
-    box-shadow: inset 0 0 10px $cyan;
+    border: 1px solid black;
+    box-shadow: inset 0 0 10px black;
     vertical-align: middle;
     p {
       line-height: $size;
@@ -29,7 +29,7 @@
     }
   }
   h1 {
-    color: $cyan;
+    color: black;
     font-size: 4em;
   }
   h2 {
@@ -43,12 +43,7 @@
   p {
     margin: 10px;
   }
-  .humility {
-    color: $humility;
-    a {
-      color: $humility;
-    }
-  }
+
   .github {
     font-size: 1.5em;
   }
