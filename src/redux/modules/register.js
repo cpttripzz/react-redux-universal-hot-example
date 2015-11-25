@@ -28,6 +28,7 @@ export default function reducer(state = {}, action = {}) {
       };
     case REGISTER_TRUE:
       return {
+        user: action.result,
         ...state,
       };
     case REGISTER_FALSE:

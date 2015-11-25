@@ -21,25 +21,8 @@ export function login(req) {
         if (err) {
           reject({loginError: err});
         }
-        var authUser = {
-          id: user.id,
-          email: user.email
-        };
-        //function (users) { return users[0]; }
-        //users => users[0]
-        nodeAcl.userRoles(user.id)
-          .then((roles) => {
-              authUser['roles'] = roles;
-              return nodeAcl.whatResources(roles)
-            }
-          )
-          .then((resources) => {
-            authUser['resources'] = resources;
-            authUser["token"] = jwt.sign(authUser, config.jwtSecret, {
-              expiresIn: 1440 * 60 * 7// expires in 24 hours * 7
-            });
-            resolve(authUser);
-          });
+        console.log(user);
+        return resolve(getUserDetails(user));
       });
     }, (err) => {
       reject(err);
@@ -47,6 +30,32 @@ export function login(req) {
   })
 };
 
+export function getUserDetails(user) {
+  return new Promise((resolve, reject) => {
+
+    let authUser = {
+      id: user.id,
+      email: user.email,
+      username: user.username
+    };
+  //function (users) { return users[0]; }
+  //users => users[0]
+  nodeAcl.userRoles(user.id)
+    .then((roles) => {
+        authUser['roles'] = roles;
+        return nodeAcl.whatResources(roles)
+      }
+    )
+    .then((resources) => {
+      authUser['resources'] = resources;
+      authUser["token"] = jwt.sign(authUser, config.jwtSecret, {
+        expiresIn: 1440 * 60 * 7// expires in 24 hours * 7
+      });
+      resolve(authUser);
+    })
+    .catch((err) => reject(getErrorMessage(err)))
+  })
+}
 export function getUsers(req, res) {
   var userMap = [];
   return new Promise((resolve, reject) => {
@@ -163,7 +172,7 @@ export function newUser(user) {
             if(userPropsNonUnique.length) return reject(userPropsNonUnique)
             const objUser = new User(user)
             objUser.save(user).then(
-              (user) => resolve(user),
+              (user) => resolve(getUserDetails(user)),
               (err) => reject(getErrorMessage(err))
             )
           })

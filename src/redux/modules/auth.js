@@ -22,12 +22,14 @@ export default function reducer(state = initialState, action = {}) {
         loading: true
       };
     case LOAD_SUCCESS:
+      console.log(action.result)
       return {
         ...state,
         loading: false,
         loaded: true,
         user: action.result
       };
+
     case LOAD_FAIL:
       return {
         ...state,
@@ -118,19 +120,6 @@ export function login(email, password) {
     types: [LOGIN, LOGIN_SUCCESS, LOGIN_FAIL],
     promise: (client) => client.post('/login', {
       data: {
-        email: email,
-        password: password
-      }
-    })
-  };
-}
-
-export function register(username,email,password) {
-  return {
-    types: [REGISTRATION,REGISTRATION_SUCCESS,REGISTRATION_FAIL],
-    promise: (client) => client.post('/register', {
-      data: {
-        username: username,
         email: email,
         password: password
       }

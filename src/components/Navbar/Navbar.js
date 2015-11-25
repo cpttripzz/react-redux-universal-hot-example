@@ -25,7 +25,10 @@ export default class Navbar extends Component {
 
   handleLogout(event) {
     event.preventDefault();
-    this.props.logout();
+    if (typeof window !== "undefined") {
+      delete window.localStorage.token
+    }
+    this.props.logout()
   }
 
 
@@ -36,7 +39,7 @@ export default class Navbar extends Component {
       <nav className="navbar navbar-default navbar-fixed-top">
         <div className="container">
           <NavbarLink to="/" className="navbar-brand" component={IndexLink}>
-            Application
+            Reduxxed
           </NavbarLink>
 
           <ul className="nav navbar-nav">

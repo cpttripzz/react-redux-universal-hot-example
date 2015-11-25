@@ -60,9 +60,12 @@ export default class Register extends Component {
     dispatch(register(values))
       .then(response => {
         if (response.error) return response.error
-        this.props.pushState(null, '/');
+        if (typeof window !== "undefined") {
+          window.localStorage.token = response.result.token
+        }
+        this.props.pushState(null, '/')
       })
-      .catch(err => reject(err))
+      .catch(err => console.log(err))
   }
 
   render() {
