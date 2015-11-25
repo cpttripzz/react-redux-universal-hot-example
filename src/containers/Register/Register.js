@@ -4,6 +4,8 @@ import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import { validate as validateParams, register} from 'redux/modules/register';
 import {connect} from 'react-redux';
+import { pushState } from 'redux-router';
+
 var classNames = require('classnames');
 var Loader = require('react-loader');
 
@@ -37,20 +39,12 @@ const asyncValidate = (values, dispatch, _props) => {
   })
 }
 
-const submitRegister = (values, dispatch, _props) => {
-  return new Promise((resolve, reject) => {
-    dispatch(register(values))
-      .then(response => {
-        if (response.error) return reject(response.error);
-        return resolve();
-      })
-      .catch(err => reject(err))
-  })
-}
-
-
-@connect(state => ({validate: state.validate}))
+@connect(state => ({validate: state.validate}), {pushState})
 export default class Register extends Component {
+  constructor(props) {
+    super(props)
+    this.submitRegister = this.submitRegister.bind(this)
+  }
 
   static propTypes = {
     fields: PropTypes.object.isRequired,
@@ -58,15 +52,25 @@ export default class Register extends Component {
     handleSubmit: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
     validateParams: PropTypes.func,
-    register: PropTypes.func
+    register: PropTypes.func,
+    pushState: PropTypes.func.isRequired
   };
+
+  submitRegister(values, dispatch, _props) {
+    dispatch(register(values))
+      .then(response => {
+        if (response.error) return response.error
+        this.props.pushState(null, '/');
+      })
+      .catch(err => reject(err))
+  }
 
   render() {
     const {
       error, submitting, invalid,
       fields: {username, email, password},
       resetForm, handleSubmit
-    } = this.props;
+      } = this.props;
     const styles = require('./Register.scss');
     var options = {
       speed: 1,
@@ -79,27 +83,27 @@ export default class Register extends Component {
       display: 'inline-block',
       left: '100%'
     };
-    let usernameSpinnerOptions = Object.assign({top:'18px'}, options);
-    let emailSpinnerOptions = Object.assign({top:'67px'}, options);
+    let usernameSpinnerOptions = Object.assign({top: '18px'}, options);
+    let emailSpinnerOptions = Object.assign({top: '67px'}, options);
     const btnSubmitClass = classNames({
       'btn': true,
       'btn-primary': true,
-      'disabled' : invalid
+      'disabled': invalid
     });
 
     return (
       <div className={styles.registerPage}>
         <h1><span className="fa fa-user-plus"></span> Sign up</h1>
         <div className="col-sm-6 col-sm-offset-3">
-          <form className="login-form" onSubmit={submitRegister}>
+          <form className="login-form" onSubmit={this.submitRegister}>
             <div className={'form-group' + (username.touched && username.error ? ' has-error' : '')}>
               <input type="text" className="username form-control" placeholder="Username" {...username}/>
-                {validating.username && <Loader options={usernameSpinnerOptions} />}
+              {validating.username && <Loader options={usernameSpinnerOptions}/>}
             </div>
             {username.touched && username.error && <div className="help-block">{username.error}</div>}
             <div className={'form-group' + (email.touched && email.error ? ' has-error' : '')}>
               <input type="text" className="form-control" placeholder="Email" {...email}/>
-              {validating.email && <Loader options={emailSpinnerOptions} />}
+              {validating.email && <Loader options={emailSpinnerOptions}/>}
             </div>
             {email.touched && email.error && <div className="help-block">{email.error}</div>}
             <div className={'form-group' + (password.touched && password.error ? ' has-error' : '')}>
@@ -110,11 +114,11 @@ export default class Register extends Component {
             {error && <div>{error}</div>}
             <div>
 
-              <button className={btnSubmitClass} onClick={handleSubmit(submitRegister)}>
+              <button className={btnSubmitClass} onClick={handleSubmit(this.submitRegister)}>
                 {!submitting && <i className="fa fa-key"/>}
                 {submitting && <i className="fa fa-cog fa-spin"/>} Register
               </button>
-              <button className = "btn btn-warning" onClick={resetForm}>Clear Values</button>
+              <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
           </form>
         </div>
@@ -122,8 +126,8 @@ export default class Register extends Component {
 
 
 
-);
-}
+    );
+  }
 }
 
 export default reduxForm({
