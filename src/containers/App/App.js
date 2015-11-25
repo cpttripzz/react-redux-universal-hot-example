@@ -14,10 +14,6 @@ import { Navbar } from  'components';
   }),
   {pushState})
 export default class App extends Component {
-  constructor(props) {
-    super(props)
-    this.checkAuthToken = this.checkAuthToken.bind(this)
-  }
   static propTypes = {
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
@@ -28,7 +24,8 @@ export default class App extends Component {
     store: PropTypes.object.isRequired
   };
 
-  checkAuthToken(){
+
+  componentWillReceiveProps(nextProps) {
     if ( (!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading) {
       if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined"
         && window.localStorage.token !== "undefined") {
@@ -36,12 +33,14 @@ export default class App extends Component {
       }
     }
   }
-  componentWillReceiveProps() {
-    this.checkAuthToken()
-  }
 
-  componentWillMount() {
-    this.checkAuthToken()
+  componentDidMount() {
+    if ( (!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading) {
+      if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined"
+        && window.localStorage.token !== "undefined") {
+        this.context.store.dispatch(loadAuth());
+      }
+    }
   }
 
 
