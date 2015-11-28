@@ -41,8 +41,15 @@ export default class Login extends Component {
         event.preventDefault();
         const email = this.refs.email;
         const password = this.refs.password;
-        this.props.login(email.value, password.value);
-        //input.value = '';
+        this.props.login(email.value, password.value)
+          .then(response => {
+              if (response.error) return response.error
+              if (typeof window !== "undefined") {
+                  window.localStorage.token = response.result.token
+              }
+              this.props.pushState(null, '/')
+          })
+          .catch(err => console.log(err))
     }
 
     handleGoogleLogin(event) {

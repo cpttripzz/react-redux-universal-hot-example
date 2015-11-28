@@ -130,8 +130,8 @@ module.exports = function(app) {
     );
 
     app.get('/profile', (req, res) =>
-      getProfile(req).then( (user) => res.json(user))
-        .catch( (err) => res.json(err) )
+          getProfile(req).then((user) => res.json(user))
+            .catch((err) => res.json(err))
 
     );
 

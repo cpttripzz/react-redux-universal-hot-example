@@ -8,7 +8,7 @@ const NavbarLink = ({to, className, component, children}) => {
   const Comp = component || Link;
 
   return (
-    <Comp to={to} className={className} activeStyle={{color: '#33e0ff'}}>
+    <Comp to={to} className={className} activeStyle={{color: '#3eff70 !important' }}>
       {children}
     </Comp>
   );

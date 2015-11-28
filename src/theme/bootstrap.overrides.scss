@@ -1,5 +1,4 @@
 
-
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -99,3 +98,16 @@ div[class*="grid"] {
 .navbar-nav > li > a {
   color:#2A9FD6 !important;
 }
+
+.navbar-brand {
+  position: relative;
+  padding-left: 50px;
+}
+
+.navbar-nav > .active > a,
+.navbar-nav > .active > a:hover,
+.navbar-nav > .active > a:focus {
+  color: #3eff70 !important;
+  background-color: transparent;
+}
+
