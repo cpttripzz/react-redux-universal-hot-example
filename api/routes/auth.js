@@ -2,7 +2,7 @@ var passport = require('passport');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 
-import { login, register, getUsers, newUser, getProfile, checkProps } from '../services/user.service';
+import { login, register, getUsers, newUser, getProfile, postProfile, checkProps } from '../services/user.service';
 
 module.exports = function(app) {
 
@@ -17,15 +17,9 @@ module.exports = function(app) {
             .catch( (err) => res.status(500).json(err) )
     });
 
-    app.post('/register', (req, res) =>{
-        register(req)
-            .then( (data) => res.json(data) )
-            .catch( (err) => res.status(500).json(err) )
-    });
-
     app.post('/user/new',function(req, res) {
-        newUser(req.body)
-            .then((user) => res.json(user))
+            newUser(req.body)
+              .then((user) => res.json(user))
             .catch((err) => res.status(500).json(err))
     });
 
@@ -127,13 +121,21 @@ module.exports = function(app) {
 // ---------------------------------------------------------
     app.get('/users', (req, res) =>
       getUsers().then( (users) => res.json(users))
-    );
+        .catch((err) => res.json(err))
+
+    )
 
     app.get('/profile', (req, res) =>
           getProfile(req).then((user) => res.json(user))
             .catch((err) => res.json(err))
 
-    );
+    )
+
+    app.post('/profile', (req, res) =>
+      postProfile(req).then((user) => res.json(user))
+        .catch((err) => res.json(err))
+    )
+
 
     app.post('/resource', function(req, res){
         import { allow } from '../services/resource.server.service';
@@ -143,5 +145,5 @@ module.exports = function(app) {
                 .catch( (err) => res.json(err) )
 
         }
-    });
+    })
 };

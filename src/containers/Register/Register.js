@@ -57,15 +57,26 @@ export default class Register extends Component {
   };
 
   submitRegister(values, dispatch, _props) {
-    dispatch(register(values))
-      .then(response => {
-        if (response.error) return response.error
-        if (typeof window !== "undefined") {
-          window.localStorage.token = response.result.token
-        }
-        this.props.pushState(null, '/')
-      })
-      .catch(err => console.log(err))
+    const errors = {};
+    return new Promise((resolve, reject) => {
+      dispatch(register(values))
+        .then(response => {
+          if (response.error) {
+            response.error.map( obj => {
+              for (let propName in obj){
+                errors[propName] = obj[propName]
+              }
+            })
+            reject(errors)
+          } else {
+            if (typeof window !== "undefined") {
+              window.localStorage.token = response.result.token
+            }
+            this.props.pushState(null, '/')
+          }
+        })
+        .catch(err => reject(err))
+    })
   }
 
   render() {

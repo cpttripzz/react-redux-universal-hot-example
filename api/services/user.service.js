@@ -7,7 +7,7 @@ var nodeAcl = new acl(new acl.mongodbBackend(mongoose.connection.db));
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 export function login(req) {
-  let email = req.body.email;
+  let username = req.body.username;
   let password = req.body.password;
   var User = require('mongoose').model('User');
   return new Promise((resolve, reject) => {
@@ -94,7 +94,26 @@ export function getProfile(req) {
           lastName: user.lastName,
           email: user.email
         };
-        resolve(u)
+        console.log('fff',user)
+        resolve(user)
+      }
+      , (err) => reject(err))
+  })
+}
+
+export function postProfile(req) {
+  var objectId = (require('mongoose').Types.ObjectId);
+  const profile = Object.keys(req.body).filter((prop) => ['email','firstName', 'lastName'].indexOf(prop) >= 0 )
+  return new Promise((resolve, reject) => {
+    var User = require('mongoose').model('User');
+    User.findById(req.user.id).then((user) => {
+      profile.map((prop) => {
+        user[prop] = profile[prop]
+      })
+        user.save( (err)  =>{
+          if (err) return handleError(err);
+          resolve(user)
+        });
       }
       , (err) => reject(err))
   })
@@ -125,7 +144,7 @@ export function checkProps(props){
   })
 }
 var getErrorMessage = function (err) {
-  console.log(err);
+  console.log("getErrorMessage",err);
   let message = '';
   if (err.code) {
     switch (err.code) {
@@ -152,6 +171,8 @@ export function register(req, res, next) {
         resolve(user);
       })
     })
+      .catch((err) => reject(err))
+
   })
 }
 export function propsUnique(objUser){

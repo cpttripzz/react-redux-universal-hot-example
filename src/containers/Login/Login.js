@@ -39,15 +39,18 @@ export default class Login extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const email = this.refs.email;
+        const username = this.refs.username;
         const password = this.refs.password;
-        this.props.login(email.value, password.value)
+        this.props.login(username.value, password.value)
           .then(response => {
-              if (response.error) return response.error
-              if (typeof window !== "undefined") {
+              if (response.error) {
+                return response.error
+              } else {
+                if (typeof window !== "undefined") {
                   window.localStorage.token = response.result.token
+                }
+                this.props.pushState(null, '/')
               }
-              this.props.pushState(null, '/')
           })
           .catch(err => console.log(err))
     }
@@ -74,7 +77,7 @@ export default class Login extends Component {
                 <div className="col-sm-6 col-sm-offset-3">
                     <form className="login-form" onSubmit={::this.handleSubmit}>
                         <div className="form-group">
-                            <input type="text" className="form-control" ref="email" placeholder="Enter your email"/>
+                            <input type="text" className="form-control" ref="username" placeholder="Enter your email"/>
                         </div>
                         <div className="form-group">
                             <input type="password" className="form-control" ref="password" placeholder="Enter your password"/>

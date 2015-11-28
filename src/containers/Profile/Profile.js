@@ -14,14 +14,14 @@ export const fields = ['firstName','lastName', 'email', 'password', 'image'];
 let propToValidate;
 let validating = {};
 const validate = values => {
-  //const errors = {};
-  //if (!values.username) {
-  //  errors.username = 'Required';
-  //}
-  //if (!values.password) {
-  //  errors.password = 'Required';
-  //}
-  //return errors;
+  const errors = {};
+  if (!values.username) {
+    errors.username = 'Required';
+  }
+  if (!values.password) {
+    errors.password = 'Required';
+  }
+  return errors;
 };
 
 const asyncValidate = (values, dispatch, _props) => {
@@ -91,7 +91,7 @@ export default class Profile extends Component {
 
     return (
       <div className={styles.profilePage}>
-        <h1><span className="fa fa-user-secret"></span> Sign up</h1>
+        <h1><span className="fa fa-user-secret"></span>Profile</h1>
         <div className="col-sm-6 col-sm-offset-3">
           <form className="profile-form" onSubmit={this.submitProfile}>
             <div className={'form-group' + (email.touched && email.error ? ' has-error' : '')}>
@@ -101,12 +101,12 @@ export default class Profile extends Component {
             {email.touched && email.error && <div className="help-block">{email.error}</div>}
 
             <div className={'form-group' + (firstName.touched && firstName.error ? ' has-error' : '')}>
-              <input type="text" className="form-control" placeholder="Email" {...firstName}/>
+              <input type="text" className="form-control" placeholder="First Name" {...firstName}/>
             </div>
             {firstName.touched && firstName.error && <div className="help-block">{firstName.error}</div>}
 
             <div className={'form-group' + (lastName.touched && lastName.error ? ' has-error' : '')}>
-              <input type="text" className="form-control" placeholder="Email" {...lastName}/>
+              <input type="text" className="form-control" placeholder="Last Name" {...lastName}/>
             </div>
             {lastName.touched && lastName.error && <div className="help-block">{lastName.error}</div>}
 
@@ -121,9 +121,8 @@ export default class Profile extends Component {
 
               <button className={btnSubmitClass} onClick={handleSubmit(this.submitProfile)}>
                 {!submitting && <i className="fa fa-key"/>}
-                {submitting && <i className="fa fa-cog fa-spin"/>} Profile
+                {submitting && <i className="fa fa-cog fa-spin"/>} Save Profile
               </button>
-              <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
           </form>
         </div>
