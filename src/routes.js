@@ -5,7 +5,6 @@ import {
     App,
     Chat,
     Home,
-    Widgets,
     About,
     Login,
     Register,
@@ -27,21 +26,13 @@ export default (store) => {
             }
             cb();
         }
-
+debugger;
         if (!isAuthLoaded(store.getState())) {
             store.dispatch(loadAuth(store.getState())).then(checkAuth);
         } else {
             checkAuth();
         }
     };
-
-    const saveOauthToken = (nextState, replaceState, cb) => {
-      if (typeof nextState.params.token !== "undefined")
-      {
-
-      }
-      cb();
-    }
     return (
         <Route component={App}>
             <Route path="/" component={Home}/>
@@ -49,8 +40,9 @@ export default (store) => {
             <Route path="/register" component={Register}/>
             <Route path="/user-admin" component={UserAdmin}/>
             <Route path="/oauth-profile/:token" component={OauthToken}/>
+          <Route path="/profile" component={Profile}/>
             <Route onEnter={requireLogin}>
-                <Route path="/profile" component={Profile}/>
+
                 <Route path="/loginSuccess" component={LoginSuccess}/>
             </Route>
             <Route path="*" component={NotFound} status={404}/>

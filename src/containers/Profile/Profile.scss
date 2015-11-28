@@ -1,35 +1,31 @@
-.profile {
-  .refreshBtn {
-    margin-left: 20px;
+.profilePage {
+  body {
+    padding-top: 80px;
   }
-  .idCol {
-    width: 5%;
+  input {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
   }
-  .colorCol {
-    width: 20%;
-  }
-  .sprocketsCol {
-    width: 20%;
-    text-align: right;
-    input {
-      text-align: right;
-    }
-  }
-  .ownerCol {
-    width: 30%;
-  }
-  .buttonCol {
-    width: 25%;
+  form {
+    margin-top: 0em;
     :global(.btn) {
-      margin: 0 5px;
+      margin-right: 10px;
     }
   }
-  tr.saving {
-    opacity: 0.8;
-    :global(.btn) {
-      &[disabled] {
-        opacity: 1;
-      }
-    }
+  :global(.help-block) {
+    color: red;
+  }
+  h1 {
+    text-align: center;
+  }
+  .form-control {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+  }
+  .spinner{
+    display:  inline-flex !important;
   }
 }

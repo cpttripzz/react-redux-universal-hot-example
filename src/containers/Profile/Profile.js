@@ -1,85 +1,145 @@
+import { Link } from 'react-router';
+import { AlertAutoDismissable } from 'components';
 import React, {Component, PropTypes} from 'react';
-import DocumentMeta from 'react-document-meta';
+import { reduxForm } from 'redux-form';
+import { validate as validateParams, post as postProfile} from 'redux/modules/profile';
 import {connect} from 'react-redux';
-import * as profileActions from 'redux/modules/profile';
-import { isLoaded as isProfileLoaded, load as loadProfile } from 'redux/modules/profile';
+import { pushState } from 'redux-router';
 
+var classNames = require('classnames');
+var Loader = require('react-loader');
 
-import {initializeWithKey} from 'redux-form';
-import { ProfileForm } from 'components';
+export const fields = ['firstName','lastName', 'email', 'password', 'image'];
 
-@connect(
-  state => ({
-    profile: state.profile.data,
-    editing: state.profile.editing,
-    error: state.profile.error,
-    loading: state.profile.loading
-  }),
-  {...profileActions, initializeWithKey })
-export default
-class Profile extends Component {
+let propToValidate;
+let validating = {};
+const validate = values => {
+  //const errors = {};
+  //if (!values.username) {
+  //  errors.username = 'Required';
+  //}
+  //if (!values.password) {
+  //  errors.password = 'Required';
+  //}
+  //return errors;
+};
+
+const asyncValidate = (values, dispatch, _props) => {
+  //const propToValidate = _props.form._active;
+  //if (values[propToValidate]) validating[[propToValidate]] = true
+  //return new Promise((resolve, reject) => {
+  //  dispatch(validateParams(values))
+  //    .then(response => {
+  //      validating[[propToValidate]] = false
+  //      if (response.error) return reject(response.error);
+  //
+  //      return resolve();
+  //    })
+  //    .catch(err => reject(err))
+  //})
+}
+
+@connect(state => ({validate: state.validate}), {pushState})
+export default class Profile extends Component {
+  constructor(props) {
+    super(props)
+    this.submitProfile = this.submitProfile.bind(this)
+  }
+
   static propTypes = {
-    profile: PropTypes.object,
-    error: PropTypes.string,
-    loading: PropTypes.bool,
-    initializeWithKey: PropTypes.func.isRequired,
-    editing: PropTypes.object.isRequired,
-    load: PropTypes.func.isRequired,
-    editStart: PropTypes.func.isRequired
-  }
+    fields: PropTypes.object.isRequired,
+    resetForm: PropTypes.func.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    validateParams: PropTypes.func,
+    profile: PropTypes.func,
+    pushState: PropTypes.func.isRequired
+  };
 
-  static fetchDataDeferred(getState, dispatch) {
-    if (!isProfileLoaded(getState())) {
-      return dispatch(loadProfile());
-    }
-  }
-
-  handleEdit(profile) {
-    const {editStart} = this.props; // eslint-disable-line no-shadow
-    return () => {
-      editStart(String(profile.id));
-    };
+  submitProfile(values, dispatch, _props) {
+    dispatch(postProfile(values))
+      .then(response => {
+        if (response.error) return response.error
+      })
+      .catch(err => console.log(err))
   }
 
   render() {
-    const {profile, error, editing, loading, load} = this.props;
-    console.log(this.props.profile);
-    let refreshClassName = 'fa fa-refresh';
-    if (loading) {
-      refreshClassName += ' fa-spin';
-    }
+    const {
+      error, submitting, invalid,
+      fields: {firstName, lastName, email, password, image},
+      resetForm, handleSubmit
+      } = this.props;
     const styles = require('./Profile.scss');
-    const hasProfile = this.props.profile && (Object.keys(this.props.profile).length) ? true: false;
+    var options = {
+      speed: 1,
+      trail: 60,
+      color: '#2A9FD6',
+      shadow: false,
+      hwaccel: true,
+      scale: 0.5,
+      position: 'relative',
+      display: 'inline-block',
+      left: '100%'
+    };
+    let emailSpinnerOptions = Object.assign({top: '67px'}, options);
+    const btnSubmitClass = classNames({
+      'btn': true,
+      'btn-primary': true,
+      'disabled': invalid
+    });
 
     return (
-      <div className={styles.profile + ' container'}>
-        <h1>
-          Profile
-          <button className={styles.refreshBtn + ' btn btn-success'} onClick={load}><i
-            className={refreshClassName}/> {' '} Reload Profile
-          </button>
-        </h1>
-        <DocumentMeta title="React Redux Example: Profile"/>
-        <p>
-          If you hit refresh on your browser, the data loading will take place on the server before the page is returned.
-          If you navigated here from another page, the data was fetched from the client after the route transition.
-          This uses the static method <code>fetchDataDeferred</code>. To block a route transition until some data is loaded, use <code>fetchData</code>.
-          To always render before loading data, even on the server, use <code>componentDidMount</code>.
-        </p>
-        <p>
-          This profile are stored in your session, so feel free to edit it and refresh.
-        </p>
-        {error &&
-        <div className="alert alert-danger" role="alert">
-          <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-          {' '}
-          {error}
-        </div>}
-        {hasProfile &&
-        <ProfileForm formKey={String(profile.id)} key={String(profile.id)} initialValues={profile}/>
-        }
+      <div className={styles.profilePage}>
+        <h1><span className="fa fa-user-secret"></span> Sign up</h1>
+        <div className="col-sm-6 col-sm-offset-3">
+          <form className="profile-form" onSubmit={this.submitProfile}>
+            <div className={'form-group' + (email.touched && email.error ? ' has-error' : '')}>
+              <input type="text" className="form-control" placeholder="Email" {...email}/>
+              {validating.email && <Loader options={emailSpinnerOptions}/>}
+            </div>
+            {email.touched && email.error && <div className="help-block">{email.error}</div>}
+
+            <div className={'form-group' + (firstName.touched && firstName.error ? ' has-error' : '')}>
+              <input type="text" className="form-control" placeholder="Email" {...firstName}/>
+            </div>
+            {firstName.touched && firstName.error && <div className="help-block">{firstName.error}</div>}
+
+            <div className={'form-group' + (lastName.touched && lastName.error ? ' has-error' : '')}>
+              <input type="text" className="form-control" placeholder="Email" {...lastName}/>
+            </div>
+            {lastName.touched && lastName.error && <div className="help-block">{lastName.error}</div>}
+
+            
+            <div className={'form-group' + (password.touched && password.error ? ' has-error' : '')}>
+              <input type="password" className="form-control" placeholder="Password" {...password}/>
+            </div>
+            {password.touched && password.error && <div className="help-block">{password.error}</div>}
+
+            {error && <div>{error}</div>}
+            <div>
+
+              <button className={btnSubmitClass} onClick={handleSubmit(this.submitProfile)}>
+                {!submitting && <i className="fa fa-key"/>}
+                {submitting && <i className="fa fa-cog fa-spin"/>} Profile
+              </button>
+              <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
+            </div>
+          </form>
+        </div>
       </div>
+
+
+
     );
   }
 }
 
+export default reduxForm({
+  form: 'profile',
+  fields,
+  asyncValidate,
+  asyncBlurFields: ['email'],
+  validate
+}
+)(Profile);
