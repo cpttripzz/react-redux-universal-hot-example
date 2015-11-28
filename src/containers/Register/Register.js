@@ -62,12 +62,7 @@ export default class Register extends Component {
       dispatch(register(values))
         .then(response => {
           if (response.error) {
-            response.error.map( obj => {
-              for (let propName in obj){
-                errors[propName] = obj[propName]
-              }
-            })
-            reject(errors)
+            reject(response.error)
           } else {
             if (typeof window !== "undefined") {
               window.localStorage.token = response.result.token

@@ -156,7 +156,9 @@ var getErrorMessage = function (err) {
         message = 'Something went wrong';
     }
   } else {
-    return err.map(err =>  { return {[err.path.replace(/\#\//i, '')]: err.message} } )
+    let errors ={}
+    err.map(err =>  { errors[err.path.replace(/\#\//i, '')] = err.message } )
+    return errors
   }
   return message;
 };
