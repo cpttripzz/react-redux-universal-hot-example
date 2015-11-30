@@ -81,7 +81,6 @@ export default class Register extends Component {
       resetForm, handleSubmit
       } = this.props;
     const styles = require('./Register.scss');
-    let emailSpinnerOptions ={top: '67px'};
     const btnSubmitClass = classNames({
       'btn': true,
       'btn-primary': true,
