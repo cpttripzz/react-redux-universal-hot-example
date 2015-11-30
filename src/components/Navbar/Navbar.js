@@ -14,10 +14,13 @@ const NavbarLink = ({to, className, component, children}) => {
   );
 };
 
-
+@connect(
+  state => ({user: state.auth.user}),
+  {logout, pushState})
 export default class Navbar extends Component {
   static propTypes = {
-    user: PropTypes.object
+    user: PropTypes.object,
+    logout: PropTypes.func.isRequired
   }
 
   handleLogout(event) {

@@ -1,13 +1,10 @@
 import { Link } from 'react-router';
-import { AlertAutoDismissable,ValidatedFormInput } from 'components';
+import { AlertAutoDismissable,ValidatedFormInput,SubmitButton } from 'components';
 import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import {connect} from 'react-redux';
 import { pushState } from 'redux-router';
 import { login } from 'redux/modules/auth';
-
-var classNames = require('classnames');
-var Loader = require('react-loader');
 
 export const fields = ['username', 'password'];
 
@@ -69,11 +66,7 @@ export default class Login extends Component {
       resetForm, handleSubmit
       } = this.props;
     const styles = require('./Login.scss');
-    const btnSubmitClass = classNames({
-      'btn': true,
-      'btn-primary': true,
-      'disabled': invalid
-    });
+
     return (
       <div className={styles.loginPage}>
         <h1><span className="fa  fa-sign-in"></span> Login</h1>
@@ -83,10 +76,7 @@ export default class Login extends Component {
             <ValidatedFormInput field={username} />
             <ValidatedFormInput field={password} fieldProps={ {type: 'password'} }/>
             <div>
-              <button className={btnSubmitClass} onClick={handleSubmit(this.submitLogin)}>
-                {!submitting && <i className="fa fa-key"/>}
-                {submitting && <i className="fa fa-cog fa-spin"/>} Login
-              </button>
+             <SubmitButton label="Login" submitting={submitting} invalid={invalid} onClick={handleSubmit(this.submitLogin)} />
               <button className="btn btn-success" onClick={::this.handleGoogleLogin}><i
                 className="fa fa-google"/>{' '}Log
                 in with Google
