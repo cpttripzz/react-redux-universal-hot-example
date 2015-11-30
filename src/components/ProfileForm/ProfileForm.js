@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {reduxForm} from 'redux-form';
-import profileValidation, {colors} from './profileValidation';
 import * as profileActions from 'redux/modules/profile';
 
 @connect(
@@ -14,7 +13,6 @@ import * as profileActions from 'redux/modules/profile';
 @reduxForm({
   form: 'profile',
   fields: ['firstName', 'lastName', 'username', 'email'],
-  validate: profileValidation
 })
 export default class ProfileForm extends Component {
   static propTypes = {

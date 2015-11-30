@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { AlertAutoDismissable } from 'components';
+import { AlertAutoDismissable,ValidatedFormInput } from 'components';
 import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import { validate as validateParams, register} from 'redux/modules/register';
@@ -81,48 +81,22 @@ export default class Register extends Component {
       resetForm, handleSubmit
       } = this.props;
     const styles = require('./Register.scss');
-    var options = {
-      speed: 1,
-      trail: 60,
-      color: '#2A9FD6',
-      shadow: false,
-      hwaccel: true,
-      scale: 0.5,
-      position: 'relative',
-      display: 'inline-block',
-      left: '100%'
-    };
-    let usernameSpinnerOptions = Object.assign({top: '18px'}, options);
-    let emailSpinnerOptions = Object.assign({top: '67px'}, options);
+    let emailSpinnerOptions ={top: '67px'};
     const btnSubmitClass = classNames({
       'btn': true,
       'btn-primary': true,
       'disabled': invalid
     });
-
     return (
       <div className={styles.registerPage}>
         <h1><span className="fa fa-user-plus"></span> Sign up</h1>
         <div className="col-sm-6 col-sm-offset-3">
           <form className="login-form" onSubmit={this.submitRegister}>
-            <div className={'form-group' + (username.touched && username.error ? ' has-error' : '')}>
-              <input type="text" className="username form-control" placeholder="Username" {...username}/>
-              {validating.username && <Loader options={usernameSpinnerOptions}/>}
-            </div>
-            {username.touched && username.error && <div className="help-block">{username.error}</div>}
-            <div className={'form-group' + (email.touched && email.error ? ' has-error' : '')}>
-              <input type="text" className="form-control" placeholder="Email" {...email}/>
-              {validating.email && <Loader options={emailSpinnerOptions}/>}
-            </div>
-            {email.touched && email.error && <div className="help-block">{email.error}</div>}
-            <div className={'form-group' + (password.touched && password.error ? ' has-error' : '')}>
-              <input type="password" className="form-control" placeholder="Password" {...password}/>
-            </div>
-            {password.touched && password.error && <div className="help-block">{password.error}</div>}
-
+            <ValidatedFormInput field={username} fieldProps={ {name: 'username'} } validating={validating.username} spinnerOptions={ {top: '18px'} } />
+            <ValidatedFormInput field={email} fieldProps={ {name: 'email'} } validating={validating.email} spinnerOptions={ {top: '67px'} } />
+            <ValidatedFormInput field={password} fieldProps={ {name: 'password'} } validating={validating.password}  />
             {error && <div>{error}</div>}
             <div>
-
               <button className={btnSubmitClass} onClick={handleSubmit(this.submitRegister)}>
                 {!submitting && <i className="fa fa-key"/>}
                 {submitting && <i className="fa fa-cog fa-spin"/>} Register
@@ -132,9 +106,6 @@ export default class Register extends Component {
           </form>
         </div>
       </div>
-
-
-
     );
   }
 }

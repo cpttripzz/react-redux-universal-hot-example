@@ -11,7 +11,7 @@ export function login(req) {
   let password = req.body.password;
   var User = require('mongoose').model('User');
   return new Promise((resolve, reject) => {
-    User.findOne({email: email}).exec().then((user) => {
+    User.findOne({username: username}).then((user) => {
       let errMsg = {message: 'Invalid username or password'};
       if (!user || (!user.authenticate(password))) {
         reject(errMsg);
