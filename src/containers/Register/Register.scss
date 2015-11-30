@@ -7,27 +7,5 @@
     border-radius: 5px;
     border: 1px solid #ccc;
   }
-  form {
 
-
-    margin-top: 0em;
-    :global(.btn) {
-      margin-right: 10px;
-    }
-  }
-  :global(.help-block) {
-    color: red;
-  }
-  h1 {
-    text-align: center;
-  }
-  .form-control {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-  }
-  .spinner{
-    display:  inline-flex !important;
-  }
 }

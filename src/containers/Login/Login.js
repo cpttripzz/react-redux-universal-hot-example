@@ -41,7 +41,6 @@ export default class Login extends Component {
   };
 
   submitLogin(values, dispatch, _props) {
-    const errors = {};
     return new Promise((resolve, reject) => {
       dispatch(login(values))
         .then(response => {
@@ -58,13 +57,17 @@ export default class Login extends Component {
     })
   }
 
+  handleGoogleLogin(event) {
+    event.preventDefault();
+    window.location.href = 'http://bandaid.com:3030/oauth/google';
+  }
+
   render() {
     const {
       error, submitting, invalid,
       fields: {username, password},
       resetForm, handleSubmit
       } = this.props;
-    console.log(this.props)
     const styles = require('./Login.scss');
     const btnSubmitClass = classNames({
       'btn': true,
@@ -84,9 +87,14 @@ export default class Login extends Component {
                 {!submitting && <i className="fa fa-key"/>}
                 {submitting && <i className="fa fa-cog fa-spin"/>} Login
               </button>
+              <button className="btn btn-success" onClick={::this.handleGoogleLogin}><i
+                className="fa fa-google"/>{' '}Log
+                in with Google
+              </button>
               <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
           </form>
+          <p>Need an account? <Link to="/register">Register</Link></p>
         </div>
       </div>
     );
