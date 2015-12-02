@@ -3,7 +3,7 @@ var Loader = require('react-loader');
 
 export default class Spinner extends Component {
   static propTypes = {
-    options: PropTypes.object.isRequired
+    options: PropTypes.object
   }
 
 

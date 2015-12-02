@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
-import { AlertAutoDismissable } from 'components';
+import { AlertAutoDismissable,ValidatedFormInput,SubmitButton } from 'components';
 import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
-import { validate as validateParams, post as postProfile} from 'redux/modules/profile';
+import { postProfile} from 'redux/modules/profile';
 import {connect} from 'react-redux';
 import { pushState } from 'redux-router';
 
@@ -18,28 +18,10 @@ const validate = values => {
   if (!values.username) {
     errors.username = 'Required';
   }
-  if (!values.password) {
-    errors.password = 'Required';
-  }
   return errors;
 };
 
-const asyncValidate = (values, dispatch, _props) => {
-  //const propToValidate = _props.form._active;
-  //if (values[propToValidate]) validating[[propToValidate]] = true
-  //return new Promise((resolve, reject) => {
-  //  dispatch(validateParams(values))
-  //    .then(response => {
-  //      validating[[propToValidate]] = false
-  //      if (response.error) return reject(response.error);
-  //
-  //      return resolve();
-  //    })
-  //    .catch(err => reject(err))
-  //})
-}
-
-@connect(state => ({validate: state.validate}), {pushState})
+@connect(state => ({user: state.validate}), {pushState})
 export default class Profile extends Component {
   constructor(props) {
     super(props)
@@ -51,17 +33,23 @@ export default class Profile extends Component {
     resetForm: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
-    validateParams: PropTypes.func,
-    profile: PropTypes.func,
     pushState: PropTypes.func.isRequired
   };
 
-  submitProfile(values, dispatch, _props) {
-    dispatch(postProfile(values))
-      .then(response => {
-        if (response.error) return response.error
-      })
-      .catch(err => console.log(err))
+  submitProfile(values, dispatch) {
+    console.log('asdfdf');
+    return new Promise((resolve, reject) => {
+      dispatch(postProfile(values))
+        .then(response => {
+          if (response.error) {
+            reject(response.error)
+          }
+        })
+        .catch(err => reject(err))
+    })
+
+
+
   }
 
   render() {
@@ -71,58 +59,19 @@ export default class Profile extends Component {
       resetForm, handleSubmit
       } = this.props;
     const styles = require('./Profile.scss');
-    var options = {
-      speed: 1,
-      trail: 60,
-      color: '#2A9FD6',
-      shadow: false,
-      hwaccel: true,
-      scale: 0.5,
-      position: 'relative',
-      display: 'inline-block',
-      left: '100%'
-    };
-    let emailSpinnerOptions = Object.assign({top: '67px'}, options);
-    const btnSubmitClass = classNames({
-      'btn': true,
-      'btn-primary': true,
-      'disabled': invalid
-    });
 
     return (
       <div className={styles.profilePage}>
         <h1><span className="fa fa-user-secret"></span>Profile</h1>
         <div className="col-sm-6 col-sm-offset-3">
           <form className="profile-form" onSubmit={this.submitProfile}>
-            <div className={'form-group' + (email.touched && email.error ? ' has-error' : '')}>
-              <input type="text" className="form-control" placeholder="Email" {...email}/>
-              {validating.email && <Loader options={emailSpinnerOptions}/>}
-            </div>
-            {email.touched && email.error && <div className="help-block">{email.error}</div>}
-
-            <div className={'form-group' + (firstName.touched && firstName.error ? ' has-error' : '')}>
-              <input type="text" className="form-control" placeholder="First Name" {...firstName}/>
-            </div>
-            {firstName.touched && firstName.error && <div className="help-block">{firstName.error}</div>}
-
-            <div className={'form-group' + (lastName.touched && lastName.error ? ' has-error' : '')}>
-              <input type="text" className="form-control" placeholder="Last Name" {...lastName}/>
-            </div>
-            {lastName.touched && lastName.error && <div className="help-block">{lastName.error}</div>}
-
-            
-            <div className={'form-group' + (password.touched && password.error ? ' has-error' : '')}>
-              <input type="password" className="form-control" placeholder="Password" {...password}/>
-            </div>
-            {password.touched && password.error && <div className="help-block">{password.error}</div>}
-
+            <ValidatedFormInput field={email} />
+            <ValidatedFormInput field={firstName} />
+            <ValidatedFormInput field={lastName} />
             {error && <div>{error}</div>}
             <div>
-
-              <button className={btnSubmitClass} onClick={handleSubmit(this.submitProfile)}>
-                {!submitting && <i className="fa fa-key"/>}
-                {submitting && <i className="fa fa-cog fa-spin"/>} Save Profile
-              </button>
+              <SubmitButton label="Save Profile" submitting={submitting} onClick={handleSubmit(this.submitProfile)} />
+              <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
           </form>
         </div>
@@ -135,10 +84,10 @@ export default class Profile extends Component {
 }
 
 export default reduxForm({
-  form: 'profile',
-  fields,
-  asyncValidate,
-  asyncBlurFields: ['email'],
-  validate
-}
+    form: 'profile',
+    fields,
+  },
+  state => ({ // mapStateToProps
+    initialValues: state.auth.user // will pull state into form's initialValues
+  })
 )(Profile);

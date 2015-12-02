@@ -26,7 +26,6 @@ export default (store) => {
             }
             cb();
         }
-debugger;
         if (!isAuthLoaded(store.getState())) {
             store.dispatch(loadAuth(store.getState())).then(checkAuth);
         } else {
@@ -40,7 +39,7 @@ debugger;
             <Route path="/register" component={Register}/>
             <Route path="/user-admin" component={UserAdmin}/>
             <Route path="/oauth-profile/:token" component={OauthToken}/>
-          <Route path="/profile" component={Profile}/>
+            <Route path="/profile" component={Profile}/>
             <Route onEnter={requireLogin}>
 
                 <Route path="/loginSuccess" component={LoginSuccess}/>
