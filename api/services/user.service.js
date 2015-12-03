@@ -6,6 +6,8 @@ mongoose.Promise = Promise;
 var nodeAcl = new acl(new acl.mongodbBackend(mongoose.connection.db));
 var config = require('../config');
 var jwt = require('jsonwebtoken');
+import { validateEntityProps, getValidateEntityErrors } from './validation.service'
+
 export function login(req) {
   let username = req.body.username;
   let password = req.body.password;
@@ -156,9 +158,7 @@ var getErrorMessage = function (err) {
         message = 'Something went wrong';
     }
   } else {
-    let errors ={}
-    err.map(err =>  { errors[err.path.replace(/\#\//i, '')] = err.message } )
-    return errors
+    return getValidateEntityErrors(err)
   }
   return message;
 };
@@ -186,8 +186,9 @@ export function propsUnique(objUser){
 export function newUser(user) {
   return new Promise((resolve, reject) => {
 
-    if (!user.provider) user.provider = 'local';
-    validateUser(user)
+    if (!user.provider) user.provider = 'local'
+
+    validateEntityProps('user', user)
       .then((user) => {
         propsUnique(user)
           .then(userProps  =>  userProps.filter( (prop) =>  prop !== false ))
@@ -214,20 +215,6 @@ export function newUser(user) {
   })
 }
 
-export function validateUser(user) {
-  import validate from  '../../utils/validate';
-  var readFile = require("bluebird").promisify(require("fs").readFile);
-  return new Promise((resolve, reject) => {
-    readFile(__dirname + '/../models/validators/user.schema.json')
-      .then((schema) => JSON.parse(schema))
-      .then((schema) => validate(user, schema))
-      .then((user) => resolve(user))
-      .catch((err) =>  reject(err))
-  });
-}
-export function logout(req, res) {
-  req.logout();
-};
 
 export function saveOAuthUserProfile(req, profile, done) {
   User.findOne({

@@ -6,7 +6,7 @@ export default function validate(objToValidate, schema) {
   });
   return new Promise((resolve, reject) => {
     validator.validate(objToValidate, schema, (err, valid)  => {
-      if (err) reject(err)
+      if (err) { console.log('err',err); return reject(err) }
       resolve(objToValidate);
     });
   })
