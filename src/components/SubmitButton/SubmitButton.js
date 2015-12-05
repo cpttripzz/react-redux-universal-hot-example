@@ -14,12 +14,11 @@ export default class SubmitButton extends Component {
     const { label, onClick, submitting, invalid } = this.props;
     const btnSubmitClass = classNames({
       'btn': true,
-      'btn-primary': true,
-      'disabled': invalid || false
+      'btn-primary': true
     });
 
     return (
-      <button className={btnSubmitClass} onClick={onClick}>
+      <button {...this.props} className={btnSubmitClass} onClick={onClick}>
         {!submitting && <i className="fa fa-key"/>}
         {submitting && <i className="fa fa-cog fa-spin"/>} {label}
       </button>

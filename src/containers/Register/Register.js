@@ -26,8 +26,10 @@ const validate = values => {
 
 const asyncValidate = (values, dispatch, _props) => {
   const propToValidate = _props.form._active;
-  if (values[propToValidate]) validating[[propToValidate]] = true
+  Object.keys(values).forEach((key) => { if (values[key] && values[key].length < 3) delete values[key] })
   return new Promise((resolve, reject) => {
+    if (!Object.keys(values).length) return resolve();
+    validating[[propToValidate]] = true
     dispatch(validateParams(values))
       .then(response => {
         validating[[propToValidate]] = false
@@ -36,8 +38,8 @@ const asyncValidate = (values, dispatch, _props) => {
         return resolve();
       })
       .catch(err => reject(err))
-  })
-}
+  }
+)}
 
 @connect(state => ({validate: state.validate}), {pushState})
 export default class Register extends Component {
@@ -87,12 +89,13 @@ export default class Register extends Component {
         <h1><span className="fa fa-user-plus"></span> Sign up</h1>
         <div className="col-sm-6 col-sm-offset-3">
           <form className="login-form" onSubmit={this.submitRegister}>
-            <ValidatedFormInput field={username} fieldProps={ {name: 'username'} } validating={validating.username} spinnerOptions={ {top: '18px'} } />
-            <ValidatedFormInput field={email} fieldProps={ {name: 'email'} } validating={validating.email} spinnerOptions={ {top: '67px'} } />
-            <ValidatedFormInput field={password} fieldProps={ {name: 'password'} } validating={validating.password}  />
+            <ValidatedFormInput field={username}  validating={validating.username} spinnerOptions={ {top: '18px'} }/>
+            <ValidatedFormInput field={email} validating={validating.email} spinnerOptions={ {top: '67px'} }/>
+            <ValidatedFormInput type="password" field={password} />
             {error && <div>{error}</div>}
             <div>
-              <SubmitButton label="Register" submitting={submitting} invalid={invalid} onClick={handleSubmit(this.submitRegister)} />
+              <SubmitButton label="Register" submitting={submitting} invalid={invalid}
+                            onClick={handleSubmit(this.submitRegister)}/>
               <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
           </form>

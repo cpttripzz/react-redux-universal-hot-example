@@ -5,17 +5,15 @@ import { reduxForm } from 'redux-form';
 import {connect} from 'react-redux';
 import { pushState } from 'redux-router';
 import { login } from 'redux/modules/auth';
+let equals = require('shallow-equals')
+export const fields = ['username', 'password']
 
-export const fields = ['username', 'password'];
-
+let showSubmitErrors = true
 const validate = values => {
   const errors = {};
-  if (!values.username) {
-    errors.username = 'Required';
-  }
-  if (!values.password) {
-    errors.password = 'Required';
-  }
+  Object.keys(values).forEach(key => {
+    if (!values[key]) errors[key] = 'Required'
+  })
   return errors;
 };
 
@@ -41,7 +39,9 @@ export default class Login extends Component {
     return new Promise((resolve, reject) => {
       dispatch(login(values))
         .then(response => {
+
           if (response.error) {
+            console.log('err',response.error.message)
             reject({_error: response.error.message})
           } else {
             if (typeof window !== "undefined") {
@@ -54,6 +54,16 @@ export default class Login extends Component {
     })
   }
 
+
+  componentWillReceiveProps(nextProps) {
+    if( ! equals(this.props.values,nextProps.values) ) { showSubmitErrors = true }
+
+    if( showSubmitErrors && this.props.submitting && this.refs && this.refs.alertAuto) {
+      this.refs.alertAuto.setState({isVisible: true})
+      showSubmitErrors = false
+    }
+  }
+
   handleGoogleLogin(event) {
     event.preventDefault();
     window.location.href = 'http://bandaid.com:3030/oauth/google';
@@ -61,23 +71,22 @@ export default class Login extends Component {
 
   render() {
     const {
-      error, submitting, invalid,
+      error, submitting, invalid, pristine,
       fields: {username, password},
       resetForm, handleSubmit
       } = this.props;
     const styles = require('./Login.scss');
-
     return (
       <div className={styles.loginPage}>
         <h1><span className="fa  fa-sign-in"></span> Login</h1>
         <div className="col-sm-6 col-sm-offset-3">
           <form className="login-form" onSubmit={this.submitLogin}>
-            {error &&  <AlertAutoDismissable message={error} bsStyle="danger" ref="alertAuto"/>}
-            <ValidatedFormInput field={username} />
-            <ValidatedFormInput field={password} fieldProps={ {type: 'password'} }/>
+            { error && <AlertAutoDismissable message={error} bsStyle="danger" ref="alertAuto"/>}
+            <ValidatedFormInput field={username}/>
+            <ValidatedFormInput type="password" field={password}/>
             <div>
              <SubmitButton label="Login" submitting={submitting} invalid={invalid} onClick={handleSubmit(this.submitLogin)} />
-              <button className="btn btn-success" onClick={::this.handleGoogleLogin}><i
+              <button className="btn btn-success" onClick={this.handleGoogleLogin}><i
                 className="fa fa-google"/>{' '}Log
                 in with Google
               </button>

@@ -15,7 +15,7 @@ export default class ValidatedFormInput extends Component {
     return (
       <div>
         <div className={'form-group' + (field.touched && field.error ? ' has-error' : '')}>
-          <input type={(fieldProps && fieldProps.type) || 'text'} className={field.name +' form-control'}
+          <input {...this.props} className={field.name +' form-control'}
                  placeholder={(fieldProps && fieldProps.placeholder) || ucFirst(field.name)} {...field} />
           {validating && <Spinner options={spinnerOptions} />}
 
