@@ -5,7 +5,7 @@ import DocumentMeta from 'react-document-meta';
 import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
 import { pushState } from 'redux-router';
 import { Navbar } from  'components';
-
+let checkingAuth = false;
 
 @connect(
   state => ({
@@ -24,23 +24,28 @@ export default class App extends Component {
     store: PropTypes.object.isRequired
   };
 
+  constructor(props) {
+    super(props)
+    this.checkAuth = this.checkAuth.bind(this)
+  }
 
-  componentWillReceiveProps(nextProps) {
-    if ( (!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading) {
+  checkAuth() {
+    if ( (!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading && !checkingAuth) {
       if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined"
         && window.localStorage.token !== "undefined") {
-        this.context.store.dispatch(loadAuth());
+        checkingAuth = true
+        this.context.store.dispatch(loadAuth()).then( () => {
+          checkingAuth = false
+        });
       }
     }
   }
+  componentWillReceiveProps(nextProps) {
+    this.checkAuth()
+  }
 
   componentDidMount() {
-    if ( (!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading) {
-      if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined"
-        && window.localStorage.token !== "undefined") {
-        this.context.store.dispatch(loadAuth());
-      }
-    }
+    this.checkAuth()
   }
 
 
