@@ -23,7 +23,7 @@ This is a starter boilerplate app I've put together using the following technolo
 * [Webpack Dev Middleware](http://webpack.github.io/docs/webpack-dev-middleware.html)
 * [Webpack Hot Middleware](https://github.com/glenjamin/webpack-hot-middleware)
 * [Redux](https://github.com/rackt/redux)'s futuristic [Flux](https://facebook.github.io/react/blog/2014/05/06/flux.html) implementation
-* [Redux Dev Tools](https://github.com/rackt/redux-devtools) for next generation DX (developer experience). Watch [Dan Abramov's talk](https://www.youtube.com/watch?v=xsSnOQynTHs).
+* [Redux Dev Tools](https://github.com/gaearon/redux-devtools) for next generation DX (developer experience). Watch [Dan Abramov's talk](https://www.youtube.com/watch?v=xsSnOQynTHs).
 * [Redux Router](https://github.com/rackt/redux-router) Keep your router state in your Redux store
 * [ESLint](http://eslint.org) to maintain a consistent code style
 * [redux-form](https://github.com/erikras/redux-form) to manage form state in Redux
@@ -58,6 +58,8 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 - <kbd>Ctrl+H</kbd> Toggle DevTools Dock
 - <kbd>Ctrl+Q</kbd> Move Dock Position
 - see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
+
+If you have the [Redux DevTools chrome extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) installed it will automatically be used on the client-side instead.
 
 ## Building and Running Production Server
 
