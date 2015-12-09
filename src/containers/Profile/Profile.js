@@ -5,6 +5,7 @@ import { reduxForm } from 'redux-form';
 import { postProfile} from 'redux/modules/profile';
 import {connect} from 'react-redux';
 import { pushState } from 'redux-router';
+import { isLoaded as profileLoaded, load as loadProfile } from 'redux/modules/profile';
 
 var classNames = require('classnames');
 var Loader = require('react-loader');
@@ -33,8 +34,16 @@ export default class Profile extends Component {
     resetForm: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
-    pushState: PropTypes.func.isRequired
   };
+
+  static fetchData(getState, dispatch) {
+    const promises = [];
+
+    if (!profileLoaded()) {
+      promises.push(dispatch(loadProfile()));
+    }
+    return Promise.all(promises);
+  }
 
   submitProfile(values, dispatch) {
     console.log('asdfdf');
@@ -88,6 +97,7 @@ export default reduxForm({
     fields,
   },
   state => ({ // mapStateToProps
-    initialValues: state.auth.user // will pull state into form's initialValues
-  })
+    initialValues: state.profile.data // will pull state into form's initialValues
+  }),
+  {load: loadProfile}
 )(Profile);

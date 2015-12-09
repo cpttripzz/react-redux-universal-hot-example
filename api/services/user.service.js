@@ -9,8 +9,8 @@ var jwt = require('jsonwebtoken');
 import { validateEntityProps, getValidateEntityErrors } from './validation.service'
 
 export function login(req) {
-  let username = req.body.username;
-  let password = req.body.password;
+  let { username, password } = req.body;
+
   var User = require('mongoose').model('User');
   return new Promise((resolve, reject) => {
     User.findOne({username: username}).then((user) => {
@@ -38,7 +38,9 @@ export function getUserDetails(user) {
     let authUser = {
       id: user.id,
       email: user.email,
-      username: user.username
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName
     };
   //function (users) { return users[0]; }
   //users => users[0]
@@ -104,15 +106,14 @@ export function getProfile(req) {
 }
 
 export function postProfile(req) {
-  var objectId = (require('mongoose').Types.ObjectId);
   const profile = Object.keys(req.body).filter((prop) => ['email','firstName', 'lastName'].indexOf(prop) >= 0 )
   return new Promise((resolve, reject) => {
     var User = require('mongoose').model('User');
     User.findById(req.user.id).then((user) => {
       profile.map((prop) => {
-        user[prop] = profile[prop]
+        user[prop] = req.body[prop]
       })
-        user.save( (err)  =>{
+        user.update( (err)  =>{
           if (err) return handleError(err);
           resolve(user)
         });
@@ -134,7 +135,7 @@ export function checkProps(props){
       .then(userProps  =>  userProps.filter((prop) =>  prop !== false))
       .then(userPropsNonUnique => {
         let objProps = {}
-        if (userPropsNonUnique.length === 0) return resolve()
+        if (!userPropsNonUnique.length) return resolve()
         userPropsNonUnique.forEach(prop  => {
           for (let propName in prop){
             objProps[propName] = prop[propName]

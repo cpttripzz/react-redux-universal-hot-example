@@ -12,10 +12,6 @@ export default function clientMiddleware(client) {
 
       const [REQUEST, SUCCESS, FAILURE] = types;
       next({...rest, type: REQUEST});
-      const state = getState();
-      if (state && state.auth && state.auth.user && state.auth.user.token) {
-        client.setHeaders([{type: 'x-access-token', value: state.auth.user.token}]);
-      }
       return promise(client).then(
         (result) => next({...rest, result, type: SUCCESS}),
         (error) => next({...rest, error, type: FAILURE})

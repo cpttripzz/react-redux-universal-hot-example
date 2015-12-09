@@ -1,11 +1,11 @@
-const LOAD = 'redux-example/users/LOAD';
-const LOAD_SUCCESS = 'redux-example/users/LOAD_SUCCESS';
-const LOAD_FAIL = 'redux-example/users/LOAD_FAIL';
-const EDIT_START = 'redux-example/users/EDIT_START';
-const EDIT_STOP = 'redux-example/users/EDIT_STOP';
-const SAVE = 'redux-example/users/SAVE';
-const SAVE_SUCCESS = 'redux-example/users/SAVE_SUCCESS';
-const SAVE_FAIL = 'redux-example/users/SAVE_FAIL';
+const LOAD_USERS = 'redux-example/users/LOAD_USERS';
+const LOAD_USERS_SUCCESS = 'redux-example/users/LOAD_USERS_SUCCESS';
+const LOAD_USERS_FAIL = 'redux-example/users/LOAD_USERS_FAIL';
+const EDIT_USERS_START = 'redux-example/users/EDIT_USERS_START';
+const EDIT_USERS_STOP = 'redux-example/users/EDIT_USERS_STOP';
+const SAVE_USERS = 'redux-example/users/SAVE_USERS';
+const SAVE_USERS_SUCCESS = 'redux-example/users/SAVE_USERS_SUCCESS';
+const SAVE_USERS_FAIL = 'redux-example/users/SAVE_USERS_FAIL';
 const initialState = {
   loaded: false,
   users: false
@@ -13,26 +13,26 @@ const initialState = {
 
 export default function users(state = initialState, action = {}) {
   switch (action.type) {
-    case LOAD:
+    case LOAD_USERS:
       return {
         ...state,
         loading: true
       };
-    case LOAD_SUCCESS:
+    case LOAD_USERS_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
         users: action.result
       };
-    case LOAD_FAIL:
+    case LOAD_USERS_FAIL:
       return {
         ...state,
         loading: false,
         loaded: false,
         error: action.error
       };
-    case EDIT_START:
+    case EDIT_USERS_START:
       return {
         ...state,
         editing: {
@@ -40,7 +40,7 @@ export default function users(state = initialState, action = {}) {
           [action.id]: true
         }
       };
-    case EDIT_STOP:
+    case EDIT_USERS_STOP:
       return {
         ...state,
         editing: {
@@ -48,9 +48,9 @@ export default function users(state = initialState, action = {}) {
           [action.id]: false
         }
       };
-    case SAVE:
+    case SAVE_USERS:
       return state; // 'saving' flag handled by redux-form
-    case SAVE_SUCCESS:
+    case SAVE_USERS_SUCCESS:
       const data = [...state.data];
       data[action.result.id - 1] = action.result;
       return {
@@ -65,7 +65,7 @@ export default function users(state = initialState, action = {}) {
           [action.id]: null
         }
       };
-    case SAVE_FAIL:
+    case SAVE_USERS_FAIL:
       return typeof action.error === 'string' ? {
         ...state,
         saveError: {
@@ -84,7 +84,7 @@ export function isLoaded(globalState) {
 
 export function load() {
   return {
-    types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
+    types: [LOAD_USERS, LOAD_USERS_SUCCESS, LOAD_USERS_FAIL],
     promise: (client) => client.get('/users') // params not used, just shown as demonstration
   };
 }
