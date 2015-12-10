@@ -38,26 +38,26 @@ export function getUserDetails(user) {
     let authUser = {
       id: user.id,
       email: user.email,
-    username: user.username,
-    firstName: user.firstName,
-    lastName: user.lastName
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName
     };
-  //function (users) { return users[0]; }
-  //users => users[0]
-  nodeAcl.userRoles(user.id)
-    .then((roles) => {
-        authUser['roles'] = roles;
-        return nodeAcl.whatResources(roles)
-      }
-    )
-    .then((resources) => {
-      authUser['resources'] = resources;
-      authUser["token"] = jwt.sign(authUser, config.jwtSecret, {
-        expiresIn: 1440 * 60 * 7// expires in 24 hours * 7
-      });
-      resolve(authUser);
-    })
-    .catch((err) => reject(getErrorMessage(err)))
+    //function (users) { return users[0]; }
+    //users => users[0]
+    nodeAcl.userRoles(user.id)
+      .then((roles) => {
+          authUser['roles'] = roles;
+          return nodeAcl.whatResources(roles)
+        }
+      )
+      .then((resources) => {
+        authUser['resources'] = resources;
+        authUser["token"] = jwt.sign(authUser, config.jwtSecret, {
+          expiresIn: 1440 * 60 * 7// expires in 24 hours * 7
+        });
+        resolve(authUser);
+      })
+      .catch((err) => reject(getErrorMessage(err)))
   })
 }
 export function getUsers(req, res) {
@@ -85,20 +85,11 @@ export function getUsers(req, res) {
   })
 }
 
-export function getProfile(req) {
-  console.log(req.user.id);
-  var objectId = (require('mongoose').Types.ObjectId);
-
+export function getProfile(id) {
   return new Promise((resolve, reject) => {
     var User = require('mongoose').model('User');
-    User.findById(req.user.id).then((user) => {
-        var u = {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email
-        };
-        console.log('fff',user)
+    User.findById(id).select('id firstName lastName email').lean().then((user) => {
+        console.log('getProfile', user)
         resolve(user)
       }
       , (err) => reject(err))
@@ -106,16 +97,16 @@ export function getProfile(req) {
 }
 
 export function postProfile(req) {
-  const profile = Object.keys(req.body).filter((prop) => ['email','firstName', 'lastName'].indexOf(prop) >= 0 )
   return new Promise((resolve, reject) => {
     var User = require('mongoose').model('User');
     User.findById(req.user.id).then((user) => {
-      profile.map((prop) => {
-        user[prop] = req.body[prop]
-      })
-        user.update( (err)  =>{
+        ['email', 'firstName', 'lastName'].map((prop) => {
+          user[prop] = req.body[prop]
+        })
+        user.save((err)  => {
           if (err) return handleError(err);
-          resolve(user)
+
+          resolve(getProfile(user.id))
         });
       }
       , (err) => reject(err))
@@ -125,11 +116,11 @@ export function postProfile(req) {
 export function exists(req) {
   return new Promise((resolve, reject) => {
     var User = require('mongoose').model('User');
-    User.findOne(req).then((result) =>  resolve( result !== null ? {[ Object.keys(req)[0]] : Object.keys(req)[0] + ' already exists'  } : false),
+    User.findOne(req).then((result) =>  resolve(result !== null ? {[ Object.keys(req)[0]]: Object.keys(req)[0] + ' already exists'} : false),
       (err) => reject(err))
   })
 }
-export function checkProps(props){
+export function checkProps(props) {
   return new Promise((resolve, reject) => {
     propsUnique(props)
       .then(userProps  =>  userProps.filter((prop) =>  prop !== false))
@@ -137,7 +128,7 @@ export function checkProps(props){
         let objProps = {}
         if (!userPropsNonUnique.length) return resolve()
         userPropsNonUnique.forEach(prop  => {
-          for (let propName in prop){
+          for (let propName in prop) {
             objProps[propName] = prop[propName]
           }
         })
@@ -147,7 +138,7 @@ export function checkProps(props){
   })
 }
 var getErrorMessage = function (err) {
-  console.log("getErrorMessage",err);
+  console.log("getErrorMessage", err);
   let message = '';
   if (err.code) {
     switch (err.code) {
@@ -167,21 +158,21 @@ var getErrorMessage = function (err) {
 export function register(req, res, next) {
   return new Promise((resolve, reject) => {
     newUser(req.body).then((user) => {
-      req.login(user, (err) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(user);
+        req.login(user, (err) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(user);
+        })
       })
-    })
       .catch((err) => reject(err))
 
   })
 }
-export function propsUnique(objUser){
+export function propsUnique(objUser) {
   return Promise.all(Object.keys(objUser)
-    .filter((prop) => ['email','username'].indexOf(prop) >= 0 )
-    .map( (prop) => exists({[prop]: objUser[prop]}) )
+    .filter((prop) => ['email', 'username'].indexOf(prop) >= 0)
+    .map((prop) => exists({[prop]: objUser[prop]}))
   )
 }
 export function newUser(user) {
@@ -192,9 +183,9 @@ export function newUser(user) {
     validateEntityProps('user', user)
       .then((user) => {
         propsUnique(user)
-          .then(userProps  =>  userProps.filter( (prop) =>  prop !== false ))
+          .then(userProps  =>  userProps.filter((prop) =>  prop !== false))
           .then(userPropsNonUnique => {
-            if(userPropsNonUnique.length) return reject(userPropsNonUnique)
+            if (userPropsNonUnique.length) return reject(userPropsNonUnique)
             const objUser = new User(user)
             objUser.save(user).then(
               (user) => resolve(getUserDetails(user)),

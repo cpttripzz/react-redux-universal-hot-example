@@ -46,19 +46,16 @@ export default class Profile extends Component {
   }
 
   submitProfile(values, dispatch) {
-    console.log('asdfdf');
     return new Promise((resolve, reject) => {
       dispatch(postProfile(values))
         .then(response => {
+          resolve(response)
           if (response.error) {
             reject(response.error)
           }
         })
         .catch(err => reject(err))
     })
-
-
-
   }
 
   render() {

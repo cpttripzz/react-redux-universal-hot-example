@@ -36,11 +36,14 @@ export default function profile(state = initialState, action = {}) {
     case SAVE_PROFILE_SUCCESS:
       return {
         ...state,
-        data: data,
+        submitting: false,
+        data: action.result
       };
     case SAVE_PROFILE_FAIL:
       return {
         ...state,
+        submitting: false,
+        error: action.error
       }
     default:
       return state;
