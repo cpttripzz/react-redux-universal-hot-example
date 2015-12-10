@@ -149,9 +149,7 @@ export function register(req, res, next) {
   return new Promise((resolve, reject) => {
     newUser(req.body).then((user) => {
         req.login(user, (err) => {
-          if (err) {
-            reject(err);
-          }
+          if (err) { reject(err) };
           resolve(user);
         })
       })
@@ -206,10 +204,10 @@ export function saveOAuthUserProfile(req, profile, done) {
     function (err, user) {
       if (err) {
         return done(err);
-      }
-      else {
+      } else {
         if (!user) {
           var possibleUsername = profile.username || ((profile.email) ? profile.email.split('@')[0] : '');
+
           User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
             profile.username = availableUsername;
             user = new User(profile);
@@ -219,40 +217,20 @@ export function saveOAuthUserProfile(req, profile, done) {
                 var message = _this.getErrorMessage(err);
                 console.log(message);
               }
-              let roles = ['user'];
-              nodeAcl.addUserRoles(user.id, roles, function (err) {
-                if (err) {
-                  console.log(err);
-                }
-                req.user = {
-                  id: user.id,
-                  email: user.email || null,
-                  username: possibleUsername,
-                  role: roles
-                };
-                return done(err, user);
-              });
+              req.user = {
+                id: user.id,
+                email: user.email || null,
+                username: possibleUsername,
+              };
+              return done(err, user);
             });
-          });
-        }
-        else {
-          nodeAcl.userRoles(user.id, function (err, roles) {
-            if (err) {
-              console.log('node acl errrrrror', err);
-            }
-            //req.session.user = {
-            //	id: user.id,
-            //	email: user.email || null,
-            //	username: possibleUsername,
-            //	role: roles
-            //};
-          });
+          })
+        } else {
           return done(err, user);
         }
       }
-    }
-  );
-};
+    })
+}
 
 
 //exports.create = function(req, res, next) {

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { pushState } from 'redux-router';
+import cookie from '../../../utils/cookie';
 
 @connect( state => ({}), {pushState})
 export default class OauthToken extends Component {
@@ -10,10 +11,8 @@ export default class OauthToken extends Component {
 
   componentDidMount() {
     if (this.props.routeParams.token) {
-      if (typeof window !== "undefined") {
-        window.localStorage.token = this.props.routeParams.token;
-        this.props.pushState(null, '/profile');
-      }
+      cookie.setToken(this.props.routeParams.token)
+      this.props.pushState(null, '/profile');
     }
   }
 
