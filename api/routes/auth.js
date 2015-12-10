@@ -66,8 +66,9 @@ module.exports = function(app) {
     app.post('/loadAuth', (req, res) => {
         // check header or url parameters or post parameters for token
 
-        var token = req.body.token || req.params.token || req.headers['x-access-token'];
+        var token = req.body.token || req.params.token || req.headers['x-access-token'] || req.cookies.token
         // decode token
+        console.log('token',token)
         if (token) {
 
             // verifies secret and checks exp
@@ -88,7 +89,9 @@ module.exports = function(app) {
     app.use(function(req, res, next) {
 
         // check header or url parameters or post parameters for token
-        var token = req.body.token || req.params.token || req.headers['x-access-token'];
+        var token = req.body.token || req.params.token || req.headers['x-access-token'] || req.cookies.token;
+        console.log('token',token)
+
         // decode token
         if (token) {
 

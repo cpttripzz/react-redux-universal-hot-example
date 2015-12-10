@@ -5,6 +5,8 @@ var db = mongoose();
 import express from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+
 import config from './config';
 import PrettyError from 'pretty-error';
 import passport from 'passport';
@@ -21,7 +23,7 @@ if (app.get('env') == 'production') {
 } else {
   app.use(morgan(':method :url :status :req[header] :body'));
 }
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());

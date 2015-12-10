@@ -59,16 +59,15 @@ export default class Register extends Component {
 
   submitRegister(values, dispatch, _props) {
     const errors = {};
-    debugger;
     return new Promise((resolve, reject) => {
       dispatch(register(values))
         .then(response => {
           if (response.error) {
             reject(response.error)
           } else {
-            if (typeof window !== "undefined") {
-              window.localStorage.token = response.result.token
-            }
+            //if (typeof window !== "undefined") {
+            //  window.localStorage.token = response.result.token
+            //}
             this.props.pushState(null, '/')
           }
         })

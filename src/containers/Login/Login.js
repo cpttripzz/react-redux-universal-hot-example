@@ -8,6 +8,8 @@ import { login } from 'redux/modules/auth';
 let equals = require('shallow-equals')
 export const fields = ['username', 'password']
 
+import cookie from '../../../utils/cookie';
+
 let showSubmitErrors = true
 const validate = values => {
   const errors = {};
@@ -45,10 +47,17 @@ export default class Login extends Component {
             reject({_error: response.error.message})
           } else {
             if (typeof window !== "undefined") {
-              window.localStorage.token = response.result.token
+                const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+                cookie.set({
+                  name: 'token',
+                  value: response.result.token,
+                  expires
+                });
+              }
             }
             this.props.pushState(null, '/')
-          }
+
         })
         .catch(err => reject(err))
     })

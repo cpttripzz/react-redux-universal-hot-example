@@ -18,7 +18,6 @@ export default function profile(state = initialState, action = {}) {
         loading: true
       };
     case LOAD_PROFILE_SUCCESS:
-      debugger
       return {
         ...state,
         loading: false,

@@ -26,20 +26,18 @@ export default class App extends Component {
 
   constructor(props) {
     super(props)
-    this.checkAuth = this.checkAuth.bind(this)
+    //this.checkAuth = this.checkAuth.bind(this)
   }
 
   checkAuth() {
-    if ( (!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading && !checkingAuth) {
-      if (typeof window !== "undefined" && typeof window.localStorage.token !== "undefined"
-        && window.localStorage.token !== "undefined") {
-        checkingAuth = true
-        this.context.store.dispatch(loadAuth()).then( () => {
-          checkingAuth = false
-        });
-      }
+    if ((!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading && !checkingAuth) {
+      checkingAuth = true
+      this.context.store.dispatch(loadAuth()).then(() => {
+        checkingAuth = false
+      });
     }
   }
+
   componentWillReceiveProps(nextProps) {
     this.checkAuth()
   }
@@ -50,6 +48,7 @@ export default class App extends Component {
 
 
   render() {
+    console.log(this.props)
     const {user} = this.props;
     const styles = require('./App.scss');
     return (

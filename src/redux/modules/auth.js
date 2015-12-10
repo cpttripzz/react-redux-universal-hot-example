@@ -79,10 +79,10 @@ export function isLoaded(globalState) {
 }
 //function getJsonWebToken()
 export function load() {
-  let token = null;
-  if (typeof window !== "undefined" && window.localStorage.token) {
-    token = window.localStorage.token;
-  }
+  import cookie from '../../../utils/cookie';
+
+  const token = cookie.get('token')
+  if(!token) return
     return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
     //promise: (client) => client.get('/loadAuth')
