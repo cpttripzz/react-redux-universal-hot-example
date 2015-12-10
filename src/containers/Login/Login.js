@@ -5,10 +5,10 @@ import { reduxForm } from 'redux-form';
 import {connect} from 'react-redux';
 import { pushState } from 'redux-router';
 import { login } from 'redux/modules/auth';
+import cookie from '../../../utils/cookie';
 let equals = require('shallow-equals')
 export const fields = ['username', 'password']
 
-import cookie from '../../../utils/cookie';
 
 let showSubmitErrors = true
 const validate = values => {
@@ -41,23 +41,13 @@ export default class Login extends Component {
     return new Promise((resolve, reject) => {
       dispatch(login(values))
         .then(response => {
-
           if (response.error) {
-            console.log('err',response.error.message)
             reject({_error: response.error.message})
           } else {
-            if (typeof window !== "undefined") {
-                const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-                cookie.set({
-                  name: 'token',
-                  value: response.result.token,
-                  expires
-                });
-              }
-            }
+            cookie.setToken(response.result.token)
             this.props.pushState(null, '/')
-
+            resolve()
+          }
         })
         .catch(err => reject(err))
     })
@@ -65,9 +55,11 @@ export default class Login extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    if( ! equals(this.props.values,nextProps.values) ) { showSubmitErrors = true }
+    if (!equals(this.props.values, nextProps.values)) {
+      showSubmitErrors = true
+    }
 
-    if( showSubmitErrors && this.props.submitting && this.refs && this.refs.alertAuto) {
+    if (showSubmitErrors && this.props.submitting && this.refs && this.refs.alertAuto) {
       this.refs.alertAuto.setState({isVisible: true})
       showSubmitErrors = false
     }
@@ -94,7 +86,8 @@ export default class Login extends Component {
             <ValidatedFormInput field={username}/>
             <ValidatedFormInput type="password" field={password}/>
             <div>
-             <SubmitButton label="Login" submitting={submitting} invalid={invalid} onClick={handleSubmit(this.submitLogin)} />
+              <SubmitButton label="Login" submitting={submitting} invalid={invalid}
+                            onClick={handleSubmit(this.submitLogin)}/>
               <button className="btn btn-success" onClick={this.handleGoogleLogin}><i
                 className="fa fa-google"/>{' '}Log
                 in with Google

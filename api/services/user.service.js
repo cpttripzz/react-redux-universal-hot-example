@@ -6,6 +6,7 @@ mongoose.Promise = Promise;
 var nodeAcl = new acl(new acl.mongodbBackend(mongoose.connection.db));
 var config = require('../config');
 var jwt = require('jsonwebtoken');
+import { pick } from '../../utils/objUtils'
 import { validateEntityProps, getValidateEntityErrors } from './validation.service'
 
 export function login(req) {
@@ -89,7 +90,6 @@ export function getProfile(id) {
   return new Promise((resolve, reject) => {
     var User = require('mongoose').model('User');
     User.findById(id).select('id firstName lastName email').lean().then((user) => {
-        console.log('getProfile', user)
         resolve(user)
       }
       , (err) => reject(err))
@@ -98,18 +98,8 @@ export function getProfile(id) {
 
 export function postProfile(req) {
   return new Promise((resolve, reject) => {
-    var User = require('mongoose').model('User');
-    User.findById(req.user.id).then((user) => {
-        ['email', 'firstName', 'lastName'].map((prop) => {
-          user[prop] = req.body[prop]
-        })
-        user.save((err)  => {
-          if (err) return handleError(err);
-
-          resolve(getProfile(user.id))
-        });
-      }
-      , (err) => reject(err))
+    const profile = pick(req.body, 'email', 'firstName', 'lastName')
+    User.findOneAndUpdate({_id: req.user.id},profile).then((user) => resolve(getProfile(user.id)), (err) => reject(err))
   })
 }
 

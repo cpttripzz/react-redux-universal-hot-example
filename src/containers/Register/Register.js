@@ -5,6 +5,7 @@ import { reduxForm } from 'redux-form';
 import { validate as validateParams, register} from 'redux/modules/register';
 import {connect} from 'react-redux';
 import { pushState } from 'redux-router';
+import cookie from '../../../utils/cookie';
 
 var classNames = require('classnames');
 var Loader = require('react-loader');
@@ -26,20 +27,23 @@ const validate = values => {
 
 const asyncValidate = (values, dispatch, _props) => {
   const propToValidate = _props.form._active;
-  Object.keys(values).forEach((key) => { if (values[key] && values[key].length < 3) delete values[key] })
+  Object.keys(values).forEach((key) => {
+    if (values[key] && values[key].length < 3) delete values[key]
+  })
   return new Promise((resolve, reject) => {
-    if (!Object.keys(values).length) return resolve();
-    validating[[propToValidate]] = true
-    dispatch(validateParams(values))
-      .then(response => {
-        validating[[propToValidate]] = false
-        if (response.error) return reject(response.error);
+      if (!Object.keys(values).length) return resolve();
+      validating[[propToValidate]] = true
+      dispatch(validateParams(values))
+        .then(response => {
+          validating[[propToValidate]] = false
+          if (response.error) return reject(response.error);
 
-        return resolve();
-      })
-      .catch(err => reject(err))
-  }
-)}
+          return resolve();
+        })
+        .catch(err => reject(err))
+    }
+  )
+}
 
 @connect(state => ({validate: state.validate}), {pushState})
 export default class Register extends Component {
@@ -62,14 +66,15 @@ export default class Register extends Component {
     return new Promise((resolve, reject) => {
       dispatch(register(values))
         .then(response => {
+
           if (response.error) {
             reject(response.error)
           } else {
-            //if (typeof window !== "undefined") {
-            //  window.localStorage.token = response.result.token
-            //}
+            cookie.setToken(response.result.token)
             this.props.pushState(null, '/')
+            resolve()
           }
+
         })
         .catch(err => reject(err))
     })
@@ -88,9 +93,9 @@ export default class Register extends Component {
         <h1><span className="fa fa-user-plus"></span> Sign up</h1>
         <div className="col-sm-6 col-sm-offset-3">
           <form className="login-form" onSubmit={this.submitRegister}>
-            <ValidatedFormInput field={username}  validating={validating.username} spinnerOptions={ {top: '18px'} }/>
+            <ValidatedFormInput field={username} validating={validating.username} spinnerOptions={ {top: '18px'} }/>
             <ValidatedFormInput field={email} validating={validating.email} spinnerOptions={ {top: '67px'} }/>
-            <ValidatedFormInput type="password" field={password} />
+            <ValidatedFormInput type="password" field={password}/>
             {error && <div>{error}</div>}
             <div>
               <SubmitButton label="Register" submitting={submitting} invalid={invalid}

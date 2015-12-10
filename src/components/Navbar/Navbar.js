@@ -25,10 +25,8 @@ export default class Navbar extends Component {
 
   handleLogout(event) {
     event.preventDefault();
-    if (typeof window !== "undefined") {
-      delete window.localStorage.token
-    }
-    this.props.logout()
+    this.props.logout().then(() => this.props.pushState(null, '/'))
+
   }
 
 

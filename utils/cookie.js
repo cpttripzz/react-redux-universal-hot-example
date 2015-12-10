@@ -30,6 +30,15 @@ let cookie = {
     var matches = document.cookie.match(re);
 
     return matches ? decodeURIComponent(matches[1]) : undefined;
+  },
+  setToken(token){
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    this.set({
+      name: 'token',
+      value: token,
+      expires
+    });
   }
 };
 

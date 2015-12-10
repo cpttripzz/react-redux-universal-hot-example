@@ -8,6 +8,8 @@ const LOGOUT = 'redux-example/auth/LOGOUT';
 const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
 const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
 
+import cookie from '../../../utils/cookie';
+
 const initialState = {
   loaded: false
 };
@@ -79,7 +81,6 @@ export function isLoaded(globalState) {
 }
 //function getJsonWebToken()
 export function load() {
-  import cookie from '../../../utils/cookie';
 
   const token = cookie.get('token')
   if(!token) return
@@ -105,6 +106,7 @@ export function login(values) {
 }
 
 export function logout() {
+  cookie.unset('token')
   return {
     types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
     promise: (client) => client.get('/logout')

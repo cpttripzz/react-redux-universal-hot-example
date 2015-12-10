@@ -1,3 +1,6 @@
 export function pick(o, ...fields) {
-  return Object.assign({}, ...(for (p of fields) {[p]: o[p]}) )
+  return fields.reduce((a, x) => {
+    if(o.hasOwnProperty(x)) a[x] = o[x];
+    return a;
+  }, {});
 }

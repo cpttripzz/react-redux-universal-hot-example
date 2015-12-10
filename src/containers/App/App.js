@@ -26,7 +26,7 @@ export default class App extends Component {
 
   constructor(props) {
     super(props)
-    //this.checkAuth = this.checkAuth.bind(this)
+    this.checkAuth = this.checkAuth.bind(this)
   }
 
   checkAuth() {
@@ -48,7 +48,6 @@ export default class App extends Component {
 
 
   render() {
-    console.log(this.props)
     const {user} = this.props;
     const styles = require('./App.scss');
     return (

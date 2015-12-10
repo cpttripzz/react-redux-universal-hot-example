@@ -28,6 +28,12 @@ UserSchema.pre('save',
     }
 );
 
+// Pre hook for `findOneAndUpdate`
+UserSchema.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
 UserSchema.methods.authenticate = function(password) {
     var md5 = crypto.createHash('md5');
     md5 = md5.update(password).digest('hex');
