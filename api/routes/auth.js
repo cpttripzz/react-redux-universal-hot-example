@@ -94,7 +94,7 @@ module.exports = function (app) {
   )
 
   app.get('/profile', (req, res) =>
-    getProfile(req.user.id).then((user) => res.json(user))
+    getProfile(req.user._id).then((user) => res.json(user))
       .catch((err) => res.json(err))
   )
 

@@ -17,12 +17,17 @@ module.exports = function () {
       var providerData = profile._json;
       providerData.token = token;
       providerData.tokenSecret = tokenSecret;
+      let photo =''
+      if (profile.photos)  photo = profile.photos[ Object.keys(profile.photos)[0] ]['value']
+
       var providerUserProfile = {
-        name: profile.displayName,
-        username: profile.username,
+        username: profile.displayName ? profile.displayName.replace(/\s+/g, '.').toLowerCase() : '',
+        firstName: (profile.name || profile.name.givenName) ? profile.name.givenName : '',
+        lastName: (profile.name || profile.name.familyName) ? profile.name.familyName : '',
+        email: (profile.email) ? profile.email : '',
         provider: 'google',
         providerId: profile.id,
-        providerData: providerData
+        photo: photo || ''
       };
       saveOAuthUserProfile(req, providerUserProfile, done);
     }));

@@ -88,6 +88,7 @@ export function getUsers(req, res) {
 
 export function getProfile(id) {
   return new Promise((resolve, reject) => {
+    console.log('id',id)
     var User = require('mongoose').model('User');
     User.findById(id).select('id firstName lastName email').lean().then((user) => {
         resolve(user)
@@ -99,7 +100,7 @@ export function getProfile(id) {
 export function postProfile(req) {
   return new Promise((resolve, reject) => {
     const profile = pick(req.body, 'email', 'firstName', 'lastName')
-    User.findOneAndUpdate({_id: req.user.id},profile).then((user) => resolve(getProfile(user.id)), (err) => reject(err))
+    User.findOneAndUpdate({_id: req.user.id}, profile).then((user) => resolve(getProfile(user.id)), (err) => reject(err))
   })
 }
 
@@ -149,7 +150,10 @@ export function register(req, res, next) {
   return new Promise((resolve, reject) => {
     newUser(req.body).then((user) => {
         req.login(user, (err) => {
-          if (err) { reject(err) };
+          if (err) {
+            reject(err)
+          }
+          ;
           resolve(user);
         })
       })
@@ -182,16 +186,6 @@ export function newUser(user) {
           })
       })
       .catch((err) => reject(getErrorMessage(err)))
-
-    //user.save()
-    //  .then((user) => {
-    //    console.log(user);
-    //    nodeAcl.addUserRoles(user.id, params.roles || 'user').then(
-    //      (roles) => resolve(user),
-    //      (err) => reject(err)
-    //    )
-    //  })
-    //  .catch((err) => reject(err))
   })
 }
 
@@ -206,10 +200,10 @@ export function saveOAuthUserProfile(req, profile, done) {
         return done(err);
       } else {
         if (!user) {
-          var possibleUsername = profile.username || ((profile.email) ? profile.email.split('@')[0] : '');
-
-          User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
-            profile.username = availableUsername;
+          //  ['username','email'].forEach( (prop) => {
+          //    exists({[prop]: profile[prop]}).then((propExists) => { if(propExists) profile[prop] = '' })
+          //  })
+          console.log('pppp',profile)
             user = new User(profile);
 
             user.save(function (err) {
@@ -220,80 +214,13 @@ export function saveOAuthUserProfile(req, profile, done) {
               req.user = {
                 id: user.id,
                 email: user.email || null,
-                username: possibleUsername,
+                username: user.username
               };
               return done(err, user);
-            });
-          })
+            })
         } else {
           return done(err, user);
         }
       }
     })
 }
-
-
-//exports.create = function(req, res, next) {
-//	var user = new User(req.body);
-//	user.save(function(err) {
-//		if (err) {
-//			return next(err);
-//		}
-//		else {
-//			res.json(user);
-//		}
-//	});
-//};
-//
-//exports.list = function(req, res, next) {
-//	User.find({}, function(err, users) {
-//		if (err) {
-//			return next(err);
-//		}
-//		else {
-//			res.json(users);
-//		}
-//	});
-//};
-//
-//exports.read = function(req, res) {
-//	res.json(req.user);
-//};
-//
-//exports.userByID = function(req, res, next, id) {
-//	User.findOne({
-//			_id: id
-//		},
-//		function(err, user) {
-//			if (err) {
-//				return next(err);
-//			}
-//			else {
-//				req.user = user;
-//				next();
-//			}
-//		}
-//	);
-//};
-//
-//exports.update = function(req, res, next) {
-//	User.findByIdAndUpdate(req.user.id, req.body, function(err, user) {
-//		if (err) {
-//			return next(err);
-//		}
-//		else {
-//			res.json(user);
-//		}
-//	});
-//};
-//
-//exports.delete = function(req, res, next) {
-//	req.user.remove(function(err) {
-//		if (err) {
-//			return next(err);
-//		}
-//		else {
-//			res.json(req.user);
-//		}
-//	})
-//};
