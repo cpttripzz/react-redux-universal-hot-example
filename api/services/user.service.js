@@ -6,9 +6,10 @@ mongoose.Promise = Promise;
 var nodeAcl = new acl(new acl.mongodbBackend(mongoose.connection.db));
 var config = require('../config');
 var jwt = require('jsonwebtoken');
+import { removeStringBeforeLastInstance } from '../../utils/stringUtils'
 import { pick } from '../../utils/objUtils'
 import { validateEntityProps, getValidateEntityErrors } from './validation.service'
-
+import { download } from '../../utils/fileUtils'
 export function login(req) {
   let { username, password } = req.body;
 
@@ -216,6 +217,13 @@ export function saveOAuthUserProfile(req, profile, done) {
                 email: user.email || null,
                 username: user.username
               };
+              if(user.photo){
+                let photo = user.photo.split('?')[0]
+                let ext = removeStringBeforeLastInstance(photo,'.')
+                download(photo,__dirname + '/../../images', user.id +'.' + ext, () => {
+                  console.log('downloaded', user.photo);
+                });
+              }
               return done(err, user);
             })
         } else {
