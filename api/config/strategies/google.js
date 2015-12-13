@@ -18,7 +18,7 @@ module.exports = function () {
       providerData.token = token;
       providerData.tokenSecret = tokenSecret;
       let photo =''
-      if (profile.photos)  photo = profile.photos[ Object.keys(profile.photos)[0] ]['value']
+      if (Object.keys(profile.photos).length)  photo = profile.photos[ Object.keys(profile.photos)[0] ]['value']
 
       var providerUserProfile = {
         username: profile.displayName ? profile.displayName.replace(/\s+/g, '.').toLowerCase() : '',
@@ -27,7 +27,7 @@ module.exports = function () {
         email: (profile.email) ? profile.email : '',
         provider: 'google',
         providerId: profile.id,
-        photo: photo || ''
+        photo: photo || false
       };
       saveOAuthUserProfile(req, providerUserProfile, done);
     }));

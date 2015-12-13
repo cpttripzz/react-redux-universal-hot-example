@@ -27,6 +27,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/images', express.static('./images'));
 require('./routes/auth')(app);
 app.listen(config.apiPort);
 

@@ -66,7 +66,6 @@ export default class Register extends Component {
     return new Promise((resolve, reject) => {
       dispatch(register(values))
         .then(response => {
-
           if (response.error) {
             reject(response.error)
           } else {

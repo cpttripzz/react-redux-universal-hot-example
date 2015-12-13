@@ -30,7 +30,7 @@ export default class App extends Component {
   }
 
   checkAuth() {
-    if ((!this.props.user || Object.keys(this.props.user).length === 0) && this.props.auth.loaded === false && !this.props.auth.loading && !checkingAuth) {
+    if ((!this.props.user || !Object.keys(this.props.user).length) && !this.props.auth.loaded && !this.props.auth.loading && !checkingAuth) {
       checkingAuth = true
       this.context.store.dispatch(loadAuth()).then(() => {
         checkingAuth = false

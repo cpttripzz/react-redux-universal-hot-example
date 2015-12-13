@@ -38,7 +38,7 @@ export function getUserDetails(user) {
   return new Promise((resolve, reject) => {
 
     let authUser = {
-      id: user.id,
+      _id: user.id,
       email: user.email,
       username: user.username,
       firstName: user.firstName,
@@ -89,7 +89,7 @@ export function getUsers(req, res) {
 
 export function getProfile(id) {
   return new Promise((resolve, reject) => {
-    console.log('id',id)
+    console.log('id', id)
     var User = require('mongoose').model('User');
     User.findById(id).select('id firstName lastName email').lean().then((user) => {
         resolve(user)
@@ -204,28 +204,32 @@ export function saveOAuthUserProfile(req, profile, done) {
           //  ['username','email'].forEach( (prop) => {
           //    exists({[prop]: profile[prop]}).then((propExists) => { if(propExists) profile[prop] = '' })
           //  })
-          console.log('pppp',profile)
-            user = new User(profile);
+          let photo = false;
+          if (profile.photo) {
+            photo = user.photo.split('?')[0]
+            profile.photo = true
+          }
+          user = new User(profile);
 
-            user.save(function (err) {
-              if (err) {
-                var message = _this.getErrorMessage(err);
-                console.log(message);
-              }
-              req.user = {
-                id: user.id,
-                email: user.email || null,
-                username: user.username
-              };
-              if(user.photo){
-                let photo = user.photo.split('?')[0]
-                let ext = removeStringBeforeLastInstance(photo,'.')
-                download(photo,__dirname + '/../../images', user.id +'.' + ext, () => {
-                  console.log('downloaded', user.photo);
-                });
-              }
-              return done(err, user);
-            })
+          user.save(function (err) {
+            if (err) {
+              var message = _this.getErrorMessage(err);
+              console.log(message);
+            }
+            req.user = {
+              id: user.id,
+              email: user.email || null,
+              username: user.username
+            };
+            if (user.photo) {
+
+              let ext = removeStringBeforeLastInstance(photo, '.')
+              download(photo, __dirname + '/../../images', user.id + '.' + ext, () => {
+                console.log('downloaded', user.photo);
+              });
+            }
+            return done(err, user);
+          })
         } else {
           return done(err, user);
         }
