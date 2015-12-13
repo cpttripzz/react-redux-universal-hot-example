@@ -101,7 +101,7 @@ export function getProfile(id) {
 export function postProfile(req) {
   return new Promise((resolve, reject) => {
     const profile = pick(req.body, 'email', 'firstName', 'lastName')
-    User.findOneAndUpdate({_id: req.user.id}, profile).then((user) => resolve(getProfile(user.id)), (err) => reject(err))
+    User.findOneAndUpdate({_id: req.user._id}, profile).then((user) => resolve(getProfile(user.id)), (err) => reject(err))
   })
 }
 

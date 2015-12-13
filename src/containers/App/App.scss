@@ -39,6 +39,9 @@ form {
 :global(.help-block) {
   color: red;
 }
+:global(.navbar-nav > li > a.active) {
+  color: #3eff70 !important;
+}
 h1 {
   text-align: center;
 }
