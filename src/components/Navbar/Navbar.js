@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { pushState } from 'redux-router';
 import { logout } from 'redux/modules/auth';
 
-const NavbarLink = ({to, className, component, children}) => {
+const NavbarLink = ({to, className, activeRoute, component, children}) => {
   const Comp = component || Link;
 
+  if (to==activeRoute) className += className + " active"
   return (
-    <Comp to={to} className={className} activeStyle={{color: '#3eff70 !important' }}>
+    <Comp to={to} className={className}>
       {children}
     </Comp>
   );
@@ -20,7 +21,8 @@ const NavbarLink = ({to, className, component, children}) => {
 export default class Navbar extends Component {
   static propTypes = {
     user: PropTypes.object,
-    logout: PropTypes.func.isRequired
+    logout: PropTypes.func.isRequired,
+    activeRoute:  PropTypes.String
   }
 
   handleLogout(event) {
@@ -31,8 +33,8 @@ export default class Navbar extends Component {
 
 
   render() {
-    const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false;
-
+    const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false
+    const { activeRoute } = this.props
     return (
       <nav className="navbar navbar-default navbar-fixed-top">
         <div className="container">
@@ -41,9 +43,9 @@ export default class Navbar extends Component {
           </NavbarLink>
 
           <ul className="nav navbar-nav">
-            {isLoggedIn && <li><NavbarLink to="/user-admin">User Admin</NavbarLink></li>}
-            {isLoggedIn && <li><NavbarLink to="/profile">Profile</NavbarLink></li>}
-            {!isLoggedIn && <li><NavbarLink to="/login">Login</NavbarLink></li>}
+            {isLoggedIn && <li><NavbarLink to="/user-admin" activeRoute={activeRoute} >User Admin</NavbarLink></li>}
+            {isLoggedIn && <li><NavbarLink to="/profile" activeRoute={activeRoute}>Profile</NavbarLink></li>}
+            {!isLoggedIn && <li><NavbarLink to="/login" activeRoute={activeRoute}>Login</NavbarLink></li>}
             {isLoggedIn && <li className="logout-link"><a href="/logout" onClick={::this.handleLogout}>Logout</a></li>}
           </ul>
           {isLoggedIn && <p className='navbar-text'>Logged in as <strong>{this.props.user.email}</strong></p>}

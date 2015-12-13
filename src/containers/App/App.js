@@ -21,7 +21,9 @@ export default class App extends Component {
   };
 
   static contextTypes = {
-    store: PropTypes.object.isRequired
+    store: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    location: PropTypes.object
   };
 
   constructor(props) {
@@ -48,12 +50,16 @@ export default class App extends Component {
 
 
   render() {
+
     const {user} = this.props;
+    console.log(this.context.location)
+    const activeRoute = this.context.location.pathname
+
     const styles = require('./App.scss');
     return (
       <div className={styles.app}>
         <div className="container">
-          <Navbar user={this.props.user}></Navbar>
+          <Navbar activeRoute={activeRoute} user={this.props.user}></Navbar>
         </div>
         <div className={styles.appContent}>
           {this.props.children}
