@@ -66,8 +66,6 @@ export default class Profile extends Component {
   onDrop(file) {
      newImg = file
     this.refs.imgPreview.src = file[0].preview
-
-    console.log(file)
   }
 
   render() {
@@ -100,7 +98,7 @@ export default class Profile extends Component {
           </form>
         </div>
         <div className={styles.photocontainer}>
-          <Dropzone ref="dropzone" onDrop={this.onDrop} style={styles.dropzone}>
+          <Dropzone ref="dropzone" onDrop={this.onDrop} className={styles.dropzone}>
             {imgUrl && <div className={styles.imgPreview}><img ref="imgPreview" className={styles.image} src={imgUrl} /></div>}
           </Dropzone>
 
