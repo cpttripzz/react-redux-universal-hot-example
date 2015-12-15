@@ -22,7 +22,7 @@ export default class Navbar extends Component {
   static propTypes = {
     user: PropTypes.object,
     logout: PropTypes.func.isRequired,
-    activeRoute:  PropTypes.String
+    activeRoute:  PropTypes.string
   }
 
   handleLogout(event) {

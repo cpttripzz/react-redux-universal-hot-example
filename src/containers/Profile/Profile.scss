@@ -25,7 +25,35 @@
     -webkit-flex-direction: row;
     flex-direction: row;
   }
-  .spinner{
-    display:  inline-flex !important;
+  .spinner {
+    display: inline-flex !important;
+  }
+  .imgPreview {
+    height: auto;
+    width: auto;
+    max-width: 144px;
+    max-height: 144px;
+    position: relative !important;
+    display: inline-block !important;
+    border-width: 2px !important;
+    border-color: #666 !important;
+    border-style: dashed !important;
+    border-radius: 5px !important;
+  }
+  .dropzone {
+    eight: auto;
+    width: auto;
+    max-width: 144px;
+    max-height: 144px;
+    position: relative !important;
+    display: inline-block !important;
+    border-width: 2px !important;
+    border-color: #666 !important;
+    border-style: dashed !important;
+    border-radius: 5px !important;
+  }
+  .image {
+    max-width: 100%;
+    max-height: 100%;
   }
 }

@@ -59,7 +59,6 @@ export default function profile(state = initialState, action = {}) {
     };
   }
   export function postProfile(values) {
-    console.log(values)
     return {
       types: [SAVE_PROFILE, SAVE_PROFILE_SUCCESS, SAVE_PROFILE_FAIL],
       promise: (client) => client.post('/profile', {

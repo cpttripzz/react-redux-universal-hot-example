@@ -6,12 +6,11 @@ import { postProfile} from 'redux/modules/profile';
 import {connect} from 'react-redux';
 import { pushState } from 'redux-router';
 import { isLoaded as profileLoaded, load as loadProfile } from 'redux/modules/profile';
+var Dropzone = require('react-dropzone');
 
-var classNames = require('classnames');
-var Loader = require('react-loader');
+export const fields = ['firstName','lastName', 'email', 'password'];
 
-export const fields = ['firstName','lastName', 'email', 'password', 'image'];
-
+let newImg;
 let propToValidate;
 let validating = {};
 const validate = values => {
@@ -22,11 +21,12 @@ const validate = values => {
   return errors;
 };
 
-@connect(state => ({user: state.validate}), {pushState})
+@connect(state => ({profile: state.profile}), {pushState})
 export default class Profile extends Component {
   constructor(props) {
     super(props)
     this.submitProfile = this.submitProfile.bind(this)
+    this.onDrop = this.onDrop.bind(this)
   }
 
   static propTypes = {
@@ -47,7 +47,12 @@ export default class Profile extends Component {
 
   submitProfile(values, dispatch) {
     return new Promise((resolve, reject) => {
-      dispatch(postProfile(values))
+      const formData = new FormData();
+      Object.keys(values).forEach((key) => {
+        formData.append(key, values[key]);
+      });
+      if(newImg && newImg.length) { formData.append('imgFile', newImg[0]); }
+      dispatch(postProfile(formData))
         .then(response => {
           resolve(response)
           if (response.error) {
@@ -58,16 +63,29 @@ export default class Profile extends Component {
     })
   }
 
+  onDrop(file) {
+     newImg = file
+    this.refs.imgPreview.src = file[0].preview
+
+    console.log(file)
+  }
+
   render() {
     const {
       error, submitting, invalid,
-      fields: {firstName, lastName, email, password, image},
-      resetForm, handleSubmit
+      fields: {firstName, lastName, email, password},
+      resetForm, handleSubmit,
       } = this.props;
     const styles = require('./Profile.scss');
-
+    let imgUrl='';
+    if(this.props && this.props.profile && this.props.profile.data && this.props.profile.data.photo) {
+      imgUrl = "/" + this.props.profile.data._id + '.jpg';
+      //console.log(imgUrl)
+      //profileImg = require(imgUrl)
+    }
     return (
       <div className={styles.profilePage}>
+
         <h1><span className="fa fa-user-secret"></span>Profile</h1>
         <div className="col-sm-6 col-sm-offset-3">
           <form className="profile-form" onSubmit={this.submitProfile}>
@@ -80,6 +98,12 @@ export default class Profile extends Component {
               <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
           </form>
+        </div>
+        <div className={styles.photocontainer}>
+          <Dropzone ref="dropzone" onDrop={this.onDrop} style={styles.dropzone}>
+            {imgUrl && <div className={styles.imgPreview}><img ref="imgPreview" className={styles.image} src={imgUrl} /></div>}
+          </Dropzone>
+
         </div>
       </div>
 

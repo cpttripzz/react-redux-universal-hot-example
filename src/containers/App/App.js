@@ -52,7 +52,6 @@ export default class App extends Component {
   render() {
 
     const {user} = this.props;
-    console.log(this.context.location)
     const activeRoute = this.context.location.pathname
 
     const styles = require('./App.scss');
