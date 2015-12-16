@@ -46,6 +46,7 @@ export default class Profile extends Component {
   }
 
   submitProfile(values, dispatch) {
+
     return new Promise((resolve, reject) => {
       const formData = new FormData();
       Object.keys(values).forEach((key) => {
@@ -99,7 +100,7 @@ export default class Profile extends Component {
         </div>
         <div className={styles.photocontainer}>
           <Dropzone ref="dropzone" onDrop={this.onDrop} className={styles.dropzone}>
-            {imgUrl && <div className={styles.imgPreview}><img ref="imgPreview" className={styles.image} src={imgUrl} /></div>}
+            <div className={styles.imgPreview}><img ref="imgPreview" className={styles.image} src={imgUrl} /></div>
           </Dropzone>
 
         </div>

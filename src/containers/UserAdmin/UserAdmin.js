@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { isLoaded as usersLoaded, load as loadUsers } from 'redux/modules/users';
-var Griddle = require('griddle-react');
 @connect(
     state => ({users: state.users}),
     dispatch => bindActionCreators({loadUsers}, dispatch))
@@ -30,8 +29,7 @@ export default class UserAdmin extends Component {
 
         return (
         <div>
-            <Griddle results={usersData} tableClassName="table" showFilter={true}
-                       showSettings={true} columns={["firstName", "lastName", "email"]}/>
+
         </div>
         );
     }

@@ -12,3 +12,13 @@ export function download(uri, directoryName, filename, callback) {
     r.on('error', function(message) { console.log(message)});
   });
 };
+
+export function existsSync(filePath){
+
+    try{
+      fs.statSync(filePath);
+    }catch(err){
+      if(err.code == 'ENOENT') return false;
+    }
+    return true;
+  };

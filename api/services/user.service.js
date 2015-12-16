@@ -98,10 +98,9 @@ export function getProfile(id) {
 
 export function postProfile(req) {
   //const profile = pick(req.body, 'email', 'firstName', 'lastName')
-  console.log('postProfile',req.user._id,req.body)
+  console.log('postProfile',req.body, req.user)
   return new Promise((resolve, reject) => {
-    const profile = pick(req.body, 'email', 'firstName', 'lastName')
-    console.log('postProfile',req.user._id,profile)
+    const profile = pick(req.body, 'email', 'firstName', 'lastName', 'photo')
     User.findOneAndUpdate({_id: req.user._id}, profile).then((user) => resolve(getProfile(user.id)), (err) => reject(err))
   })
 }
@@ -201,7 +200,6 @@ export function saveOAuthUserProfile(req, profile, done) {
       if (err) {
         return done(err);
       } else {
-        let imagePath;
         if (!user) {
           //  ['username','email'].forEach( (prop) => {
           //    exists({[prop]: profile[prop]}).then((propExists) => { if(propExists) profile[prop] = '' })
@@ -224,7 +222,6 @@ export function saveOAuthUserProfile(req, profile, done) {
               username: user.username
             };
             if (photo) {
-              console.log('profile.photo',photo)
               let ext = removeStringBeforeLastInstance(photo, '.')
               download(photo, __dirname + '/../../images', user.id + '.' + ext, () => {
                 console.log('downloaded', photo, __dirname + '/../../images', user.id + '.' + ext);

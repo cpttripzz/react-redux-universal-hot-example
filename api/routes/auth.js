@@ -4,6 +4,7 @@ var jwt = require('jsonwebtoken');
 var multer  = require('multer')
 import { login, register, getUsers, newUser, getProfile, postProfile, checkProps } from '../services/user.service';
 import { removeStringBeforeLastInstance } from '../../utils/stringUtils'
+import { existsSync } from '../../utils/fileUtils'
 module.exports = function (app) {
 
   process.on("unhandledRejection", function (reason, p) {
@@ -97,20 +98,28 @@ module.exports = function (app) {
     getProfile(req.user._id).then((user) => res.json(user))
       .catch((err) => res.json(err))
   )
-
   var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, __dirname + '../../../images')
+      cb(null, config.app.profileImgPath)
     },
     filename: function (req, file, cb) {
-      let ext = removeStringBeforeLastInstance(file.originalname, '.')
-      cb(null,req.user._id + '.' + ext )
+      const ext = removeStringBeforeLastInstance(file.originalname, '.')
+      const fileName = req.user._id + '.' + ext
+      if (existsSync(fileName)) {
+        del.sync(fileName)
+      }
+      cb(null,fileName)
+
     }
   })
 
   var upload = multer({ storage: storage })
   app.post('/profile', upload.single('imgFile'), function (req, res, next) {
-    delete req.body.imgFile
+    if(req.file) {
+      delete req.file
+      req.body['photo'] = true
+      console.log('req.body',req.body)
+    }
     req.body = JSON.parse(JSON.stringify(req.body));
     postProfile(req).then((user) => res.json(user))
       .catch((err) => res.json(err))
