@@ -1,0 +1,26 @@
+- unit test everything
+- use react-simple-router
+- https://github.com/rackt/example-react-router-server-rendering-lazy-routes
+- https://github.com/jlongster/react-redux-universal-hot-example/blob/master/src%2Fserver.js
+- use react-promise middleware https://github.com/tomatau/breko-hub/blob/master/src%2Fapp%2Fstate%2Fmiddleware.js
+- readd socket.io
+- add immutable.js
+- add memoize / selectors
+- implement caching on server / redis.... remove mongo add redis models
+- remove bootstrap, add flexbox
+- add bdd testing???
+
+Features
+- cool new menus with some cool new features http://tympanus.net/Development/MultiLevelPushMenu/index3.html#
+http://tympanus.net/Development/PageTransitions/ http://tympanus.net/Development/SidebarTransitions/ http://navnav.co/ https://codyhouse.co/demo/3d-rotating-navigation/#0
+http://codepen.io/oknoblich/full/klnjw/
+
+- homepage pageable, sortable masonry-like grid with hottest, newest and closest if not logged in and genres, closest, hottest if logged in
+- user with admin privs, routes based on acl or at least isAdmin
+- genres, instruments crud
+- locations based on location, google maps integration
+- user types: band, musician
+- user can chat or message
+- user can see messages, chat requests, disable both in preferences
+- user can see pending requests, accept.
+- user can post media
