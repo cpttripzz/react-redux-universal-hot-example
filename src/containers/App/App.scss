@@ -53,3 +53,13 @@ h1 {
 }
 :global(.image) { opacity: 0; transition: opacity 0.3s; }
 :global(.image-loaded) { opacity: 1; }
+
+:global(form) {
+  margin-top: 0em;
+  :global(.btn) {
+    margin-right: 10px;
+  }
+}
+:global(h1) {
+  text-align: center;
+}

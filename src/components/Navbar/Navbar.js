@@ -36,19 +36,22 @@ export default class Navbar extends Component {
     const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false
     const { activeRoute } = this.props
     return (
-      <nav className="navbar navbar-default navbar-fixed-top">
-        <div className="container">
+      <nav className="navbar navbar-default navbar-fixed-top navbar-left">
+        <div className="col-sm-6 col-sm-offset-3">
           <NavbarLink to="/" className="navbar-brand" component={IndexLink}>
             Reduxxed
           </NavbarLink>
 
-          <ul className="nav navbar-nav">
+          <ul className="nav navbar-nav col-sm-6 col-sm-offset-3">
             {isLoggedIn && <li><NavbarLink to="/user-admin" activeRoute={activeRoute} >User Admin</NavbarLink></li>}
             {isLoggedIn && <li><NavbarLink to="/profile" activeRoute={activeRoute}>Profile</NavbarLink></li>}
             {!isLoggedIn && <li><NavbarLink to="/login" activeRoute={activeRoute}>Login</NavbarLink></li>}
             {isLoggedIn && <li className="logout-link"><a href="/logout" onClick={::this.handleLogout}>Logout</a></li>}
           </ul>
-          {isLoggedIn && <p className='navbar-text'>Logged in as <strong>{this.props.user.email}</strong></p>}
+          </div>
+        <div>
+        {isLoggedIn && <p className='navbar-text'>Logged in as <strong>{this.props.user.email}</strong></p>}
+
           <ul className="nav navbar-nav navbar-right">
             <li>
               yo

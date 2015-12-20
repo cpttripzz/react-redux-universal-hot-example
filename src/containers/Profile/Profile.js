@@ -83,7 +83,7 @@ export default class Profile extends Component {
       //profileImg = require(imgUrl)
     }
     return (
-      <div className={styles.profilePage}>
+      <div className={"container-fluid "+styles.profilePage}>
 
         <h1><span className="fa fa-user-secret"></span>Profile</h1>
         <div className="col-sm-6 col-sm-offset-3">

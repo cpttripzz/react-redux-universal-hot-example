@@ -7,27 +7,7 @@
     border-radius: 5px;
     border: 1px solid #ccc;
   }
-  form {
-    margin-top: 0em;
-    :global(.btn) {
-      margin-right: 10px;
-    }
-  }
-  :global(.help-block) {
-    color: red;
-  }
-  h1 {
-    text-align: center;
-  }
-  .form-control {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-  }
-  .spinner {
-    display: inline-flex !important;
-  }
+
   .imgPreview {
     height: auto;
     width: auto;
@@ -35,9 +15,7 @@
     max-height: 144px;
     position: relative !important;
     display: inline-block !important;
-    border-width: 2px !important;
-    border-color: #666 !important;
-    border-style: dashed !important;
+    border: 2px dashed #666 !important;
     border-radius: 5px !important;
   }
   .dropzone {
@@ -47,9 +25,7 @@
     max-height: 144px;
     position: relative !important;
     display: inline-block !important;
-    border-width: 2px !important;
-    border-color: #666 !important;
-    border-style: dashed !important;
+    border: 2px dashed #666 !important;
     border-radius: 5px !important;
   }
   .image {
