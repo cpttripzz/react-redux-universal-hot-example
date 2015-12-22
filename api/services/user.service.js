@@ -9,7 +9,8 @@ var jwt = require('jsonwebtoken');
 import { removeStringBeforeLastInstance } from '../../utils/stringUtils'
 import { pick } from '../../utils/objUtils'
 import { validateEntityProps, getValidateEntityErrors } from './validation.service'
-import { download } from '../../utils/fileUtils'
+import { download,existsSync } from '../../utils/fileUtils'
+var del = require("del")
 export function login(req) {
   let { username, password } = req.body;
 
@@ -33,6 +34,26 @@ export function login(req) {
   })
 };
 
+export function handleProfileImageSave(fileOriginalName,userId) {
+
+  const ext = removeStringBeforeLastInstance(fileOriginalName, '.')
+  const fileName = userId + '.' + ext
+  if (existsSync(config.app.profileImgPath + '/'+ fileName)) {
+    del.sync(config.app.profileImgPath + '/'+ fileName)
+  }
+  const thumbPath = config.app.profileImgPath + '/thumbs/' +userId + '.png'
+  if (existsSync(thumbPath)) {
+    del.sync(thumbPath)
+  }
+  var fs = require('fs')
+    , gm = require('gm').subClass({imageMagick: true});
+  gm(config.app.profileImgPath +'/' + fileName).resize(40, 40,'!')
+    .noProfile()
+    .write(thumbPath, function (err) {
+      if (err) console.log(err);
+    });
+  return fileName
+}
 export function getUserDetails(user) {
   return new Promise((resolve, reject) => {
 
@@ -41,7 +62,8 @@ export function getUserDetails(user) {
       email: user.email,
       username: user.username,
       firstName: user.firstName,
-      lastName: user.lastName
+      lastName: user.lastName,
+      photo: user.photo
     };
     //function (users) { return users[0]; }
     //users => users[0]

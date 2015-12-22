@@ -33,7 +33,9 @@ export default class Navbar extends Component {
 
 
   render() {
+    console.log('this.props.user',this.props.user)
     const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false
+    const photoPath = isLoggedIn ? 'thumbs/' + this.props.user._id + '.png' : false
     const { activeRoute } = this.props
     return (
       <nav className="navbar navbar-default navbar-fixed-top navbar-left">
@@ -51,7 +53,7 @@ export default class Navbar extends Component {
           </div>
         <div>
         {isLoggedIn && <p className='navbar-text'>Logged in as <strong>{this.props.user.email}</strong></p>}
-
+          {photoPath && <img src={photoPath} />}
           <ul className="nav navbar-nav navbar-right">
             <li>
               yo

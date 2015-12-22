@@ -9,7 +9,7 @@ module.exports = {
     apiPort: 3030,
     app: {
       name: 'React Redux With Passport and Sequelize',
-      profileImgPath: __dirname + '../../images'
+      profileImgPath: __dirname + '/../images'
     },
     jwtSecret : 'jfNIdd84jd9dsw637hej',
     db: 'mongodb://localhost/bandaid',

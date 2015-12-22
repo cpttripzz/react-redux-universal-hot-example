@@ -2,9 +2,8 @@ var passport = require('passport');
 var config = require('../config');
 var jwt = require('jsonwebtoken');
 var multer  = require('multer')
-import { login, register, getUsers, newUser, getProfile, postProfile, checkProps } from '../services/user.service';
+import { login, register, getUsers, newUser, getProfile, postProfile, checkProps, handleProfileImageSave } from '../services/user.service';
 import { removeStringBeforeLastInstance } from '../../utils/stringUtils'
-import { existsSync } from '../../utils/fileUtils'
 module.exports = function (app) {
 
   process.on("unhandledRejection", function (reason, p) {
@@ -103,11 +102,7 @@ module.exports = function (app) {
       cb(null, config.app.profileImgPath)
     },
     filename: function (req, file, cb) {
-      const ext = removeStringBeforeLastInstance(file.originalname, '.')
-      const fileName = req.user._id + '.' + ext
-      if (existsSync(fileName)) {
-        del.sync(fileName)
-      }
+      const fileName = handleProfileImageSave(file.originalname,req.user._id)
       cb(null,fileName)
 
     }
