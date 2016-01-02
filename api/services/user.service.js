@@ -153,7 +153,7 @@ export function checkProps(props) {
 }
 var getErrorMessage = function (err) {
   console.log("getErrorMessage", err);
-  let message = '';
+  let message = 'nope';
   if (err.code) {
     switch (err.code) {
       case 11000:
@@ -199,7 +199,7 @@ export function newUser(user) {
       .then((user) => {
         propsUnique(user)
           .then(userProps  =>  userProps.filter((prop) =>  prop !== false))
-          .then(userPropsNonUnique => {
+          .then(userPropsNonUnique => { console.log('1',userPropsNonUnique)
             if (userPropsNonUnique.length) return reject(userPropsNonUnique)
             const objUser = new User(user)
             objUser.save(user).then(

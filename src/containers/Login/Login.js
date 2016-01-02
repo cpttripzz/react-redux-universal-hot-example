@@ -3,7 +3,7 @@ import { AlertAutoDismissable,ValidatedFormInput,SubmitButton } from 'components
 import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import {connect} from 'react-redux';
-import { pushState } from 'redux-router';
+import { pushPath } from 'redux-simple-router';
 import { login } from 'redux/modules/auth';
 import cookie from '../../../utils/cookie';
 let equals = require('shallow-equals')
@@ -20,7 +20,7 @@ const validate = values => {
 };
 
 
-@connect(state => ({validate: state.validate}), {pushState})
+@connect(state => ({validate: state.validate}), {pushPath})
 export default class Login extends Component {
   constructor(props) {
     super(props)
@@ -34,7 +34,7 @@ export default class Login extends Component {
     submitting: PropTypes.bool.isRequired,
     validateParams: PropTypes.func,
     login: PropTypes.func,
-    pushState: PropTypes.func.isRequired
+    pushPath: PropTypes.func.isRequired
   };
 
   submitLogin(values, dispatch, _props) {
@@ -45,7 +45,7 @@ export default class Login extends Component {
             reject({_error: response.error.message})
           } else {
             cookie.setToken(response.result.token)
-            this.props.pushState(null, '/')
+            this.props.pushPath('/')
             resolve()
           }
         })

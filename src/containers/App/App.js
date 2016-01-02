@@ -3,7 +3,7 @@ import { IndexLink, Link } from 'react-router';
 import { connect } from 'react-redux';
 import DocumentMeta from 'react-document-meta';
 import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
-import { pushState } from 'redux-router';
+import { pushPath } from 'redux-simple-router';
 import { Navbar } from  'components';
 let checkingAuth = false;
 
@@ -12,12 +12,12 @@ let checkingAuth = false;
     user: state.auth.user,
     auth: state.auth
   }),
-  {pushState})
+  {pushPath})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
-    pushState: PropTypes.func.isRequired
+    pushPath: PropTypes.func.isRequired
   };
 
   static contextTypes = {

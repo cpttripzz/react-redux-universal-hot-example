@@ -4,7 +4,6 @@
   "properties": {
     "username": {
       "type": "string",
-      "pattern": "^\w+$",
       "minLength": 3,
       "maxLength": 30
     },

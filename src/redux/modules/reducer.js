@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
-import { routerStateReducer } from 'redux-router';
-
+import { routeReducer } from 'redux-simple-router';
 import {reducer as form} from 'redux-form';
 import auth from './auth';
 import users from './users';
@@ -8,7 +7,7 @@ import profile from './profile';
 import register from './register';
 
 export default combineReducers({
-  router: routerStateReducer,
+  routing: routeReducer,
   form,
   auth,
   users,

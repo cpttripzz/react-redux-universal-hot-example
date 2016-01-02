@@ -4,7 +4,7 @@ import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import { postProfile} from 'redux/modules/profile';
 import {connect} from 'react-redux';
-import { pushState } from 'redux-router';
+import { pushPath } from 'redux-simple-router';
 import { isLoaded as profileLoaded, load as loadProfile } from 'redux/modules/profile';
 var Dropzone = require('react-dropzone');
 
@@ -21,7 +21,7 @@ const validate = values => {
   return errors;
 };
 
-@connect(state => ({profile: state.profile}), {pushState})
+@connect(state => ({profile: state.profile}), {pushPath})
 export default class Profile extends Component {
   constructor(props) {
     super(props)

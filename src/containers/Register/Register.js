@@ -4,7 +4,7 @@ import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import { validate as validateParams, register} from 'redux/modules/register';
 import {connect} from 'react-redux';
-import { pushState } from 'redux-router';
+import { pushPath } from 'redux-simple-router';
 import cookie from '../../../utils/cookie';
 
 var classNames = require('classnames');
@@ -45,7 +45,7 @@ const asyncValidate = (values, dispatch, _props) => {
   )
 }
 
-@connect(state => ({validate: state.validate}), {pushState})
+@connect(state => ({validate: state.validate}), {pushPath})
 export default class Register extends Component {
   constructor(props) {
     super(props)
@@ -58,7 +58,7 @@ export default class Register extends Component {
     handleSubmit: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
     validateParams: PropTypes.func,
-    pushState: PropTypes.func.isRequired
+    pushPath: PropTypes.func.isRequired
   };
 
   submitRegister(values, dispatch, _props) {
@@ -70,7 +70,7 @@ export default class Register extends Component {
             reject(response.error)
           } else {
             cookie.setToken(response.result.token)
-            this.props.pushState(null, '/')
+            this.props.pushPath(null, '/')
             resolve()
           }
 

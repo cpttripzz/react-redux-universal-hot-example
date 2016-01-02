@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { IndexLink, Link } from 'react-router';
 import { connect } from 'react-redux';
-import { pushState } from 'redux-router';
+import { pushPath } from 'redux-simple-router';
 import { logout } from 'redux/modules/auth';
 
 const NavbarLink = ({to, className, activeRoute, component, children}) => {
@@ -17,7 +17,7 @@ const NavbarLink = ({to, className, activeRoute, component, children}) => {
 
 @connect(
   state => ({user: state.auth.user}),
-  {logout, pushState})
+  {logout})
 export default class Navbar extends Component {
   static propTypes = {
     user: PropTypes.object,
@@ -27,7 +27,7 @@ export default class Navbar extends Component {
 
   handleLogout(event) {
     event.preventDefault();
-    this.props.logout().then(() => this.props.pushState(null, '/'))
+    this.props.logout().then(() => pushPath(null, '/'))
 
   }
 
@@ -35,7 +35,7 @@ export default class Navbar extends Component {
   render() {
     console.log('this.props.user',this.props.user)
     const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false
-    const photoPath = isLoggedIn ? 'thumbs/' + this.props.user._id + '.png' : false
+    const photoPath = false; //isLoggedIn ? 'thumbs/' + this.props.user._id + '.png' : false
     const { activeRoute } = this.props
     return (
       <nav className="navbar navbar-default navbar-fixed-top navbar-left">
