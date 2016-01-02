@@ -10,14 +10,17 @@ import config from './config';
 import PrettyError from 'pretty-error';
 import http from 'http';
 import SocketIo from 'socket.io';
-
-
 import passport from 'passport';
 import morgan from 'morgan';
 
 const app = express();
 const server = new http.Server(app);
 const io = new SocketIo(server);
+
+//var modelsPath = require('path').join(__dirname, 'models');
+//fs.readdirSync(modelsPath).forEach(function (file) {
+//  require(modelsPath + '/' + file);
+//});
 
 io.path('/ws');
 
@@ -34,9 +37,6 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 require('./routes/auth')(app);
-
-
-
 
 const bufferSize = 100;
 const messageBuffer = new Array(bufferSize);

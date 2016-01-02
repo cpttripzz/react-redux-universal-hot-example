@@ -1,21 +1,20 @@
 var mongoose = require('mongoose'),
   crypto = require('crypto'),
+  URLSlugs = require('mongoose-url-slugs'),
   Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-  firstName: String,
-  lastName: String,
-  email: String,
-  username: {
-    type: String,
-    trim: true,
-    unique: true
-  },
-  password: String,
-  provider: String,
-  providerId: String,
-  photo: String
-});
+    firstName: {type: String, trim: true},
+    lastName: {type: String, trim: true},
+    email: {type: String, trim: true},
+    username: {type: String, trim: true, unique: true},
+    password: String,
+    provider: String,
+    providerId: String,
+    photo: String,
+
+  }, {timestamps: true}
+);
 
 UserSchema.pre('save',
   function (next) {
@@ -62,5 +61,5 @@ UserSchema.statics.findUniqueUsername = function (username, suffix, callback) {
     }
   );
 };
-
+UserSchema.plugin(URLSlugs('username'));
 module.exports = mongoose.model('User', UserSchema);

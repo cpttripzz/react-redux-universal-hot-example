@@ -18,9 +18,18 @@ http://codepen.io/oknoblich/full/klnjw/
 - homepage pageable, sortable masonry-like grid with hottest, newest and closest if not logged in and genres, closest, hottest if logged in
 - user with admin privs, routes based on acl or at least isAdmin
 - genres, instruments crud
+- redis caching
+- i18n
 - locations based on location, google maps integration
 - user types: band, musician
 - user can chat or message
 - user can see messages, chat requests, disable both in preferences
 - user can see pending requests, accept.
 - user can post media
+
+
+
+- logged in
+    - add
+
+fake user, address, band, musician, genres

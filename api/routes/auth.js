@@ -63,6 +63,12 @@ module.exports = function (app) {
     return res.json({});
   });
 
+  app.get('/mocks', (req, res) => {
+    import { load } from '../services/mock.service'
+    load();
+    return res.json({});
+  });
+
   //check jwt
   app.use(function (req, res, next) {
     var token = req.body.token || req.params.token || req.headers['x-access-token'] || req.cookies.token;
