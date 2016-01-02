@@ -25,12 +25,13 @@ const pretty = new PrettyError();
 const app = new Express();
 const server = new http.Server(app);
 const proxy = httpProxy.createProxyServer({
-  target: 'http://' + (process.env.HOST || 'localhost') + ':' + config.apiPort,
+  target: 'http://' + config.apiHost + ':' + config.apiPort,
   ws: true
 });
 
 app.use(compression());
 app.use(favicon(path.join(__dirname, '..', 'static', 'favicon.ico')));
+app.use(Express.static(path.join(__dirname, '..', 'images')));
 
 app.use(require('serve-static')(path.join(__dirname, '..', 'static')));
 
@@ -125,7 +126,7 @@ if (config.port) {
       console.error(err);
     }
     console.info('----\n==> ✅  %s is running, talking to API server on %s.', config.app.title, config.apiPort);
-    console.info('==> 💻  Open http://%s:%s in a browser to view the app.', (process.env.HOST || 'localhost'), config.port);
+    console.info('==> 💻  Open http://%s:%s in a browser to view the app.', config.host, config.port);
   });
 } else {
   console.error('==>     ERROR: No PORT environment variable has been specified');

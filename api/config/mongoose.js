@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 //['user','country','city','genre','instrument','association','band','musician']
 module.exports = function() {
 	var db = mongoose.connect(config.db);
-	['user'].forEach( (model) => {
+	['user','country','city','genre','instrument'].forEach( (model) => {
 		require('../models/'+model+'.model.js');
 	})
 	return db;

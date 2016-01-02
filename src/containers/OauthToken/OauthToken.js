@@ -12,7 +12,7 @@ export default class OauthToken extends Component {
   componentDidMount() {
     if (this.props.routeParams.token) {
       cookie.setToken(this.props.routeParams.token)
-      this.props.pushPath(null, '/profile');
+      this.props.pushPath('/profile');
     }
   }
 

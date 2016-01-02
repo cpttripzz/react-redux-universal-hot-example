@@ -70,7 +70,7 @@ export default class Register extends Component {
             reject(response.error)
           } else {
             cookie.setToken(response.result.token)
-            this.props.pushPath(null, '/')
+            this.props.pushPath('/')
             resolve()
           }
 
