@@ -1,7 +1,5 @@
 require('../server.babel'); // babel registration (runtime transpilation for node)
-var mongoose = require('./config/mongoose');
 const pretty = new PrettyError();
-var db = mongoose();
 import express from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
@@ -13,18 +11,22 @@ import SocketIo from 'socket.io';
 import passport from 'passport';
 import morgan from 'morgan';
 
+var fs = require("fs");
+var mongoose = require('mongoose');
+var db = mongoose.connect(config.db.connectionString);
+
 const app = express();
 const server = new http.Server(app);
 const io = new SocketIo(server);
 
-//var modelsPath = require('path').join(__dirname, 'models');
-//fs.readdirSync(modelsPath).forEach(function (file) {
-//  require(modelsPath + '/' + file);
-//});
+var modelsPath = require('path').join(__dirname, 'models');
+fs.readdirSync(modelsPath).forEach(function (file) {
+  require(modelsPath + '/' + file);
+});
 
 io.path('/ws');
 
-morgan.token('body', function(req, res){ return require('util').inspect(req.body) })
+morgan.token('body', (req, res) => require('util').inspect(req.body) )
 
 require('./config/passport')(passport);
 if (app.get('env') == 'production') {

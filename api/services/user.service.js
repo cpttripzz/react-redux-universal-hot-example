@@ -199,7 +199,7 @@ export function newUser(user) {
       .then((user) => {
         propsUnique(user)
           .then(userProps  =>  userProps.filter((prop) =>  prop !== false))
-          .then(userPropsNonUnique => { console.log('1',userPropsNonUnique)
+          .then(userPropsNonUnique => {
             if (userPropsNonUnique.length) return reject(userPropsNonUnique)
             const objUser = new User(user)
             objUser.save(user).then(

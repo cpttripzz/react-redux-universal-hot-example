@@ -33,3 +33,31 @@ http://codepen.io/oknoblich/full/klnjw/
     - add
 
 fake user, address, band, musician, genres
+
+
+
+
+ (callback) => {
+
+        var faker = require('faker');
+        var geocoderProvider = 'google';
+        var httpAdapter = 'http';
+        var geocoder = require('node-geocoder')(geocoderProvider, httpAdapter);
+        var foursquare = (require('foursquarevenues'))('CA5L5IPUIOFDTXIW5BU1X01OJYDCMUAANU2AH1DWEE4G5MOE', '43WA0G1TX5KKMEN5VSRRX5A1XH5RDU4KESBU0BGEBOYIZN1P');
+        for (let x = 0; x < 5; x++) {
+          let randomCity = getRandomArrayElement(cities)
+          newUser({name: faker.name.findName(), email: faker.internet.email(), password: '11111111'}).then((user) => {
+              // Or using Promise
+              var params = {
+                "ll": randomCity.latitude + ',' + randomCity.longitude
+              };
+              foursquare.exploreVenues(params, function(error, venues) {
+                if (!error) {
+                  console.log(venues);
+                }
+              });
+          })
+          .catch((err) => reject(err))
+        }
+        callback(null, 'next');
+      },

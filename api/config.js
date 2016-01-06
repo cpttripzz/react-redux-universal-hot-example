@@ -12,7 +12,10 @@ module.exports = {
       profileImgPath: __dirname + '/../images'
     },
     jwtSecret : 'jfNIdd84jd9dsw637hej',
-    db: 'mongodb://localhost/bandaid',
+    db: {
+      connectionString: 'mongodb://localhost/bandaid',
+      models: ['user','country','city','region','genre','instrument','address','location','region','address']
+    },
     facebook: {
       clientID: '418259915025400',
       clientSecret: '4c9ef56592e122c0b9c95ed8a34a0a1e',
@@ -23,7 +26,12 @@ module.exports = {
       clientSecret: 'eGPvuTMwuT4AkpHcTejMymga',
       callbackURL: 'http://' + domain + ':' + apiPort + '/oauth/google/callback',
       scope: 'email'
-    }
+    },
+    foursquare: {
+      clientID: 'CA5L5IPUIOFDTXIW5BU1X01OJYDCMUAANU2AH1DWEE4G5MOE',
+      clientSecret: '43WA0G1TX5KKMEN5VSRRX5A1XH5RDU4KESBU0BGEBOYIZN1P'
+    },
+
 
   },
   production: {

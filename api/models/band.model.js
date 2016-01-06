@@ -1,16 +1,11 @@
-let mongoose = require('mongoose')
-let URLSlugs = require('mongoose-url-slugs')
-let Schema = mongoose.Schema
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 let Association = mongoose.model('Association')
-let Musician = mongoose.model('Musician')
-let BandVacancy = mongoose.model('BandVacancy')
 
+let BandSchema = new Schema({
+  musicians : [{ type: Schema.Types.ObjectId, ref: 'Musician' }],
+  bandVacancy : [{ type: Schema.Types.ObjectId, ref: 'BandVacancy' }
+]})
 
-var BandSchema = new Schema({
-  musician : { type: Schema.Types.ObjectId, ref: 'Musician' },
-  BandVacancy : { type: Schema.Types.ObjectId, ref: 'BandVacancy' }
-});
-
-
-BandSchema.plugin(URLSlugs('name'));
-module.exports = mongoose.model('Band', BandSchema);
+var Band = Association.discriminator('Band',BandSchema)
+module.exports = mongoose.model('Band', Band)
