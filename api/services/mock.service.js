@@ -1,6 +1,7 @@
 import { newUser } from './user.service'
 import { getRandomArrayElement, randomIntFromInterval } from '../../utils/mathUtils'
 import { createRandomAddressForCity } from './location.service'
+import { promiseWhile } from './promise.service'
 export function load() {
 
   let genres, instruments, cities, countries;
@@ -52,7 +53,7 @@ export function load() {
             readFile(__dirname + '/../json/countries.json')
               .then((json) =>  JSON.parse(json))
               .then((json) => {
-                Country.create(json, function (err, data) {
+                Country.create(json).then((data)  => {
                   countries = data
                 })
               })
@@ -95,11 +96,6 @@ export function load() {
 
       (genres, instruments, countries, cities, callback) => {
         let faker = require('faker');
-
-
-        let Band = mongoose.model('Band')
-        let Musician = mongoose.model('Musician')
-
         for (let x = 0; x < 2; x++) {
           newUser({
             name: faker.name.findName(),
@@ -107,38 +103,39 @@ export function load() {
             username: faker.internet.userName(),
             password: '11111111'
           }).then((user) => {
-              let assocNumber = randomIntFromInterval(1,4)
-              for (let y=0;y<assocNumber;y++){
-                let assocType,assoc;
-                if(randomIntFromInterval(1,5) >= 4){
-                  assocType = 'Musician'
+            let assocNumber = randomIntFromInterval(1, 4)
+
+            let index = 0
+            promiseWhile(()=>index < assocNumber,  () =>{
+              // The function to run, should return a promise
+              return new Promise( (resolve, reject) =>{
+                let assocType, assoc;
+                if (randomIntFromInterval(1, 5) >= 4) {
                   assoc = mongoose.model('Musician')
                 } else {
-                  assocType = 'Band'
                   assoc = mongoose.model('Band')
                 }
-
                 let newAssocGenres = []
-                for (let gi=0;gi<randomIntFromInterval(1,4);gi++){
+                for (let gi = 0; gi < randomIntFromInterval(1, 4); gi++) {
                   newAssocGenres.push(getRandomArrayElement(genres)['_id'])
                 }
                 let randomCity = getRandomArrayElement(cities)
-                createRandomAddressForCity(randomCity).then( address => {
-                  console.log('address',address)
+                createRandomAddressForCity(randomCity).then(address => {
                   assoc.create({
-                    name: faker.lorem.words(randomIntFromInterval(1,3)),
+                    name: faker.lorem.words(randomIntFromInterval(1, 3)),
                     description: faker.company.bs(),
                     genres: newAssocGenres,
-                    addresses: address._id
-                  }).then(newAssoc => {
-                    return newAssoc
-                    //console.log('yooo',newAssoc)
-                  }).catch( e => {console.log(e); throw e})
-                }).catch( e => e)
-              }
-            }).catch((err) => callback(err, 'next'))
-        }
+                    addresses: address._id,
+                    user: user._id
+                  }).then(newAssoc => {  index++; return resolve(newAssoc) }).catch(e => e)
+                }).catch(e => reject(e))
+              });
 
+            }).then( (assoc) => {
+
+            });
+          }).catch((err) => callback(err, 'next'))
+        }
         callback(null, 'next');
       }
       //(callback) => {

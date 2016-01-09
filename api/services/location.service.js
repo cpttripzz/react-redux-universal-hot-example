@@ -26,21 +26,11 @@ export function getOrCreateRegion(city) {
         let regionShortName = res[0]['administrativeLevels']['level1short']
         let regionLongName = res[0]['administrativeLevels']['level1long']
         Region.findOne({longName: regionLongName}).then(region => {
-          if (region) { console.log('rgion found',region); return resolve(region) }
+          if (region) return resolve(region)
           let newRegion = {shortName: regionShortName, longName: regionLongName, country: city.country._id}
-          Region.create(newRegion).then((region) => {
-            console.log('newRegion',region)
-
-            return resolve(region)
-          }).catch((err) => {console.log('2',err); return reject(err);})
-        }).catch((err) => {
-          console.log('region', err)
-          reject(err)
-        })
-      }).catch((err) => {
-        console.log('region1', err)
-        reject(err)
-      })
+          Region.create(newRegion).then((region) => resolve(region)).catch((err) => reject(err))
+        }).catch((err) => reject(err))
+      }).catch((err) => reject(err))
   })
 }
 
