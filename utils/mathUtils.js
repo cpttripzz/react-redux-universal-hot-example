@@ -4,5 +4,5 @@ export function randomIntFromInterval(min,max)
 }
 
 export function getRandomArrayElement(arr) {
-  return arr[ randomIntFromInterval(0, arr.length)]
+  return arr[ randomIntFromInterval(0, arr.length - 1)]
 }

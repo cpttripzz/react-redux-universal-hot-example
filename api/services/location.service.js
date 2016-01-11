@@ -20,17 +20,33 @@ export function getOrCreateRegion(city) {
       .then(function (res) {
         console.log('geocoding ', cityLookupString);
         if (!res || !res[0] || !res[0]['administrativeLevels'] || !res[0]['administrativeLevels']['level1long']) {
-          console.log('nope1',res[0]['administrativeLevels']['level1long']);
+          console.log('nope1', res[0]['administrativeLevels']['level1long']);
           return resolve()
         }
         let regionShortName = res[0]['administrativeLevels']['level1short']
         let regionLongName = res[0]['administrativeLevels']['level1long']
         Region.findOne({longName: regionLongName}).then(region => {
-          if (region) return resolve(region)
+          if (region) {
+            console.log('rgion found', region);
+            return resolve(region)
+          }
           let newRegion = {shortName: regionShortName, longName: regionLongName, country: city.country._id}
-          Region.create(newRegion).then((region) => resolve(region)).catch((err) => reject(err))
-        }).catch((err) => reject(err))
-      }).catch((err) => reject(err))
+          Region.create(newRegion).then((region) => {
+            console.log('newRegion', region)
+
+            return resolve(region)
+          }).catch((err) => {
+            console.log('2', err);
+            return reject(err);
+          })
+        }).catch((err) => {
+          console.log('region', err)
+          reject(err)
+        })
+      }).catch((err) => {
+      console.log('region1', err)
+      reject(err)
+    })
   })
 }
 
@@ -87,11 +103,10 @@ export function createRandomAddressForCity(randomCity) {
 
       getOrCreateRegion(randomCity)
         .then(region => {
-          if(region) newAddress.region = region
+          if (region) newAddress.region = region
           Address.create(newAddress).then(a => resolve(a))
-        }).catch(err => reject('err getOrCreateRegion',err))
-      console.log('vi',vi++)
+            .catch(err => console.log('err address create', err))
+        }).catch(err => console.log('err getOrCreateRegion', err))
     }).catch(err => reject(err))
-
   })
 }

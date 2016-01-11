@@ -11,6 +11,8 @@ export function load() {
   let readFile = require("bluebird").promisify(require("fs").readFile)
   let async = require('async')
   let _ = require('lodash')
+  let faker = require('faker');
+
   let Genre = mongoose.model('Genre');
   let Instrument = mongoose.model('Instrument');
   let Country = mongoose.model('Country');
@@ -23,13 +25,10 @@ export function load() {
           if (!genres.length) {
             readFile(__dirname + '/../json/genres.json')
               .then((json) =>  JSON.parse(json))
-              .then((json) => {
-                Genre.create(json, function (err, g) {
-                  genres = g
-                })
-              })
+              .then((json) => Genre.create(json).then(genres => callback(null, genres)))
+          } else {
+            callback(null, genres)
           }
-          callback(null, genres);
         })
       },
       (genres, callback) => {
@@ -37,13 +36,10 @@ export function load() {
           if (!instruments.length) {
             readFile(__dirname + '/../json/instruments.json')
               .then((json) =>  JSON.parse(json))
-              .then((json) => {
-                Instrument.create(json, function (err, data) {
-                  instruments = data
-                })
-              })
+              .then((json) => Instrument.create(json).then(instruments => callback(null, genres, instruments) ) )
+          } else {
+            callback(null, genres, instruments);
           }
-          callback(null, genres, instruments);
 
         })
       },
@@ -52,13 +48,10 @@ export function load() {
           if (!countries.length) {
             readFile(__dirname + '/../json/countries.json')
               .then((json) =>  JSON.parse(json))
-              .then((json) => {
-                Country.create(json).then((data)  => {
-                  countries = data
-                })
-              })
+              .then((json) => Country.create(json).then((countries)  => callback(null, genres, instruments, countries)))
+          } else {
+            callback(null, genres, instruments, countries);
           }
-          callback(null, genres, instruments, countries);
 
         })
       },
@@ -72,30 +65,31 @@ export function load() {
                 let cities = _.uniq(json, (item, key, a) => item.name)
                 cities.forEach((city) => {
                   let countryCode = city.country_code
-                  Country.findOne({code: countryCode}).lean().then((country) => {
-                    city.country = country._id
-                    delete city.country_code
-                    City.create(city).then(data => data).catch((err) => callback(err, 'cities'))
-                  })
-
+                  //Country.findOne({code: countryCode}).lean().then((country) => {
+                  //  city.country = country._id
+                  //  delete city.country_code
+                  //  City.create(city).then(data => data).catch((e) => callback(e, 'cities'))
+                  //})
+                  let country = countries.find(c => c.code == countryCode)
+                  city.country = country._id
+                  delete city.country_code
+                  City.create(city).then(data => data).catch((e) => console.log(e))
                 })
-              })
-              .catch((err) => callback(err, 'cities'))
+                setTimeout(() => {
+                  City.find({}).populate('country', 'name').then((cities) => {
+                    callback(null, genres, instruments, countries, cities)
+                  })
+                }, 500)
 
-            City.find({}).populate('country', 'name').then((c) => {
-                cities = c
               })
-              .catch((err) => callback(err, 'cities'))
 
+          } else {
+            callback(null, genres, instruments, countries, cities);
           }
-
-          callback(null, genres, instruments, countries, cities);
-
         })
       },
 
       (genres, instruments, countries, cities, callback) => {
-        let faker = require('faker');
         for (let x = 0; x < 2; x++) {
           newUser({
             name: faker.name.findName(),
@@ -105,11 +99,11 @@ export function load() {
           }).then((user) => {
             let assocNumber = randomIntFromInterval(1, 4)
 
-            let index = 0
-            promiseWhile(()=>index < assocNumber,  () =>{
+            let assocIndex = 0
+            promiseWhile(()=>assocIndex < assocNumber, () => {
               // The function to run, should return a promise
-              return new Promise( (resolve, reject) =>{
-                let assocType, assoc;
+              return new Promise((resolve, reject) => {
+                let assoc;
                 if (randomIntFromInterval(1, 5) >= 4) {
                   assoc = mongoose.model('Musician')
                 } else {
@@ -127,24 +121,29 @@ export function load() {
                     genres: newAssocGenres,
                     addresses: address._id,
                     user: user._id
-                  }).then(newAssoc => {  index++; return resolve(newAssoc) }).catch(e => e)
+
+                  }).then(newAssoc => {
+                    assocIndex++;
+                    return resolve(newAssoc)
+                  }).catch(e => e)
                 }).catch(e => reject(e))
-              });
+              })
 
-            }).then( (assoc) => {
-
-            });
-          }).catch((err) => callback(err, 'next'))
+            }).then((assoc) => assoc).catch((e) =>  {console.log('a',e);return e})
+          }).catch((e) => console.log('new user err',e))
         }
         callback(null, 'next');
-      }
+      },
+
       //(callback) => {
       //  callback(null, 'next');
-      //}
+      //},
+
+
     ],
 // optional callback
-    function (err, results) {
-      if (err) console.log(err);
+    function (e, results) {
+      if (e) console.log(e);
     });
 
 }
