@@ -64,9 +64,10 @@ module.exports = function (app) {
   });
 
   app.get('/mocks', (req, res) => {
-    import { load } from '../services/mock.service'
-    load();
-    return res.json({});
+    import { loadMocks,createMockRelationships } from '../services/mock.service'
+    //loadMocks();
+    createMockRelationships()
+    return res.json({})
   });
 
   //check jwt

@@ -1,8 +1,8 @@
 import {expect} from 'chai';
-import load from '../widget/load';
+import load from '../widget/loadMocks';
 import sinon from 'sinon';
 
-describe('widget load', () => {
+describe('widget loadMocks', () => {
 
   afterEach(()=> {
     if ('restore' in Math.random) {
@@ -44,7 +44,7 @@ describe('widget load', () => {
         ()=> {
         },
         (err)=> {
-          expect(err).to.equal('Widget load fails 33% of the time. You were unlucky.');
+          expect(err).to.equal('Widget loadMocks fails 33% of the time. You were unlucky.');
         });
     });
 

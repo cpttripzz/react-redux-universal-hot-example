@@ -2,16 +2,22 @@ import { newUser } from './user.service'
 import { getRandomArrayElement, randomIntFromInterval } from '../../utils/mathUtils'
 import { createRandomAddressForCity } from './location.service'
 import { promiseWhile } from './promise.service'
-export function load() {
+import { download,existsSync } from '../../utils/fileUtils'
+import { handleProfileImageSave } from '../services/user.service';
+
+
+let mongoose = require('mongoose')
+let _ = require('lodash')
+let async = require('async')
+let faker = require('faker')
+
+export function loadMocks() {
 
   let genres, instruments, cities, countries;
   let assert = require('assert')
   let config = require('../config')
-  let mongoose = require('mongoose')
   let readFile = require("bluebird").promisify(require("fs").readFile)
-  let async = require('async')
-  let _ = require('lodash')
-  let faker = require('faker');
+
 
   let Genre = mongoose.model('Genre');
   let Instrument = mongoose.model('Instrument');
@@ -36,7 +42,7 @@ export function load() {
           if (!instruments.length) {
             readFile(__dirname + '/../json/instruments.json')
               .then((json) =>  JSON.parse(json))
-              .then((json) => Instrument.create(json).then(instruments => callback(null, genres, instruments) ) )
+              .then((json) => Instrument.create(json).then(instruments => callback(null, genres, instruments)))
           } else {
             callback(null, genres, instruments);
           }
@@ -65,11 +71,6 @@ export function load() {
                 let cities = _.uniq(json, (item, key, a) => item.name)
                 cities.forEach((city) => {
                   let countryCode = city.country_code
-                  //Country.findOne({code: countryCode}).lean().then((country) => {
-                  //  city.country = country._id
-                  //  delete city.country_code
-                  //  City.create(city).then(data => data).catch((e) => callback(e, 'cities'))
-                  //})
                   let country = countries.find(c => c.code == countryCode)
                   city.country = country._id
                   delete city.country_code
@@ -90,7 +91,7 @@ export function load() {
       },
 
       (genres, instruments, countries, cities, callback) => {
-        for (let x = 0; x < 2; x++) {
+        for (let x = 0; x < 200; x++) {
           newUser({
             name: faker.name.findName(),
             email: faker.internet.email(),
@@ -129,8 +130,11 @@ export function load() {
                 }).catch(e => reject(e))
               })
 
-            }).then((assoc) => assoc).catch((e) =>  {console.log('a',e);return e})
-          }).catch((e) => console.log('new user err',e))
+            }).then((assoc) => assoc).catch((e) => {
+              console.log('a', e);
+              return e
+            })
+          }).catch((e) => console.log('new user err', e))
         }
         callback(null, 'next');
       },
@@ -148,6 +152,52 @@ export function load() {
 
 }
 
+export function createMockRelationships() {
+  let Musician = mongoose.model('Musician')
+  let Band = mongoose.model('Band')
+  let User = mongoose.model('User')
+  let Document = mongoose.model('Document')
+  async.waterfall([
+    (callback) => Musician.find({}).then((musicians) => callback(null, musicians)),
+    (musicians, callback) => Band.find({}).then((bands) => callback(null, musicians, bands)),
+    (musicians, bands, callback) => User.find({}).then((users) => callback(null, musicians, bands, users)),
+    (musicians, bands, users, callback) => {
+
+      users.forEach(user => {
+
+        let photo = faker.image.image()
+        let ext = 'jpg'
+
+        download(photo, __dirname + '/../../images', user.id + '.' + ext, () => {
+          console.log('downloaded', photo, __dirname + '/../../images', user.id + '.' + ext);
+          handleProfileImageSave('download.png',user._id)
+        })
+      })
+      bands.forEach(band => {
+        let musArr = []
+        let path =  __dirname + '/../../images/bands/'
+        let photo = faker.image.image()
+        let doc = { name: band.slug, type: 'image', extension: 'jpg', path: path }
+
+        for (let x = 0; x < randomIntFromInterval(1, 5); x++) {
+          let randomMusician = getRandomArrayElement(musicians)
+          if(musArr.indexOf(randomMusician._id) < 0) {
+            musArr.push(randomMusician._id)
+          }
+        }
+
+        Document.create(doc).then(doc =>{
+          Band.findOneAndUpdate({_id: band._id}, {musicians: musArr, documents: doc._id}).exec()
+          download(photo, path, doc._id + '.jpg', () => {
+            console.log('downloaded', photo, path + doc._id + '.jpg');
+          })
+        })
+
+
+      })
+    }
+  ])
+}
 
 
 

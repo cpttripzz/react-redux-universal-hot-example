@@ -79,34 +79,36 @@ export function lookupVenue(lat, lng) {
 }
 export function createRandomAddressForCity(randomCity) {
   return new Promise((resolve, reject) => {
-    lookupVenue(randomCity.latitude, randomCity.longitude).then((venue) => {
-      let vi = 0;
-      let v = venue.response.groups[0].items[vi]
-      let loc = {lid: v.venue.id}
-      let locData;
-      Location.findOne().then((d) => {
-        if (d) return
-        locData = d
-      }).catch(err => err)
-      if (locData) {
-        console.log('loc exists');
-        return
-      }
-      Location.create(loc)
-      let newAddress = {address: v.venue.location.address}
-      if (v.venue.location.lat && v.venue.location.lng) {
-        newAddress.latitude = v.venue.location.lat
-        newAddress.longitude = v.venue.location.lng
-      }
-      newAddress.city = randomCity._id
-      newAddress.country = randomCity.country._id
+    setTimeout( () => {
+      lookupVenue(randomCity.latitude, randomCity.longitude).then((venue) => {
+        let vi = 0;
+        let v = venue.response.groups[0].items[vi]
+        let loc = {lid: v.venue.id}
+        let locData;
+        Location.findOne().then((d) => {
+          if (d) return
+          locData = d
+        }).catch(err => err)
+        if (locData) {
+          console.log('loc exists');
+          return
+        }
+        Location.create(loc)
+        let newAddress = {address: v.venue.location.address}
+        if (v.venue.location.lat && v.venue.location.lng) {
+          newAddress.latitude = v.venue.location.lat
+          newAddress.longitude = v.venue.location.lng
+        }
+        newAddress.city = randomCity._id
+        newAddress.country = randomCity.country._id
 
-      getOrCreateRegion(randomCity)
-        .then(region => {
-          if (region) newAddress.region = region
-          Address.create(newAddress).then(a => resolve(a))
-            .catch(err => console.log('err address create', err))
-        }).catch(err => console.log('err getOrCreateRegion', err))
-    }).catch(err => reject(err))
+        getOrCreateRegion(randomCity)
+          .then(region => {
+            if (region) newAddress.region = region
+            Address.create(newAddress).then(a => resolve(a))
+              .catch(err => console.log('err address create', err))
+          }).catch(err => console.log('err getOrCreateRegion', err))
+      }).catch(err => reject(err))
+    },500)
   })
 }
