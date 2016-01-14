@@ -115,19 +115,21 @@ export function loadMocks() {
                   newAssocGenres.push(getRandomArrayElement(genres)['_id'])
                 }
                 let randomCity = getRandomArrayElement(cities)
-                createRandomAddressForCity(randomCity).then(address => {
-                  assoc.create({
-                    name: faker.lorem.words(randomIntFromInterval(1, 3)),
-                    description: faker.company.bs(),
-                    genres: newAssocGenres,
-                    addresses: address._id,
-                    user: user._id
+                setTimeout(() => {
+                  createRandomAddressForCity(randomCity).then(address => {
+                    assoc.create({
+                      name: faker.lorem.words(randomIntFromInterval(1, 3)),
+                      description: faker.company.bs(),
+                      genres: newAssocGenres,
+                      addresses: address._id,
+                      user: user._id
 
-                  }).then(newAssoc => {
-                    assocIndex++;
-                    return resolve(newAssoc)
-                  }).catch(e => e)
-                }).catch(e => reject(e))
+                    }).then(newAssoc => {
+                      assocIndex++;
+                      return resolve(newAssoc)
+                    }).catch(e => e)
+                  }).catch(e => console.log('createRandomAddressForCity failed', e))
+                }, 250)
               })
 
             }).then((assoc) => assoc).catch((e) => {
@@ -168,32 +170,30 @@ export function createMockRelationships() {
         let photo = faker.image.image()
         let ext = 'jpg'
 
-        download(photo, __dirname + '/../../images', user.id + '.' + ext, () => {
-          console.log('downloaded', photo, __dirname + '/../../images', user.id + '.' + ext);
-          handleProfileImageSave('download.png',user._id)
-        })
+        download(photo, __dirname + '/../../images', user.id + '.' + ext)
+          .then(p => handleProfileImageSave('download.jpg', user._id) )
+
       })
       bands.forEach(band => {
         let musArr = []
-        let path =  __dirname + '/../../images/bands/'
+        let path = __dirname + '/../../images/bands/'
         let photo = faker.image.image()
-        let doc = { name: band.slug, type: 'image', extension: 'jpg', path: path }
+        let doc = {name: band.slug, type: 'image', extension: 'jpg', path: path}
 
         for (let x = 0; x < randomIntFromInterval(1, 5); x++) {
           let randomMusician = getRandomArrayElement(musicians)
-          if(musArr.indexOf(randomMusician._id) < 0) {
+          if (musArr.indexOf(randomMusician._id) < 0) {
             musArr.push(randomMusician._id)
           }
         }
 
-        Document.create(doc).then(doc =>{
-          Band.findOneAndUpdate({_id: band._id}, {musicians: musArr, documents: doc._id}).exec()
-          download(photo, path, doc._id + '.jpg', () => {
-            console.log('downloaded', photo, path + doc._id + '.jpg');
-          })
+        Document.create(doc).then(doc => {
+          Band.findOneAndUpdate({_id: band._id}, {musicians: musArr, documents: doc._id}).then(
+            download(photo, path, doc._id + '.jpg').then(
+              console.log('downloaded', photo, path + doc._id + '.jpg')
+            )
+          )
         })
-
-
       })
     }
   ])

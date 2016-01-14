@@ -11,6 +11,8 @@ import { pick } from '../../utils/objUtils'
 import { validateEntityProps, getValidateEntityErrors } from './validation.service'
 import { download,existsSync } from '../../utils/fileUtils'
 var del = require("del")
+let mkdirp = require('mkdirp');
+
 export function login(req) {
   let { username, password } = req.body;
 
@@ -38,13 +40,11 @@ export function handleProfileImageSave(fileOriginalName,userId) {
 
   const ext = removeStringBeforeLastInstance(fileOriginalName, '.')
   const fileName = userId + '.' + ext
-  if (existsSync(config.app.profileImgPath + '/'+ fileName)) {
-    del.sync(config.app.profileImgPath + '/'+ fileName)
-  }
   const thumbPath = config.app.profileImgPath + '/thumbs/' +userId + '.png'
-  if (existsSync(thumbPath)) {
-    del.sync(thumbPath)
+  if(!existsSync(config.app.profileImgPath + '/thumbs/')){
+    mkdirp(config.app.profileImgPath + '/thumbs/')
   }
+
   var fs = require('fs')
     , gm = require('gm').subClass({imageMagick: true});
   gm(config.app.profileImgPath +'/' + fileName).resize(40, 40,'!')
