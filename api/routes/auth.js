@@ -1,9 +1,9 @@
 var passport = require('passport');
 var config = require('../config');
-var jwt = require('jsonwebtoken');
 var multer  = require('multer')
 import { login, register, getUsers, newUser, getProfile, postProfile, checkProps, handleProfileImageSave } from '../services/user.service';
 import { removeStringBeforeLastInstance } from '../../utils/stringUtils'
+import { isJwtAuthenticated } from '../middleware/jwt-authenticated.middleware'
 module.exports = function (app) {
 
   process.on("unhandledRejection", function (reason, p) {
@@ -70,42 +70,21 @@ module.exports = function (app) {
     return res.json({})
   });
 
-  app.get('/musicians', (req, res) => {
-    import { getMusicians } from '../services/musician.service'
 
-    getMusicians().then(musicians => res.json(musicians))
-  });
   //check jwt
-  app.use(function (req, res, next) {
-    var token = req.body.token || req.params.token || req.headers['x-access-token'] || req.cookies.token;
-    if (token) {
-      jwt.verify(token, config.jwtSecret, (err, decoded)  => {
-        if (err) {
-          return res.json({success: false, message: 'Failed to authenticate token.'});
-        } else {
-          req.user = decoded;
-          next();
-        }
-      });
-    } else {
-      return res.status(403).send({
-        success: false,
-        message: 'No token provided.'
-      });
-    }
-  });
+
 
 // ---------------------------------------------------------
 // authenticated routes
 // ---------------------------------------------------------
-  app.post('/loadAuth', (req, res) => res.json(req.user))
+  app.post('/loadAuth', isJwtAuthenticated, (req, res) => res.json(req.user))
 
-  app.get('/users', (req, res) =>
+  app.get('/users', isJwtAuthenticated, (req, res) =>
     getUsers().then((users) => res.json(users))
       .catch((err) => res.json(err))
   )
 
-  app.get('/profile', (req, res) =>
+  app.get('/profile', isJwtAuthenticated, (req, res) =>
     getProfile(req.user._id).then((user) => res.json(user))
       .catch((err) => res.json(err))
   )
@@ -121,7 +100,7 @@ module.exports = function (app) {
   })
 
   var upload = multer({ storage: storage })
-  app.post('/profile', upload.single('imgFile'), function (req, res, next) {
+  app.post('/profile', isJwtAuthenticated, upload.single('imgFile'),  (req, res, next) =>{
     if(req.file) {
       delete req.file
       req.body['photo'] = true
@@ -133,8 +112,8 @@ module.exports = function (app) {
   })
 
 
-  app.post('/resource', function (req, res) {
-    import { allow } from '../services/resource.server.service';
+  app.post('/resource', isJwtAuthenticated,  (req, res) => {
+    import { allow } from '../services/resource.server.service'
     if (req.user.role.indexOf('admin') >= 0) {
       allow(req.body)
         .then((result) => res.json(result))
@@ -142,4 +121,4 @@ module.exports = function (app) {
 
     }
   })
-};
+}

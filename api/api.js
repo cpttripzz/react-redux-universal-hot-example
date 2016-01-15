@@ -25,20 +25,21 @@ fs.readdirSync(modelsPath).forEach(function (file) {
 });
 
 io.path('/ws');
-
 morgan.token('body', (req, res) => require('util').inspect(req.body) )
-
-require('./config/passport')(passport);
 if (app.get('env') == 'production') {
   app.use(morgan('common', { skip: function(req, res) { return res.statusCode < 400 }, stream: __dirname + '/../morgan.log' }));
 } else {
   app.use(morgan(':method :url :status :req[header] :body'));
 }
+require('./config/passport')(passport);
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
-require('./routes/auth')(app);
+
+['auth','musician'].forEach( route => require('./routes/' + route)(app))
+
 
 const bufferSize = 100;
 const messageBuffer = new Array(bufferSize);
