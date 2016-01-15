@@ -70,6 +70,11 @@ module.exports = function (app) {
     return res.json({})
   });
 
+  app.get('/musicians', (req, res) => {
+    import { getMusicians } from '../services/musician.service'
+
+    getMusicians().then(musicians => res.json(musicians))
+  });
   //check jwt
   app.use(function (req, res, next) {
     var token = req.body.token || req.params.token || req.headers['x-access-token'] || req.cookies.token;

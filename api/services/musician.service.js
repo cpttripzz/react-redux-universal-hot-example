@@ -1,5 +1,7 @@
-export function getMusicians(params){
-  let Musician = mongoose.model('Musician')
-  Musician.find({}).populate('user ', 'name')
-    .lean().then(musicians => musicians)
+let mongoose = require('mongoose')
+mongoose.Promise = Promise
+let Musician = mongoose.model('Musician')
+
+export function getMusicians(params={}){
+  return Musician.find(params).populate('user genres addresses.country').lean()
 }
