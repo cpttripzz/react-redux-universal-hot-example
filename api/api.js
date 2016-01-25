@@ -38,7 +38,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-['auth','musician'].forEach( route => require('./routes/' + route)(app))
+['auth','musician','band'].forEach( route => require('./routes/' + route)(app))
 
 
 const bufferSize = 100;
