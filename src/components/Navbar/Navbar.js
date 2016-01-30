@@ -33,7 +33,6 @@ export default class Navbar extends Component {
 
 
   render() {
-    console.log('this.props.user',this.props.user)
     const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false
     const photoPath = false; //isLoggedIn ? 'thumbs/' + this.props.user._id + '.png' : false
     const { activeRoute } = this.props
@@ -44,7 +43,9 @@ export default class Navbar extends Component {
             Reduxxed
           </NavbarLink>
 
-          <ul className="nav navbar-nav col-sm-6 col-sm-offset-3">
+          <ul className="nav navbar-nav col-sm-6  col-sm-offset-3">
+            <li><NavbarLink to="/bands" activeRoute={activeRoute} >Bands</NavbarLink></li>
+
             {isLoggedIn && <li><NavbarLink to="/user-admin" activeRoute={activeRoute} >User Admin</NavbarLink></li>}
             {isLoggedIn && <li><NavbarLink to="/profile" activeRoute={activeRoute}>Profile</NavbarLink></li>}
             {!isLoggedIn && <li><NavbarLink to="/login" activeRoute={activeRoute}>Login</NavbarLink></li>}

@@ -5,6 +5,7 @@ import auth from './auth';
 import users from './users';
 import profile from './profile';
 import register from './register';
+import bands from './bands';
 
 export default combineReducers({
   routing: routeReducer,
@@ -13,4 +14,5 @@ export default combineReducers({
   users,
   profile,
   register,
+  bands
 });

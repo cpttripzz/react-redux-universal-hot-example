@@ -12,7 +12,8 @@ let checkingAuth = false;
     user: state.auth.user,
     auth: state.auth
   }),
-  {pushPath})
+  {pushPath}
+)
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,

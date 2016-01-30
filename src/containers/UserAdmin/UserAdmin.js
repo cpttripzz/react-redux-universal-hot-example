@@ -4,7 +4,8 @@ import {connect} from 'react-redux';
 import { isLoaded as usersLoaded, load as loadUsers } from 'redux/modules/users';
 @connect(
     state => ({users: state.users}),
-    dispatch => bindActionCreators({loadUsers}, dispatch))
+    dispatch => bindActionCreators({loadUsers}, dispatch)
+)
 
 export default class UserAdmin extends Component {
     constructor(props) {
@@ -25,7 +26,6 @@ export default class UserAdmin extends Component {
 
     render() {
         const usersData = this.props.users.users
-        console.log(usersData)
 
         return (
         <div>

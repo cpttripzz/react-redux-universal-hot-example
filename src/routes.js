@@ -13,7 +13,8 @@ import {
     NotFound,
     UserAdmin,
     Profile,
-    OauthToken
+    OauthToken,
+    Bands
 } from 'containers';
 
 export default (store) => {
@@ -40,8 +41,9 @@ export default (store) => {
             <Route path="/user-admin" component={UserAdmin}/>
             <Route path="/oauth-profile/:token" component={OauthToken}/>
             <Route path="/profile" component={Profile}/>
-            <Route onEnter={requireLogin}>
+            <Route path="/bands" component={Bands}/>
 
+            <Route onEnter={requireLogin}>
                 <Route path="/loginSuccess" component={LoginSuccess}/>
             </Route>
             <Route path="*" component={NotFound} status={404}/>
