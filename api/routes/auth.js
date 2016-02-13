@@ -65,8 +65,8 @@ module.exports = function (app) {
 
   app.get('/mocks', (req, res) => {
     import { loadMocks,createMockRelationships } from '../services/mock.service'
-    loadMocks();
-    //createMockRelationships()
+    //loadMocks();
+    createMockRelationships()
     return res.json({})
   });
 

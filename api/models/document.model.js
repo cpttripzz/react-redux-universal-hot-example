@@ -1,5 +1,4 @@
 var mongoose = require('mongoose'),
-  URLSlugs = require('mongoose-url-slugs'),
   Schema = mongoose.Schema;
 
 var DocumentSchema = new Schema({
@@ -9,5 +8,4 @@ var DocumentSchema = new Schema({
   path: {type: String, trim: true}
 });
 
-DocumentSchema.plugin(URLSlugs('name'));
 module.exports = mongoose.model('Document', DocumentSchema);

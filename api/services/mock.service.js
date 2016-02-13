@@ -91,7 +91,7 @@ export function loadMocks() {
       },
 
       (genres, instruments, countries, cities, callback) => {
-        for (let x = 0; x < 200; x++) {
+        for (let x = 0; x < 20; x++) {
           newUser({
             name: faker.name.findName(),
             email: faker.internet.email(),
@@ -155,6 +155,9 @@ export function loadMocks() {
 }
 
 export function createMockRelationships() {
+  var RateLimiter = require('limiter').RateLimiter;
+  var limiter = new RateLimiter(1, 250);
+
   let Musician = mongoose.model('Musician')
   let Band = mongoose.model('Band')
   let User = mongoose.model('User')
@@ -169,30 +172,53 @@ export function createMockRelationships() {
 
         let photo = faker.image.image()
         let ext = 'jpg'
-
-        download(photo, __dirname + '/../../images', user.id + '.' + ext)
-          .then(p => handleProfileImageSave('download.jpg', user._id) )
+        download(photo, __dirname + '/../../images', user._id + '.' + ext)
+          .then(p => handleProfileImageSave('download.jpg', user._id))
 
       })
       bands.forEach(band => {
         let musArr = []
         let path = __dirname + '/../../images/bands/'
         let photo = faker.image.image()
-        let doc = {name: band.slug, type: 'image', extension: 'jpg', path: path}
+        let doc = {name: band.slug, type: 'image', extension: 'jpg', path: '/bands'}
 
         for (let x = 0; x < randomIntFromInterval(1, 5); x++) {
           let randomMusician = getRandomArrayElement(musicians)
           if (musArr.indexOf(randomMusician._id) < 0) {
+
             musArr.push(randomMusician._id)
+
+            Musician.findById(randomMusician._id).then(musician => {
+              if(!musician) return
+              if (musician.bands && musician.bands.length) {
+                musician.bands.addToSet(band)
+              } else {
+                musician.bands = band;
+              }
+              musician.save()
+            })
           }
         }
 
         Document.create(doc).then(doc => {
-          Band.findOneAndUpdate({_id: band._id}, {musicians: musArr, documents: doc._id}).then(
-            download(photo, path, doc._id + '.jpg').then(
+          Band.findOneAndUpdate({_id: band._id}, {musicians: musArr, documents: doc._id}).then( band => {
+            download(photo, path, doc._id + '.jpg').then( p => {
               console.log('downloaded', photo, path + doc._id + '.jpg')
-            )
-          )
+            })
+          })
+        })
+      })
+      musicians.forEach(musician => {
+        let path = __dirname + '/../../images/musicians/'
+        let photo = faker.image.image()
+        let doc = {name: musician.slug, type: 'image', extension: 'jpg', path: '/musicians'}
+
+        Document.create(doc).then(doc => {
+          Musician.findOneAndUpdate({_id: musician._id}, {documents: doc._id}).then( mus => {
+            download(photo, path, doc._id + '.jpg').then( p => {
+              console.log('downloaded', photo, path + doc._id + '.jpg')
+            })
+          })
         })
       })
     }

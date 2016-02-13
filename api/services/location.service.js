@@ -16,37 +16,43 @@ export function getOrCreateRegion(city) {
   return new Promise((resolve, reject) => {
 
     let cityLookupString = city.name + ', ' + city.country.name
-    geocoder.geocode(cityLookupString)
-      .then(function (res) {
-        console.log('geocoding ', cityLookupString);
-        if (!res || !res[0] || !res[0]['administrativeLevels'] || !res[0]['administrativeLevels']['level1long']) {
-          console.log('nope1', res[0]['administrativeLevels']['level1long']);
-          return resolve()
-        }
-        let regionShortName = res[0]['administrativeLevels']['level1short']
-        let regionLongName = res[0]['administrativeLevels']['level1long']
-        Region.findOne({longName: regionLongName}).then(region => {
-          if (region) {
-            console.log('rgion found', region);
-            return resolve(region)
-          }
-          let newRegion = {shortName: regionShortName, longName: regionLongName, country: city.country._id}
-          Region.create(newRegion).then((region) => {
-            console.log('newRegion', region)
+    var RateLimiter = require('limiter').RateLimiter;
+    var limiter = new RateLimiter(1, 250);
 
-            return resolve(region)
+    limiter.removeTokens(1, function() {
+      geocoder.geocode(cityLookupString)
+        .then(function (res) {
+          console.log('geocoding ', cityLookupString);
+          if (!res || !res[0] || !res[0]['administrativeLevels'] || !res[0]['administrativeLevels']['level1long']) {
+            console.log('nope1', res[0]['administrativeLevels']['level1long']);
+            return resolve()
+          }
+          let regionShortName = res[0]['administrativeLevels']['level1short']
+          let regionLongName = res[0]['administrativeLevels']['level1long']
+          Region.findOne({longName: regionLongName}).then(region => {
+            if (region) {
+              console.log('rgion found', region);
+              return resolve(region)
+            }
+            let newRegion = {shortName: regionShortName, longName: regionLongName, country: city.country._id}
+            Region.create(newRegion).then((region) => {
+              console.log('newRegion', region)
+
+              return resolve(region)
+            }).catch((err) => {
+              console.log('2', err);
+              return reject(err);
+            })
           }).catch((err) => {
-            console.log('2', err);
-            return reject(err);
+            console.log('region', err)
+            reject(err)
           })
         }).catch((err) => {
-          console.log('region', err)
-          reject(err)
-        })
-      }).catch((err) => {
-      console.log('region1', err)
-      reject(err)
-    })
+        console.log('region1', err)
+        reject(err)
+      })
+    });
+
   })
 }
 
