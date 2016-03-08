@@ -4,6 +4,8 @@ var multer  = require('multer')
 import { login, register, getUsers, newUser, getProfile, postProfile, checkProps, handleProfileImageSave } from '../services/user.service';
 import { removeStringBeforeLastInstance } from '../../utils/stringUtils'
 import { isJwtAuthenticated } from '../middleware/jwt-authenticated.middleware'
+import jwt from 'jsonwebtoken'
+
 module.exports = function (app) {
 
   process.on("unhandledRejection", function (reason, p) {

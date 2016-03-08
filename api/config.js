@@ -23,7 +23,7 @@ module.exports = {
     },
     google: {
       clientID: '309796006487-b6ju56r441plsk1uf8l2vod0f6v0efe9.apps.googleusercontent.com',
-      clientSecret: 'eGPvuTMwuT4AkpHcTejMymga',
+      clientSecret: 'csgbFnLawbdWp4AQiNR4Y4A5',
       callbackURL: 'http://' + domain + ':' + apiPort + '/oauth/google/callback',
       scope: 'email'
     },
