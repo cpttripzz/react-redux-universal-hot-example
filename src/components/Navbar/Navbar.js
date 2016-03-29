@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { IndexLink, Link } from 'react-router';
 import { connect } from 'react-redux';
-import { pushPath } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
 import { logout } from 'redux/modules/auth';
 
 const NavbarLink = ({to, className, activeRoute, component, children}) => {
@@ -17,7 +17,7 @@ const NavbarLink = ({to, className, activeRoute, component, children}) => {
 
 @connect(
   state => ({user: state.auth.user}),
-  {logout})
+  {logout, pushState: routeActions.push})
 export default class Navbar extends Component {
   static propTypes = {
     user: PropTypes.object,
@@ -27,7 +27,7 @@ export default class Navbar extends Component {
 
   handleLogout(event) {
     event.preventDefault();
-    this.props.logout().then(() => pushPath(null, '/'))
+    this.props.logout().then(() => this.props.pushState(null, '/'))
 
   }
 

@@ -1,24 +1,38 @@
 import React, { Component, PropTypes } from 'react';
-import { IndexLink, Link } from 'react-router';
 import { connect } from 'react-redux';
-import DocumentMeta from 'react-document-meta';
-import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
-import { pushPath } from 'redux-simple-router';
+import { IndexLink } from 'react-router';
+import { LinkContainer } from 'react-router-bootstrap';
 import { Navbar } from  'components';
+import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
+import { routeActions } from 'react-router-redux';
+import { asyncConnect } from 'redux-async-connect';
 let checkingAuth = false;
+
+/*@asyncConnect([{
+  promise: ({store: {dispatch, getState}}) => {
+    const promises = [];
+
+    if (!isAuthLoaded(getState())) {
+      promises.push(dispatch(loadAuth()));
+    }
+
+    return Promise.all(promises);
+  }
+}])*/
+
 
 @connect(
   state => ({
     user: state.auth.user,
     auth: state.auth
   }),
-  {pushPath}
-)
+  {pushState: routeActions.push})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
-    pushPath: PropTypes.func.isRequired
+    logout: PropTypes.func.isRequired,
+    pushState: PropTypes.func.isRequired
   };
 
   static contextTypes = {
@@ -52,7 +66,7 @@ export default class App extends Component {
 
   render() {
 
-    const {user} = this.props;
+    const {user} = this.props
     const activeRoute = this.context.location.pathname
 
     const styles = require('./App.scss');

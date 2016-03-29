@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
-import { routeReducer } from 'redux-simple-router';
-import {reducer as form} from 'redux-form';
+import { routeReducer } from 'react-router-redux';
+import {reducer as formReducer} from 'redux-form';
+import {reducer as reduxAsyncConnect} from 'redux-async-connect';
+
 import auth from './auth';
 import users from './users';
 import profile from './profile';
@@ -9,7 +11,8 @@ import bands from './bands';
 
 export default combineReducers({
   routing: routeReducer,
-  form,
+  form: formReducer,
+  reduxAsyncConnect,
   auth,
   users,
   profile,

@@ -21,12 +21,12 @@ export function login(req) {
     User.findOne({username: username}).then((user) => {
       let errMsg = {message: 'Invalid username or password'};
       if (!user || (!user.authenticate(password))) {
-        reject(errMsg);
+        return reject(errMsg);
       }
 
       req.login(user, (err) => {
         if (err) {
-          reject({loginError: err});
+          return reject({loginError: err});
         }
         return resolve(getUserDetails(user));
       });

@@ -4,7 +4,7 @@ import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import { validate as validateParams, register} from 'redux/modules/register';
 import {connect} from 'react-redux';
-import { pushPath } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
 import cookie from '../../../utils/cookie';
 
 var classNames = require('classnames');
@@ -35,8 +35,9 @@ const asyncValidate = (values, dispatch, _props) => {
       validating[[propToValidate]] = true
       dispatch(validateParams(values))
         .then(response => {
+          console.log("response",response)
           validating[[propToValidate]] = false
-          if (response.error) return reject(response.error);
+          if (response && response.error) return reject(response.error);
 
           return resolve();
         })
@@ -45,7 +46,7 @@ const asyncValidate = (values, dispatch, _props) => {
   )
 }
 
-@connect(state => ({validate: state.validate}), {pushPath})
+@connect(state => ({validate: state.validate}), {pushState: routeActions.push})
 export default class Register extends Component {
   constructor(props) {
     super(props)
@@ -58,22 +59,22 @@ export default class Register extends Component {
     handleSubmit: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
     validateParams: PropTypes.func,
-    pushPath: PropTypes.func.isRequired
+    pushState: PropTypes.func.isRequired
   };
 
   submitRegister(values, dispatch, _props) {
     const errors = {};
+    debugger;
     return new Promise((resolve, reject) => {
       dispatch(register(values))
         .then(response => {
           if (response.error) {
             reject(response.error)
           } else {
-            cookie.setToken(response.result.token)
-            this.props.pushPath('/')
+            cookie.setToken(response.token)
+            this.props.pushState('/')
             resolve()
           }
-
         })
         .catch(err => reject(err))
     })
@@ -91,14 +92,13 @@ export default class Register extends Component {
       <div className={styles.registerPage}>
         <h1><span className="fa fa-user-plus"></span> Sign up</h1>
         <div className="col-sm-6 col-sm-offset-3">
-          <form className="login-form" onSubmit={this.submitRegister}>
+          <form className="login-form" onSubmit={handleSubmit(this.submitRegister)}>
             <ValidatedFormInput field={username} validating={validating.username} spinnerOptions={ {top: '18px'} }/>
             <ValidatedFormInput field={email} validating={validating.email} spinnerOptions={ {top: '67px'} }/>
             <ValidatedFormInput type="password" field={password}/>
             {error && <div>{error}</div>}
             <div>
-              <SubmitButton label="Register" submitting={submitting} invalid={invalid}
-                            onClick={handleSubmit(this.submitRegister)}/>
+              <SubmitButton label="Register" submitting={submitting} invalid={invalid} />
               <button className="btn btn-warning" onClick={resetForm}>Clear Values</button>
             </div>
           </form>

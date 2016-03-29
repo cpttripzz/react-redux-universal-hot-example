@@ -5,6 +5,8 @@ import { login, register, getUsers, newUser, getProfile, postProfile, checkProps
 import { removeStringBeforeLastInstance } from '../../utils/stringUtils'
 import { isJwtAuthenticated } from '../middleware/jwt-authenticated.middleware'
 import jwt from 'jsonwebtoken'
+import { loadMocks,createMockRelationships } from '../services/mock.service'
+import { allow } from '../services/resource.server.service'
 
 module.exports = function (app) {
 
@@ -66,7 +68,6 @@ module.exports = function (app) {
   });
 
   app.get('/mocks', (req, res) => {
-    import { loadMocks,createMockRelationships } from '../services/mock.service'
     //loadMocks();
     createMockRelationships()
     return res.json({})
@@ -115,7 +116,6 @@ module.exports = function (app) {
 
 
   app.post('/resource', isJwtAuthenticated,  (req, res) => {
-    import { allow } from '../services/resource.server.service'
     if (req.user.role.indexOf('admin') >= 0) {
       allow(req.body)
         .then((result) => res.json(result))

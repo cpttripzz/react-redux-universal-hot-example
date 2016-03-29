@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { IndexLink, Link } from 'react-router';
-import { pushPath } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
 import { logout } from 'redux/modules/auth';
 
 export default class Link extends Component {

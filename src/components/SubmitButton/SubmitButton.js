@@ -18,7 +18,7 @@ export default class SubmitButton extends Component {
     });
 
     return (
-      <button {...this.props} className={btnSubmitClass} onClick={onClick}>
+      <button type="submit" {...this.props} className={btnSubmitClass} onClick={onClick}>
         {!submitting && <i className="fa fa-key"/>}
         {submitting && <i className="fa fa-cog fa-spin"/>} {label}
       </button>

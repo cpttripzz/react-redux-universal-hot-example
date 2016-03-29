@@ -2,8 +2,9 @@ import { Link } from 'react-router';
 import { AlertAutoDismissable,ValidatedFormInput,SubmitButton } from 'components';
 import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
+
 import {connect} from 'react-redux';
-import { pushPath } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
 import { login } from 'redux/modules/auth';
 import cookie from '../../../utils/cookie';
 let equals = require('shallow-equals')
@@ -20,7 +21,8 @@ const validate = values => {
 };
 
 
-@connect(state => ({validate: state.validate}), {pushPath})
+@connect(state => ({validate: state.validate}), {pushState: routeActions.push})
+
 export default class Login extends Component {
   constructor(props) {
     super(props)
@@ -34,7 +36,7 @@ export default class Login extends Component {
     submitting: PropTypes.bool.isRequired,
     validateParams: PropTypes.func,
     login: PropTypes.func,
-    pushPath: PropTypes.func.isRequired
+    pushState: PropTypes.func.isRequired
   };
 
   submitLogin(values, dispatch, _props) {
@@ -44,12 +46,12 @@ export default class Login extends Component {
           if (response.error) {
             reject({_error: response.error.message})
           } else {
-            cookie.setToken(response.result.token)
-            this.props.pushPath('/')
+            cookie.setToken(response.token)
+            this.props.pushState('/')
             resolve()
           }
         })
-        .catch(err => reject(err))
+        .catch(err => reject({_error: err.message}))
     })
   }
 
@@ -77,17 +79,17 @@ export default class Login extends Component {
       resetForm, handleSubmit
       } = this.props;
     const styles = require('./Login.scss');
+    console.log('error',error);
     return (
       <div className={styles.loginPage}>
         <h1><span className="fa  fa-sign-in"></span> Login</h1>
         <div className="col-sm-6 col-sm-offset-3">
-          <form className="login-form" onSubmit={this.submitLogin}>
-            { error && <AlertAutoDismissable message={error} bsStyle="danger" ref="alertAuto"/>}
+          <form className="login-form" onSubmit={handleSubmit(this.submitLogin)}>
+            { error && <div className="has-error">{error}</div>}
             <ValidatedFormInput field={username}/>
             <ValidatedFormInput type="password" field={password}/>
             <div>
-              <SubmitButton label="Login" submitting={submitting} invalid={invalid}
-                            onClick={handleSubmit(this.submitLogin)}/>
+              <SubmitButton label="Login" submitting={submitting} invalid={invalid} />
               <button className="btn btn-success" onClick={this.handleGoogleLogin}><i
                 className="fa fa-google"/>{' '}Log
                 in with Google
@@ -101,7 +103,6 @@ export default class Login extends Component {
     );
   }
 }
-
 export default reduxForm({
   form: 'login',
   fields,

@@ -31,16 +31,15 @@ export default function bands(state = initialState, action = {}) {
     default:
       return state;
   }
-
-  export function isLoaded(globalState) {
-    console.log('isLoaded')
-    return globalState && globalState.bands && globalState.bands.loaded;
-  }
-  export function load() {
-    console.log('fdfdf');
-    return {
-      types: [LOAD_BANDS, LOAD_BANDS_SUCCESS, LOAD_BANDS_FAIL],
-      promise: (client) => client.get('/bands')
-    };
-  }
+}
+export function isLoaded(globalState) {
+  console.log('isLoaded')
+  return globalState && globalState.bands && globalState.bands.loaded;
+}
+export function load() {
+  console.log('fdfdf');
+  return {
+    types: [LOAD_BANDS, LOAD_BANDS_SUCCESS, LOAD_BANDS_FAIL],
+    promise: (client) => client.get('/bands')
+  };
 }

@@ -48,22 +48,21 @@ export default function band(state = initialState, action = {}) {
     default:
       return state;
   }
-
-  export function isLoaded(globalState) {
-    return globalState && globalState.band && globalState.band.loaded;
-  }
-  export function load() {
-    return {
-      types: [LOAD_BAND, LOAD_BAND_SUCCESS, LOAD_BAND_FAIL],
-      promise: (client) => client.get('/band')
-    };
-  }
-  export function postBand(values) {
-    return {
-      types: [SAVE_BAND, SAVE_BAND_SUCCESS, SAVE_BAND_FAIL],
-      promise: (client) => client.post('/band', {
-        data: values
-      })
-    };
-  }
+}
+export function isLoaded(globalState) {
+  return globalState && globalState.band && globalState.band.loaded;
+}
+export function load() {
+  return {
+    types: [LOAD_BAND, LOAD_BAND_SUCCESS, LOAD_BAND_FAIL],
+    promise: (client) => client.get('/band')
+  };
+}
+export function postBand(values) {
+  return {
+    types: [SAVE_BAND, SAVE_BAND_SUCCESS, SAVE_BAND_FAIL],
+    promise: (client) => client.post('/band', {
+      data: values
+    })
+  };
 }

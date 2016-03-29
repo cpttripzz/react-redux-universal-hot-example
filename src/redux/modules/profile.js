@@ -48,22 +48,21 @@ export default function profile(state = initialState, action = {}) {
     default:
       return state;
   }
-
-  export function isLoaded(globalState) {
-    return globalState && globalState.profile && globalState.profile.loaded;
-  }
-  export function load() {
-    return {
-      types: [LOAD_PROFILE, LOAD_PROFILE_SUCCESS, LOAD_PROFILE_FAIL],
-      promise: (client) => client.get('/profile')
-    };
-  }
-  export function postProfile(values) {
-    return {
-      types: [SAVE_PROFILE, SAVE_PROFILE_SUCCESS, SAVE_PROFILE_FAIL],
-      promise: (client) => client.post('/profile', {
-        data: values
-      })
-    };
-  }
+}
+export function isLoaded(globalState) {
+  return globalState && globalState.profile && globalState.profile.loaded;
+}
+export function load() {
+  return {
+    types: [LOAD_PROFILE, LOAD_PROFILE_SUCCESS, LOAD_PROFILE_FAIL],
+    promise: (client) => client.get('/profile')
+  };
+}
+export function postProfile(values) {
+  return {
+    types: [SAVE_PROFILE, SAVE_PROFILE_SUCCESS, SAVE_PROFILE_FAIL],
+    promise: (client) => client.post('/profile', {
+      data: values
+    })
+  };
 }

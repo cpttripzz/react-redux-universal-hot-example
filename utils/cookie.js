@@ -22,6 +22,7 @@ let cookie = {
   },
 
   get(name) {
+    if (!canUseDOM) { return; }
     var re = new RegExp(['(?:^|; )',
       name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1'),
       '=([^;]*)'

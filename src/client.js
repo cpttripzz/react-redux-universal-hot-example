@@ -1,95 +1,30 @@
 /**
  * THIS IS THE ENTRY POINT FOR THE CLIENT, JUST LIKE server.js IS THE ENTRY POINT FOR THE SERVER.
  */
-import 'babel/polyfill';
+import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import createHistory from 'history/lib/createBrowserHistory';
 import createStore from './redux/create';
 import ApiClient from './helpers/ApiClient';
-import io from 'socket.io-client';
 import {Provider} from 'react-redux';
-import {Router, match, createRoutes} from 'react-router';
-import {syncReduxAndRouter} from 'redux-simple-router';
-import getRoutes from './routes';
-import {fetchData, fetchDataDeferred} from './helpers/fetchComponentsData';
+import { Router, browserHistory } from 'react-router';
+import { ReduxAsyncConnect } from 'redux-async-connect';
 import useScroll from 'scroll-behavior/lib/useStandardScroll';
 
+import getRoutes from './routes';
+
 const client = new ApiClient();
-
+const history = useScroll(() => browserHistory)();
 const dest = document.getElementById('content');
-const store = createStore(client, window.__data);
-const routes = getRoutes(store);
+const store = createStore(history, client, window.__data);
 
-function initSocket() {
-  const socket = io('', {path: '/api/ws', transports: ['polling']});
-  socket.on('news', (data) => {
-    console.log(data);
-    socket.emit('my other event', { my: 'data from client' });
-  });
-  socket.on('msg', (data) => {
-    console.log(data);
-  });
 
-  return socket;
-}
-
-global.socket = initSocket();
-
-const history = useScroll(createHistory)({routes: createRoutes(routes)});
-syncReduxAndRouter(history, store);
-
-let lastMatchedLocBefore;
-let lastMatchedLocAfter;
-
-history.listenBefore((location, callback) => {
-  const loc = location.pathname + location.search + location.hash;
-  if (lastMatchedLocBefore === loc) {
-    return callback();
-  }
-
-  match({routes: routes, location: loc}, (err, redirectLocation, nextState) => {
-    if (!err && nextState) {
-      fetchData(nextState.components, store.getState, store.dispatch,
-        location, nextState.params)
-        .then(() => {
-          lastMatchedLocBefore = loc;
-          callback();
-        })
-        .catch(err2 => {
-          console.error(err2, 'Error while fetching data');
-          callback();
-        });
-    } else {
-      console.log('Location "%s" did not match any routes (listenBefore)', loc);
-      callback();
-    }
-  });
-});
-
-history.listen((location) => {
-  const loc = location.pathname + location.search + location.hash;
-  if (lastMatchedLocAfter === loc) {
-    return;
-  }
-
-  match({routes: routes, location: loc}, (err, redirectLocation, nextState) => {
-    if (err) {
-      console.error(err, 'Error while matching route (change handler)');
-    } else if (nextState) {
-      fetchDataDeferred(nextState.components, store.getState,
-        store.dispatch, location, nextState.params)
-        .then(() => lastMatchedLocAfter = loc)
-        .catch((err2) => console.error(err2, 'Error while fetching deferred data'));
-    } else {
-      console.log('Location "%s" did not match any routes (listen)', loc);
-    }
-  });
-});
 
 const component = (
-  <Router history={history}>
-    {routes}
+  <Router render={(props) =>
+        <ReduxAsyncConnect {...props} helpers={{client}} filter={item => !item.deferred} />
+      } history={history}>
+    {getRoutes(store)}
   </Router>
 );
 
@@ -108,7 +43,7 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-if (__DEVTOOLS__) {
+if (__DEVTOOLS__ && !window.devToolsExtension) {
   const DevTools = require('./containers/DevTools/DevTools');
   ReactDOM.render(
     <Provider store={store} key="provider">

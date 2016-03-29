@@ -1,6 +1,7 @@
+import validate from  '../../utils/validate'
+
 export function validateEntityProps(type, entity) {
   const schemaPath = __dirname + '/../validators/' + type +'.schema.json'
-  import validate from  '../../utils/validate'
   var readFile = require("bluebird").promisify(require("fs").readFile)
   return new Promise((resolve, reject) => {
     readFile(schemaPath)

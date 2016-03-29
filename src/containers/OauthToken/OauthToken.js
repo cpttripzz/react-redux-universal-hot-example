@@ -1,18 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { pushPath } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
 import cookie from '../../../utils/cookie';
 
-@connect( state => ({}), {pushPath})
+@connect( state => ({}), {pushState: routeActions.push})
 export default class OauthToken extends Component {
   static propTypes = {
-    pushPath: PropTypes.func.isRequired
+    pushState: PropTypes.func.isRequired 
   };
 
   componentDidMount() {
     if (this.props.routeParams.token) {
       cookie.setToken(this.props.routeParams.token)
-      this.props.pushPath('/profile');
+      this.props.pushState('/profile');
     }
   }
 

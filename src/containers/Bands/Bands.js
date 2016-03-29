@@ -2,7 +2,9 @@ import React, {Component, PropTypes} from 'react';
 import { Link } from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import { pushPath } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
+import { asyncConnect } from 'redux-async-connect';
+
 import { isLoaded as bandsLoaded, load as loadBands } from 'redux/modules/bands';
 import { AssociationGrid } from 'components';
 
@@ -12,6 +14,17 @@ import { AssociationGrid } from 'components';
   dispatch => bindActionCreators({loadBands}, dispatch)
 )
 
+@asyncConnect([{
+  promise: ({store: {dispatch, getState}}) => {
+    const promises = [];
+
+    if (!bandsLoaded()) {
+      promises.push(dispatch(loadBands()));
+    }
+
+    return Promise.all(promises);
+  }
+}])
 
 export default class Bands extends Component {
   constructor(props) {
@@ -21,14 +34,7 @@ export default class Bands extends Component {
   static propTypes = {
     bands: PropTypes.object.isRequired
   };
-  static fetchData(getState, dispatch) {
-    const promises = [];
 
-    if (!bandsLoaded()) {
-      promises.push(dispatch(loadBands()));
-    }
-    return Promise.all(promises);
-  }
 
   render() {
     const bands = this.props.bands.data.data
