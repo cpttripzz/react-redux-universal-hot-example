@@ -4,12 +4,11 @@ import { connect } from 'react-redux';
 import { routeActions } from 'react-router-redux';
 import { logout } from 'redux/modules/auth';
 
-const NavbarLink = ({to, className, activeRoute, component, children}) => {
+const NavbarLink = ({to, className, component, children}) => {
   const Comp = component || Link;
 
-  if (to==activeRoute) className += className + " active"
   return (
-    <Comp to={to} className={className}>
+    <Comp to={to} className={className} activeStyle={{color: '#33e0ff'}}>
       {children}
     </Comp>
   );
@@ -21,8 +20,7 @@ const NavbarLink = ({to, className, activeRoute, component, children}) => {
 export default class Navbar extends Component {
   static propTypes = {
     user: PropTypes.object,
-    logout: PropTypes.func.isRequired,
-    activeRoute:  PropTypes.string
+    logout: PropTypes.func.isRequired
   }
 
   handleLogout(event) {
@@ -35,7 +33,6 @@ export default class Navbar extends Component {
   render() {
     const isLoggedIn = this.props.user && (Object.keys(this.props.user).length) ? true: false
     const photoPath = false; //isLoggedIn ? 'thumbs/' + this.props.user._id + '.png' : false
-    const { activeRoute } = this.props
     return (
       <nav className="navbar navbar-default navbar-fixed-top navbar-left">
         <div className="col-sm-6 col-sm-offset-3">
@@ -44,11 +41,11 @@ export default class Navbar extends Component {
           </NavbarLink>
 
           <ul className="nav navbar-nav col-sm-6  col-sm-offset-3">
-            <li><NavbarLink to="/bands" activeRoute={activeRoute} >Bands</NavbarLink></li>
+            <li><NavbarLink to="/bands">Bands</NavbarLink></li>
 
-            {isLoggedIn && <li><NavbarLink to="/user-admin" activeRoute={activeRoute} >User Admin</NavbarLink></li>}
-            {isLoggedIn && <li><NavbarLink to="/profile" activeRoute={activeRoute}>Profile</NavbarLink></li>}
-            {!isLoggedIn && <li><NavbarLink to="/login" activeRoute={activeRoute}>Login</NavbarLink></li>}
+            {isLoggedIn && <li><NavbarLink to="/user-admin" >User Admin</NavbarLink></li>}
+            {isLoggedIn && <li><NavbarLink to="/profile">Profile</NavbarLink></li>}
+            {!isLoggedIn && <li><NavbarLink to="/login">Login</NavbarLink></li>}
             {isLoggedIn && <li className="logout-link"><a href="/logout" onClick={::this.handleLogout}>Logout</a></li>}
           </ul>
           </div>

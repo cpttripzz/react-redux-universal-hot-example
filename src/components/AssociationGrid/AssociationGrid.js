@@ -9,7 +9,6 @@ export default class AssociationGrid extends Component {
 
 
   render() {
-    debugger
     const styles = require('./AssociationGrid.scss');
     const defaultOptions = {
       speed: 1,

@@ -1,8 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import { Link } from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import { routeActions } from 'react-router-redux';
 import { asyncConnect } from 'redux-async-connect';
 
 import { isLoaded as bandsLoaded, load as loadBands } from 'redux/modules/bands';

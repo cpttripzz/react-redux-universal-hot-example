@@ -81,7 +81,6 @@ export function isLoaded(globalState) {
 }
 //function getJsonWebToken()
 export function load() {
-
   const token = cookie.get('token')
   if(!token) return
     return {

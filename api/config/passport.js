@@ -1,22 +1,15 @@
 var passport = require('passport'),
 		mongoose = require('mongoose');
+import { getProfile } from '../services/user.service';
 
 module.exports = function() {
 	var User = mongoose.model('User');
 
 	passport.serializeUser(function(user, done) {
-		done(null, user.id);
+		done(null, user._id);
 	});
 
-	passport.deserializeUser(function(id, done) {
-		User.findOne(
-				{_id: id},
-				'-password',
-				function(err, user) {
-					done(err, user);
-				}
-		);
-	});
+	passport.deserializeUser( (id, done) => done(false,getProfile(id)))
 
 	//require('./strategies/local.js')();
 	require('./strategies/facebook.js')();

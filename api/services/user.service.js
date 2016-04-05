@@ -112,6 +112,7 @@ export function getProfile(id) {
   return new Promise((resolve, reject) => {
     var User = require('mongoose').model('User');
     User.findById(id).select('id firstName lastName email photo').lean().then((user) => {
+      console.log('ffukk', user);
         resolve(user)
       }
       , (err) => reject(err))
@@ -214,46 +215,42 @@ export function newUser(user) {
 
 
 export function saveOAuthUserProfile(req, profile, done) {
-  User.findOne({
-      provider: profile.provider,
-      providerId: profile.providerId
-    },
-    function (err, user) {
-      if (err) {
-        return done(err);
-      } else {
-        if (!user) {
-          //  ['username','email'].forEach( (prop) => {
-          //    exists({[prop]: profile[prop]}).then((propExists) => { if(propExists) profile[prop] = '' })
-          //  })
-          let photo = false;
-          if (profile.photo) {
-            photo = profile.photo.split('?')[0]
-            profile.photo = true
-          }
-          user = new User(profile);
 
-          user.save(function (err) {
-            if (err) {
-              var message = _this.getErrorMessage(err);
-              console.log(message);
-            }
-            req.user = {
-              id: user.id,
-              email: user.email || null,
-              username: user.username
-            };
-            if (photo) {
-              let ext = removeStringBeforeLastInstance(photo, '.')
-              download(photo, __dirname + '/../../images', user.id + '.' + ext, () => {
-                console.log('downloaded', photo, __dirname + '/../../images', user.id + '.' + ext);
-              });
-            }
-            return done(err, user);
-          })
-        } else {
-          return done(err, user);
-        }
+  User.findOne({
+    provider: profile.provider,
+    providerId: profile.providerId
+  }).lean().exec().then(user => {
+    if (!user) {
+      let photo = false;
+      if (profile.photo) {
+        photo = profile.photo.split('?')[0]
+        profile.photo = true
       }
-    })
+      user = new User(profile);
+
+      user.save(function (err) {
+        if (err) {
+          var message = _this.getErrorMessage(err);
+          console.log(message);
+        }
+        req.user = {
+          id: user.id,
+          email: user.email || null,
+          username: user.username
+        };
+        console.log("req.user 1",req.user)
+        if (photo) {
+          let ext = removeStringBeforeLastInstance(photo, '.')
+          download(photo, __dirname + '/../../images', user.id + '.' + ext, () => {
+            console.log('downloaded', photo, __dirname + '/../../images', user.id + '.' + ext);
+          });
+        }
+        return done(err, req.user);
+      })
+    } else {
+      console.log('usessssr',user);
+      return done(null, user);
+    }
+  }).catch((err) => done(err))
+
 }

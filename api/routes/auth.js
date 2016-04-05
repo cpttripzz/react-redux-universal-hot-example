@@ -54,6 +54,7 @@ module.exports = function (app) {
   app.get('/oauth/google/callback',
     passport.authenticate('google', {failureRedirect: '/'}),
     function (req, res) {
+
       let authUser = req.user;
       authUser["token"] = jwt.sign(authUser, config.jwtSecret, {
         expiresIn: 1440 * 60 * 7// expires in 24 hours * 7

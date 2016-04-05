@@ -40,11 +40,10 @@ export default (store) => {
             <Route path="/register" component={Register}/>
             <Route path="/user-admin" component={UserAdmin}/>
             <Route path="/oauth-profile/:token" component={OauthToken}/>
-            <Route path="/profile" component={Profile}/>
             <Route path="/bands" component={Bands}/>
+          <Route path="/profile" component={Profile}/>
 
             <Route onEnter={requireLogin}>
-                <Route path="/loginSuccess" component={LoginSuccess}/>
             </Route>
             <Route path="*" component={NotFound} status={404}/>
         </Route>
