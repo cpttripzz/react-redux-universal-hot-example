@@ -4,6 +4,7 @@ import React, {Component, PropTypes} from 'react';
 import { reduxForm } from 'redux-form';
 import { postProfile} from 'redux/modules/profile';
 import {connect} from 'react-redux';
+import { asyncConnect } from 'redux-async-connect';
 import { routeActions } from 'react-router-redux';
 import { isLoaded as profileLoaded, load as loadProfile } from 'redux/modules/profile';
 var Dropzone = require('react-dropzone');
@@ -22,6 +23,18 @@ const validate = values => {
 };
 
 @connect(state => ({profile: state.profile}), {pushState: routeActions.push})
+@asyncConnect([{
+  promise: ({store: {dispatch, getState}}) => {
+    const promises = [];
+
+    if (!profileLoaded()) {
+      promises.push(dispatch(loadProfile()));
+    }
+
+    return Promise.all(promises);
+  }
+}])
+
 export default class Profile extends Component {
   constructor(props) {
     super(props)
@@ -35,15 +48,6 @@ export default class Profile extends Component {
     handleSubmit: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
   };
-
-  static fetchData(getState, dispatch) {
-    const promises = [];
-
-    if (!profileLoaded()) {
-      promises.push(dispatch(loadProfile()));
-    }
-    return Promise.all(promises);
-  }
 
   submitProfile(values, dispatch) {
 

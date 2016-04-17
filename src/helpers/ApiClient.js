@@ -29,7 +29,9 @@ class _ApiClient {
           request.query(params);
         }
 
+
         if (__SERVER__ && req.get('cookie')) {
+          console.log('api', __SERVER__,req.get('cookie'))
           request.set('cookie', req.get('cookie'));
         }
 

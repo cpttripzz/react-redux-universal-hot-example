@@ -3,6 +3,7 @@ let jwt = require('jsonwebtoken')
 
 export function isJwtAuthenticated(req, res, next) {
   var token = req.body.token || req.params.token || req.headers['x-access-token'] || req.cookies.token
+  console.log('isJwtAuthenticated',token)
   if (token) {
     jwt.verify(token, config.jwtSecret, (err, decoded)  => {
       if (err) {

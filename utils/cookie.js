@@ -1,5 +1,7 @@
 /* eslint-env browser */
-import { canUseDOM } from 'exenv';
+var ExecutionEnvironment = require('exenv');
+var canUseDOM = ExecutionEnvironment.canUseDOM;
+import config from '../api/config';
 
 let cookie = {
   set({ name, value = '', path = '/', domain = '', expires = '' }) {
@@ -32,12 +34,13 @@ let cookie = {
 
     return matches ? decodeURIComponent(matches[1]) : undefined;
   },
-  setToken(token){
+  setToken(token,domain='bandaid.com'){
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     this.set({
       name: 'token',
       value: token,
+      domain: domain,
       expires
     });
   }

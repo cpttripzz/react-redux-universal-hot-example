@@ -81,7 +81,7 @@ module.exports = function (app) {
 // ---------------------------------------------------------
 // authenticated routes
 // ---------------------------------------------------------
-  app.post('/loadAuth', isJwtAuthenticated, (req, res) => res.json(req.user))
+  app.get('/loadAuth', isJwtAuthenticated, (req, res) => res.json(req.user))
 
   app.get('/users', isJwtAuthenticated, (req, res) =>
     getUsers().then((users) => res.json(users))

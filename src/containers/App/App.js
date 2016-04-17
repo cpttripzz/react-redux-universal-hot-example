@@ -11,7 +11,7 @@ let checkingAuth = false;
 /*@asyncConnect([{
   promise: ({store: {dispatch, getState}}) => {
     const promises = [];
-
+    debugger;
     if (!isAuthLoaded(getState())) {
       promises.push(dispatch(loadAuth()));
     }
@@ -20,6 +20,9 @@ let checkingAuth = false;
   }
 }])*/
 
+@asyncConnect([{
+  promise: () => Promise.resolve()
+}])
 
 @connect(
   state => ({

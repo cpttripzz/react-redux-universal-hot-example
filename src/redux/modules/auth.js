@@ -81,17 +81,12 @@ export function isLoaded(globalState) {
 }
 //function getJsonWebToken()
 export function load() {
-  const token = cookie.get('token')
-  if(!token) return
-    return {
+
+  return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
     //promise: (client) => client.get('/loadAuth')
 
-    promise: (client) => client.post('/loadAuth', {
-      data: {
-        token:  token
-      }
-    })
+    promise: (client) => client.get('/loadAuth')
   };
 }
 

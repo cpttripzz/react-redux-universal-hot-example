@@ -6,6 +6,7 @@ module.exports = {
   development: {
     isProduction: false,
     port: 3000,
+    domain: domain,
     apiPort: 3030,
     app: {
       name: 'React Redux With Passport and Sequelize',

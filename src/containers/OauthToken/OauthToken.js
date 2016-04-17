@@ -1,18 +1,20 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { routeActions } from 'react-router-redux';
-import cookie from '../../../utils/cookie';
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { routeActions } from 'react-router-redux'
+import cookie from '../../../utils/cookie'
 
 @connect( state => ({}), {pushState: routeActions.push})
 export default class OauthToken extends Component {
   static propTypes = {
     pushState: PropTypes.func.isRequired 
-  };
+  }
 
   componentDidMount() {
-    if (this.props.routeParams.token) {
-      cookie.setToken(this.props.routeParams.token)
-      this.props.pushState('/profile');
+    const {token} = this.props.params
+    console.log("token",token)
+    if (token) {
+      cookie.setToken(token)
+      this.props.pushState('/profile')
     }
   }
 
@@ -20,6 +22,6 @@ export default class OauthToken extends Component {
     return (
       <div className="container">
       </div>
-    );
+    )
   }
 }
